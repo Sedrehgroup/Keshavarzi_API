@@ -39,6 +39,7 @@ DJANGO_APPS = [
 ]
 LOCAL_APPS = [
     "users.apps.UsersConfig",
+    "regions.apps.RegionsConfig",
 ]
 THIRD_PARTY_APPS = []
 
