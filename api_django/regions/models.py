@@ -10,4 +10,4 @@ class Region(models.Model):
     name = models.CharField(max_length=20, help_text="Maximum length for this field is 20 character")
     date_created = models.DateField()
     is_active = models.BooleanField(default=True)  # ToDo: Is necessary or not?
-    images_dates = models.TextField()
+    dates = models.TextField(null=True, blank=True)
