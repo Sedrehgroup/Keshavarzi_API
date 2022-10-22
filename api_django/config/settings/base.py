@@ -40,6 +40,7 @@ DJANGO_APPS = [
 LOCAL_APPS = [
     "users.apps.UsersConfig",
     "regions.apps.RegionsConfig",
+    "notes.apps.NotesConfig",
 ]
 THIRD_PARTY_APPS = [
     'rest_framework_simplejwt',
