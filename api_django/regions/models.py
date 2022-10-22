@@ -5,7 +5,10 @@ User = get_user_model()
 
 
 class Region(models.Model):
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user",
+                             limit_choices_to={"is_expert": False, "is_superuser": False})
+    expert = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="expert",
+                               limit_choices_to={"is_expert": True, "is_superuser": False})
     polygon = models.PolygonField()
     name = models.CharField(max_length=20, help_text="Maximum length for this field is 20 character")
     date_created = models.DateField()
