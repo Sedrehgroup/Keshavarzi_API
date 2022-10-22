@@ -8,7 +8,6 @@ class UserFactory(factory.django.DjangoModelFactory):
     is_active = True
     first_name = factory.Faker("name")
     last_name = factory.Faker("name")
-    password = factory.Faker("password")
     phone_number = "+989032567181"
     national_code = "0123456789"
 
