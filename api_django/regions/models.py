@@ -15,3 +15,6 @@ class Region(models.Model):
     date_created = models.DateField(default=now)
     is_active = models.BooleanField(default=True)  # ToDo: Is necessary or not?
     dates = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
