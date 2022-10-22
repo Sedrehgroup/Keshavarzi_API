@@ -23,6 +23,8 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 
 class ExpertFactory(UserFactory):
+    is_expert = True
+    phone_number = "+989032567182"
 
     @classmethod
     def create(cls, **kwargs):
