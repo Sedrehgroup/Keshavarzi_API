@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.gis.db import models
+from django.utils.timezone import now
 
 User = get_user_model()
 
@@ -11,6 +12,6 @@ class Region(models.Model):
                                limit_choices_to={"is_expert": True, "is_superuser": False})
     polygon = models.PolygonField()
     name = models.CharField(max_length=20, help_text="Maximum length for this field is 20 character")
-    date_created = models.DateField()
+    date_created = models.DateField(default=now)
     is_active = models.BooleanField(default=True)  # ToDo: Is necessary or not?
     dates = models.TextField(null=True, blank=True)
