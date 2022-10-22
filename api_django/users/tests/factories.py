@@ -26,8 +26,7 @@ class ExpertFactory(UserFactory):
     is_expert = True
     phone_number = "+989032567182"
 
-    @classmethod
-    def create(cls, **kwargs):
-        instance: User = super(UserFactory, cls).create(**kwargs)
-        instance.is_expert = True
-        instance.save(update_fields=["is_expert"])
+
+class AdminFactory(UserFactory):
+    is_superuser = True
+    phone_number = "+989032567183"
