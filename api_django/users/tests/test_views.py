@@ -7,7 +7,7 @@ from users.tests.factories import UserFactory
 CREATE_URL = reverse("users:create")
 
 
-class ViewsTestCase(APITestCase):
+class UsersViewsTestCase(APITestCase):
     def setUp(self) -> None:
         self.user_password = "VeryStrongPassword"
         self.user = UserFactory.create(password=self.user_password)
