@@ -7,6 +7,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import User
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        exclude = ("date_joined", "password", "groups", "user_permissions")
+        model = User
+
+
 def phone_number_validator(phone_number: str) -> (bool, str):
     if phone_number[:3] != "+98":
         return False, "Phone number should start with '+98'"
