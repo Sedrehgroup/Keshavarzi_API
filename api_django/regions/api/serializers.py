@@ -2,7 +2,24 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from regions.models import Region
+from users.api.serializers import UserSerializer
 from users.models import User
+
+
+class ListRegionExpertSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Region
+        exclude = ("dates", "expert")
+
+
+class ListRegionUserSerializer(serializers.ModelSerializer):
+    expert = UserSerializer()
+
+    class Meta:
+        model = Region
+        exclude = ("dates", "user")
 
 
 class UpdateRegionExpertSerializer(serializers.ModelSerializer):
