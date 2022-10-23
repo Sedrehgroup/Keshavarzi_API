@@ -9,11 +9,11 @@ CREATE_URL = reverse("users:create")
 
 class UsersViewsTestCase(APITestCase):
     def setUp(self) -> None:
-        self.user_password = "VeryStrongPassword"
-        self.user = UserFactory.create(password=self.user_password)
+        self.password = "VeryStrongPassword"
+        self.user = UserFactory.create(password=self.password)
 
     def test_register(self):
-        data = {"phone_number": "+989032567182", "password": "StrongPassword"}
+        data = {"phone_number": "+989032567185", "password": self.password}
         with self.assertNumQueries(2):
             """
                 1- Check if user with that username exists
@@ -60,7 +60,7 @@ class UsersViewsTestCase(APITestCase):
 
     def test_register_duplicated_username_field(self):
         """ Check if user with that username is already exists """
-        data = {"phone_number": self.user.phone_number, "password": self.user_password}
+        data = {"phone_number": self.user.phone_number, "password": self.password}
         with self.assertNumQueries(1):
             res = self.client.post(CREATE_URL, data=data)
 
