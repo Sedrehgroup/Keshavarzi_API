@@ -1,4 +1,3 @@
-import factory
 import factory.fuzzy
 
 from random import randint
@@ -49,7 +48,7 @@ class FuzzyMultiPolygon(factory.fuzzy.BaseFuzzyAttribute):
 class RegionFactory(factory.django.DjangoModelFactory):
     id = factory.Faker("pyint", min_value=0)
     name = factory.Faker("name")
-    user = factory.SubFactory(UserFactory, phone_number="+989032567184")
+    user = factory.SubFactory(UserFactory)
     polygon = FuzzyPolygon()
 
     @classmethod
