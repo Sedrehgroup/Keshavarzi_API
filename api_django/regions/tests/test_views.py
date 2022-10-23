@@ -1,15 +1,18 @@
+import os
+
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from notes.models import Note
+from config.settings import BASE_DIR
 from regions.models import Region
-from regions.tests.factories import RegionFactory, FuzzyPolygon
-from users.models import User
+from regions.tests.factories import FuzzyPolygon, RegionFactory
 from users.tests.factories import AdminFactory, ExpertFactory, UserFactory
 
-# UPDATE_REGION_EXPERT_URL = reverse("regions:update_region_expert")
 LOGIN_URL = reverse("users:token_obtain_pair")
+LIST_REGIONS_EXPERT_URL = reverse("regions:list_expert_regions")
+LIST_REGIONS_USER_URL = reverse("regions:list_user_regions")
+TEST_TIF = os.path.join(BASE_DIR, "regions", "tests", "test.tif")
 
 
 class RegionViewsTestCase(APITestCase):
@@ -78,3 +81,58 @@ class RegionViewsTestCase(APITestCase):
 
         self.region.refresh_from_db()
         self.assertEqual(self.region.expert_id, None)
+
+    def test_list_user_regions_by_admin(self):
+        """ Test that admin user(superuser) doesnt have access to this endpoint """
+        self.login(self.admin_user.phone_number)
+
+        with self.assertNumQueries(1):
+            """
+                1- Retrieve user
+            """
+            res = self.client.get(LIST_REGIONS_USER_URL)
+
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
+
+    def test_list_expert_regions_by_admin(self):
+        """ Test that admin user(superuser) doesnt have access to this endpoint """
+        self.login(self.admin_user.phone_number)
+
+        with self.assertNumQueries(1):
+            """
+                1- Retrieve user
+            """
+            res = self.client.get(LIST_REGIONS_EXPERT_URL)
+
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
+
+    def test_list_region_by_expert(self):
+        RegionFactory.create_batch(10, expert_id=self.expert_user.id)
+        self.login(self.expert_user.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve expert
+                2- Retrieve -> (region, user)
+            """
+            res = self.client.get(LIST_REGIONS_EXPERT_URL)
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+            self.assertIn("regions", res.data)
+
+        region_count = Region.objects.filter(expert_id=self.expert_user.id).count()
+        self.assertEqual(len(res.data["regions"]), region_count)
+
+    def test_list_region_by_user(self):
+        RegionFactory.create_batch(10, with_expert=True, user_id=self.regular_user.id)
+        self.login(self.regular_user.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve regular_user
+                2- Retrieve -> (region, expert)
+            """
+            res = self.client.get(LIST_REGIONS_USER_URL)
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+        region_count = Region.objects.filter(user_id=self.regular_user.id).count()
+        self.assertEqual(len(res.data), region_count)
