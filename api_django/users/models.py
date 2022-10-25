@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    is_staff = None
     username = None
     last_login = None
     email = models.EmailField(null=True, blank=True)
