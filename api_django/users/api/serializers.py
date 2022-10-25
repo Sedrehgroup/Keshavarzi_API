@@ -1,10 +1,19 @@
 from django.contrib.auth.hashers import make_password
-from rest_framework import exceptions, serializers, status
+from django.db.models import Q
+from rest_framework import serializers, status
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from regions.models import Region
 from users.models import User
+
+
+class RegionSerializer(serializers.ModelSerializer):
+    # ToDo: Delete this serializer from users package. This class should be in regions package.
+    class Meta:
+        model = Region
+        exclude = ("dates",)
 
 
 class UserSerializer(serializers.ModelSerializer):
