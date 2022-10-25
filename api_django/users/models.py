@@ -14,4 +14,4 @@ class User(AbstractUser):
     USERNAME_FIELD = "phone_number"
 
     def __str__(self):
-        return self.get_full_name()
+        return self.phone_number
