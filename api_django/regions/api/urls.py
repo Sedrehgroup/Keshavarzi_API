@@ -1,6 +1,6 @@
 from django.urls import path
 
-from regions.api.views import UpdateRegionExpert, ListRegionsUser, ListRegionsExpert
+from regions.api.views import UpdateRegionExpert, ListRegionsUser, ListRegionsExpert, CreateRegion
 
 app_name = "regions"
 
