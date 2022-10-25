@@ -31,3 +31,16 @@ class ListRegionsUser(ListAPIView):
         return Region.objects.filter(user_id=self.request.user.id) \
             .defer("user") \
             .select_related("expert")
+
+
+class CreateRegion(CreateAPIView):
+    permission_classes = [IsAuthenticated & ~IsSuperUser]
+    serializer_class = CreateRegionSerializer
+
+    def create(self, request, *args, **kwargs):
+        response = super(CreateRegion, self).create(request, *args, **kwargs)
+        # call celery task
+        return response
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

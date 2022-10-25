@@ -43,3 +43,11 @@ class UpdateRegionExpertSerializer(serializers.ModelSerializer):
             instance.expert = None
             instance.save(update_fields=["expert"])
         return instance
+
+
+class CreateRegionSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField()
+
+    class Meta:
+        model = Region
+        exclude = ("date_created", "is_active", "expert", "user")
