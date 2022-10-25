@@ -31,7 +31,14 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         is_valid, msg = phone_number_validator(attrs["phone_number"])
         if not is_valid:
             raise AuthenticationFailed({"phone_number": msg})
-        return super(CustomTokenObtainPairSerializer, self).validate(attrs)
+
+        data = super(CustomTokenObtainPairSerializer, self).validate(attrs)
+        request = self.context["request"]
+        regions_qs = Region.objects \
+            .filter(Q(user_id=request.user.id) | Q(expert_id=request.user.id))
+        regions = RegionSerializer(regions_qs, many=True).data
+        data.update({"regions": regions})
+        return data
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
