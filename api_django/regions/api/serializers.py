@@ -6,6 +6,12 @@ from users.api.serializers import UserSerializer
 from users.models import User
 
 
+class RegionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        exclude = ("dates",)
+
+
 class ListRegionExpertSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
