@@ -47,7 +47,7 @@ class FuzzyMultiPolygon(factory.fuzzy.BaseFuzzyAttribute):
 
 class RegionFactory(factory.django.DjangoModelFactory):
     id = factory.Faker("pyint", min_value=0)
-    name = factory.Faker("name")
+    name = factory.Faker("pystr", max_chars=20)
     user = factory.SubFactory(UserFactory)
     polygon = FuzzyPolygon()
 
