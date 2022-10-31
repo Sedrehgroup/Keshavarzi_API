@@ -1,9 +1,9 @@
-from rest_framework.generics import ListAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from regions.models import Region
 from regions.api.serializers import UpdateRegionExpertSerializer, \
-    ListRegionExpertSerializer, ListRegionUserSerializer
+    ListRegionExpertSerializer, ListRegionUserSerializer, CreateRegionSerializer
 from users.permissions import IsExpertUser, IsRegularUser, IsSuperUser
 
 
@@ -36,11 +36,6 @@ class ListRegionsUser(ListAPIView):
 class CreateRegion(CreateAPIView):
     permission_classes = [IsAuthenticated & IsRegularUser]
     serializer_class = CreateRegionSerializer
-
-    def create(self, request, *args, **kwargs):
-        response = super(CreateRegion, self).create(request, *args, **kwargs)
-        # call celery task
-        return response
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
