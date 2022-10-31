@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 
 from notes.models import Note
 from regions.models import Region
-from regions.tests.factories import RegionFactory, FuzzyPolygon
+from regions.tests.factories import RegionFactory, fake_polygon
 from users.tests.factories import ExpertFactory, UserFactory
 
 
@@ -15,7 +15,7 @@ class RegionModelTestCase(APITestCase):
 
     def test_create_region(self):
         user = UserFactory.create()
-        pl = FuzzyPolygon().fuzz()
+        pl = fake_polygon
 
         region = Region.objects.create(user_id=user.id, polygon=pl, name="test polygon")
 
