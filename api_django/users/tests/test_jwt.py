@@ -1,9 +1,8 @@
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from users.tests.factories import UserFactory
+from users.tests.factories import ExpertFactory, UserFactory
 
 LOGIN_URL = reverse('users:token_obtain_pair')
 REFRESH_URL = reverse('users:token_refresh')
@@ -13,16 +12,17 @@ class JWTTestCase(APITestCase):
     def setUp(self) -> None:
         self.user_password = "strongPassword"
         self.user = UserFactory.create(password=self.user_password)
+        self.expert_user = ExpertFactory.create(password=self.user_password)
 
     def test_login(self):
         data = {"phone_number": self.user.phone_number, "password": self.user_password}
         with self.assertNumQueries(1):
             """
-                1- Get user
+                1- Retrieve user
             """
             res = self.client.post(LOGIN_URL, data=data)
 
-            self.assertEqual(res.status_code, status.HTTP_200_OK,res.data)
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
             self.assertIn('refresh', res.data)
             self.assertIn('access', res.data)
 
@@ -50,7 +50,7 @@ class JWTTestCase(APITestCase):
             self.assertNotEqual(res.data['access'], old_res.data['access'])
 
     def test_refresh(self):
-        data ={"phone_number": self.user.phone_number,"password":self.user_password}
+        data = {"phone_number": self.user.phone_number, "password": self.user_password}
         login_res = self.client.post(LOGIN_URL, data)
         with self.assertNumQueries(0):
             res = self.client.post(REFRESH_URL, data={'refresh': login_res.data['refresh']})
