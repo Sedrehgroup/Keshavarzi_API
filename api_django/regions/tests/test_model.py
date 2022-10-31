@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from rest_framework.test import APITestCase
 
 from notes.models import Note
@@ -36,3 +37,27 @@ class RegionModelTestCase(APITestCase):
         note = Note.objects.filter(region=region, expert=expert)
         self.assertEqual(note.count(), 1)
         self.assertIsNotNone(note.first().text)
+
+    def test_detach_expert_with_none_value_will_not_create_note(self):
+        """ Test that set 'None' to expert_id of region, will not create note. """
+        region = RegionFactory.create(with_expert=True)
+        self.assertIsNotNone(region.expert_id)
+
+        region.expert_id = None
+        region.save(update_fields=["expert_id"])
+        self.assertIsNone(region.expert_id)
+
+        note = Note.objects.filter(region_id=region.id)
+        self.assertEqual(note.count(), 0)
+
+    def test_detach_expert_with_0_value_is_not_working(self):
+        """ Test that set '0' to expert_id of region, will not create note. """
+        region = RegionFactory.create(with_expert=True)
+        self.assertIsNotNone(region.expert_id)
+
+        with self.assertRaises(ValidationError):
+            region.expert_id = 0
+            region.save(update_fields=["expert_id"])
+
+        self.assertTrue(region.expert_id)  # Is not 0 or None
+        self.assertEqual(Note.objects.filter(region_id=region.id).count(), 0)
