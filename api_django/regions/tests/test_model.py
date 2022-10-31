@@ -59,5 +59,5 @@ class RegionModelTestCase(APITestCase):
             region.expert_id = 0
             region.save(update_fields=["expert_id"])
 
-        self.assertTrue(region.expert_id)  # Is not 0 or None
+        self.assertTrue(region.expert_id in (0, None))  # Is not 0 or None
         self.assertEqual(Note.objects.filter(region_id=region.id).count(), 0)
