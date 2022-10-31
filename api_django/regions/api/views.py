@@ -34,7 +34,7 @@ class ListRegionsUser(ListAPIView):
 
 
 class CreateRegion(CreateAPIView):
-    permission_classes = [IsAuthenticated & ~IsSuperUser]
+    permission_classes = [IsAuthenticated & IsRegularUser]
     serializer_class = CreateRegionSerializer
 
     def create(self, request, *args, **kwargs):
