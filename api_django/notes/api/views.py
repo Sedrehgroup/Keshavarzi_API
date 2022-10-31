@@ -1,3 +1,12 @@
-from django.shortcuts import render
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
+from notes.api.serializers import CreateNoteSerializer
+
+
+class CreateNote(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CreateNoteSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
