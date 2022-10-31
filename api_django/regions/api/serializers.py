@@ -12,7 +12,14 @@ class RegionSerializer(serializers.ModelSerializer):
         exclude = ("dates",)
 
 
-class ListRegionExpertSerializer(serializers.ModelSerializer):
+class BaseListRegionSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super(BaseListRegionSerializer, self).to_representation(instance)
+        data["polygon"] = get_geojson_by_polygon(instance.polygon)
+        return data
+
+
+class ListRegionExpertSerializer(BaseListRegionSerializer):
     user = UserSerializer()
 
     class Meta:
@@ -20,7 +27,7 @@ class ListRegionExpertSerializer(serializers.ModelSerializer):
         exclude = ("dates", "expert")
 
 
-class ListRegionUserSerializer(serializers.ModelSerializer):
+class ListRegionUserSerializer(BaseListRegionSerializer):
     expert = UserSerializer()
 
     class Meta:
