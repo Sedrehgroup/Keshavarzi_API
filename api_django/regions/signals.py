@@ -7,7 +7,7 @@ from notes.models import Note
 
 
 @receiver(post_save, sender=Region)
-def my_handler(sender, instance: Region, update_fields, **kwargs):
+def create_note_after_attach_expert(sender, instance: Region, update_fields, **kwargs):
     if update_fields is not None:
         if ("expert_id" or "expert") in update_fields:  # Expert of region is updated
             if instance.expert_id is not None:  # Expert is not deleted
