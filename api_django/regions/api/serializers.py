@@ -60,8 +60,9 @@ class UpdateRegionExpertSerializer(serializers.ModelSerializer):
 
 
 class CreateRegionSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField()
+    def validate_polygon(self, value):
+        return get_polygon_by_geojson(value)
 
     class Meta:
         model = Region
-        exclude = ("date_created", "is_active", "expert", "user")
+        exclude = ("date_created", "dates", "is_active", "expert", "user")
