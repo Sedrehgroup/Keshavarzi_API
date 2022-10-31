@@ -34,7 +34,7 @@ class RegionModelTestCase(APITestCase):
         region.expert_id = expert.id
         region.save(update_fields=["expert_id"])
 
-        note = Note.objects.filter(region=region, expert=expert)
+        note = Note.objects.filter(region=region, user=expert)
         self.assertEqual(note.count(), 1)
         self.assertIsNotNone(note.first().text)
 
