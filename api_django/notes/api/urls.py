@@ -1,5 +1,9 @@
 from django.urls import path
 
-app_name = "users"
+from notes.api.views import CreateNote
 
-urlpatterns = []
+app_name = "notes"
+
+urlpatterns = [
+    path("", CreateNote.as_view(), name="create"),
+]

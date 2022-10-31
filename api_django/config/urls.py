@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("users/", include("users.api.urls", namespace="users")),
     path("regions/", include("regions.api.urls", namespace="regions")),
+    path("notes/", include("notes.api.urls", namespace="notes")),
 ]
 urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns = urlpatterns + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
