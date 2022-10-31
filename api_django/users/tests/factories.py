@@ -17,8 +17,8 @@ class FuzzyPhoneNumber(factory.fuzzy.BaseFuzzyAttribute):
 
 class UserFactory(factory.django.DjangoModelFactory):
     is_active = True
-    first_name = factory.Faker("name")
-    last_name = factory.Faker("name")
+    first_name = factory.Faker("first_name")
+    last_name = factory.Faker("last_name")
     phone_number = FuzzyPhoneNumber()
     national_code = "0123456789"
 
