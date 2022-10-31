@@ -10,6 +10,6 @@ from notes.models import Note
 def create_note_after_attach_expert(sender, instance: Region, update_fields, **kwargs):
     if update_fields is not None:
         if ("expert_id" or "expert") in update_fields:  # Expert of region is updated
-            if instance.expert_id is not None:  # Expert is not deleted
+            if instance.expert_id is not None:  # Expert is attached
                 note_text = f"کارشناس با شماره شناسایی {instance.expert_id} به ناحیه ای با شماره شناسایی {instance.id} متصل گردید."
                 Note.objects.create(region=instance, expert_id=instance.expert_id, text=note_text)
