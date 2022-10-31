@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from regions.models import Region
+from regions.utils import get_geojson_by_polygon, get_polygon_by_geojson
 from users.api.serializers import UserSerializer
 from users.models import User
 
@@ -36,14 +37,14 @@ class ListRegionUserSerializer(BaseListRegionSerializer):
 
 
 class UpdateRegionExpertSerializer(serializers.ModelSerializer):
-    expert_id = serializers.IntegerField(min_value=0)
+    expert_id = serializers.IntegerField(min_value=1, allow_null=True)
 
     class Meta:
         model = Region
         fields = ("expert_id",)
 
     def validate_expert_id(self, val):
-        if val != 0 and not User.objects.filter(id=val, is_expert=True).exists():
+        if val and not User.objects.filter(id=val, is_expert=True).exists():
             raise ValidationError({"Expert": "Expert user with given ID not found"})
         return val
 
