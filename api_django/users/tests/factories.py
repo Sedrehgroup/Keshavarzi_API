@@ -16,7 +16,6 @@ class FuzzyPhoneNumber(factory.fuzzy.BaseFuzzyAttribute):
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    id = factory.Faker("pyint", min_value=0)
     is_active = True
     first_name = factory.Faker("name")
     last_name = factory.Faker("name")
