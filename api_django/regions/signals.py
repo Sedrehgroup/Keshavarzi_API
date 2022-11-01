@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from regions.models import Region
@@ -23,7 +23,7 @@ def create_note_after_attach_expert(sender, instance: Region, update_fields, **k
                                     text=note_text, user_role="E")
 
 
-@receiver(pre_save, sender=Region)
+@receiver(post_save, sender=Region)
 def download_images_after_region(sender, instance: Region, **kwargs):
     logger.info("Signal: Download image after region")
     end = datetime.datetime.now()
@@ -32,3 +32,4 @@ def download_images_after_region(sender, instance: Region, **kwargs):
     task = download_images.delay(start.strftime('%Y-%m-%d'), end.strftime('%Y-%m-%d'),
                                  geom, instance.user_id, instance.id, instance.dates)
     instance.task_id = task.id
+    instance.save(update_fields=["task_id"])
