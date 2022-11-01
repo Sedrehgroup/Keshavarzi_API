@@ -41,7 +41,7 @@ def download_images(start, end, geom, user_id, region_id, dates):
 
         # Example: /media/images/user-1/region-1/2022-01-02.tif
         file_path = f"{folder}/{img_date}.tif"
-        dates += f"{file_path}\n"
+        dates += f"{img_date}\n"
         with requests.get(url) as response:
             with open(file_path, 'wb') as raster_file:
                 # ToDo: Test without wb
