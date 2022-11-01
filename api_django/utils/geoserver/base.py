@@ -1,7 +1,7 @@
 from django.conf import settings
 from geoserver.catalog import Catalog
 
-cat = Catalog(f"http://{settings.GEOSERVER['HOST']}:{settings.GEOSERVER['PORT']}/geoserver/rest",
+cat = Catalog(f"http://{settings.GEOSERVER['HOST']}:{settings.GEOSERVER['PORT']}/geoserver/rest/",
               username=settings.GEOSERVER['USERNAME'],
               password=settings.GEOSERVER['PASSWORD'])
 
