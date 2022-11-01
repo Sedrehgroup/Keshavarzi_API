@@ -1,0 +1,149 @@
+version: "3.9"
+
+services:
+  api_django:
+    restart: on-failure
+    container_name: api_django
+    build:
+      context: ./api_django
+    command: sh -c "python manage.py makemigrations --noinput
+      && python manage.py migrate
+      && python manage.py collectstatic --no-input
+      && gunicorn --reload config.wsgi --bind 0.0.0.0:8000"
+    depends_on:
+      - postgis
+      - geoserver
+    ports:
+      - 8000:8000
+    environment:
+      - ALLOW_ORIGIN=""
+      - DB_SCHEMA=public
+      - DB_HOST=postgis
+      - DB_NAME=KeshavarziDB
+      - DB_USER=postgres
+      - DB_PASS=ymEp331j5cI5jRI9
+      - DB_PORT=5432
+    networks:
+      - main
+    volumes:
+      - F:\computer\Project\Django\Sedreh\FirstPrj\api_django:/api_django
+
+  postgis:
+    image: kartoza/postgis:14-3.2
+    restart: on-failure
+    container_name: postgis
+    volumes:
+      - db_land:/var/lib/postgresql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASS=ymEp331j5cI5jRI9
+      - POSTGRES_DBNAME=KeshavarziDB
+    networks:
+      - main
+    expose:
+      - 5432
+
+  geoserver:
+    image: kartoza/geoserver:2.20.4
+    container_name: geoserver
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      - DEBUG=""
+      - SECRET_KEY=""
+      - DB_HOST=postgis
+      - DB_NAME=KeshavarziDB
+      - DB_USER=postgres
+      - DB_PASS=ymEp331j5cI5jRI9
+      - DB_PORT=5432
+    volumes:
+      - geoserver_sedreh:/opt/geoserver/data_dir
+      - geoserver_footprints_sedreh:/opt/footprints_dir
+      - geoserver_gwc_sedreh:/opt/geoserver/data_dir/gwc
+      - geoserver_letsencrypt_sedreh:/etc/letsencrypt
+      - geoserver_fonts_sedreh:/opt/fonts
+      - ./Server/media/:/media
+      - settings:/settings
+    networks:
+      - main
+
+  rabbitmq:
+    container_name: rabbitmq_f
+    image: rabbitmq:latest
+    restart: on-failure
+    networks:
+      - main
+    expose:
+      - 5672
+
+  celery_worker:
+    container_name: celery_worker
+    restart: on-failure
+    command: celery -A config worker -l INFO
+    build:
+      context: ./api_django
+    depends_on:
+      - api_django
+      - postgis
+      - rabbitmq
+    environment:
+      - DB_HOST=postgis
+      - DB_NAME=KeshavarziDB
+      - DB_USER=SedrehAdmin
+      - DB_PASS=ymEp331j5cI5jRI9
+      - DB_PORT=5432
+      - DB_SCHEMA=public
+      - C_FORCE_ROOT=true
+    networks:
+      - main
+
+  celery_beat:
+    container_name: celery_beat
+    restart: always
+    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    build:
+      context: ./api_django
+#    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    depends_on:
+      - api_django
+      - geoserver
+      - rabbitmq
+    environment:
+      - DB_HOST=postgis
+      - DB_NAME=KeshavarziDB
+      - DB_USER=postgres
+      - DB_PASS=ymEp331j5cI5jRI9
+      - DB_PORT=5432
+      - DB_SCHEMA=public
+      - C_FORCE_ROOT="true"
+    networks:
+      - main
+#  nginx:
+#    image: nginx:latest
+#    restart: on-failure
+#    container_name: nginx_f
+#    command: nginx -g 'daemon off;'
+#    depends_on:
+#      - api_django
+##      - ai_django
+#    networks:
+#      - main
+#    ports:
+#      - 80:80
+#      - 443:443
+#    volumes:
+#      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+#      - ./ssl:/ssl
+
+networks:
+  main:
+
+volumes:
+  db_land:
+  geoserver_sedreh:
+  geoserver_footprints_sedreh:
+  geoserver_gwc_sedreh:
+  geoserver_letsencrypt_sedreh:
+  geoserver_fonts_sedreh:
+  settings:
