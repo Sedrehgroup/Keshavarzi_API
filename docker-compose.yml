@@ -55,6 +55,8 @@ services:
     ports:
       - 8080:8080
     environment:
+      - GEOSERVER_ADMIN_USER=sedreh
+      - GEOSERVER_ADMIN_PASSWORD=ABcd1234!@
       - DEBUG=""
       - SECRET_KEY=""
       - DB_HOST=postgis
