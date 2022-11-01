@@ -6,6 +6,7 @@ from errno import EEXIST
 from celery import shared_task
 from django.conf import settings
 
+from regions.models import Region
 from utils.gee.utils import get_and_validate_date_range, get_and_validate_polygon_by_geom, get_dates_of_image_collection, get_image_collections
 from utils.geoserver.base import cat
 
@@ -24,7 +25,7 @@ def get_or_create_dir(base_dir, dir_names: list):
 
 
 @shared_task()
-def download_images(start, end, geom, user_id, region_id):
+def download_images(start, end, geom, user_id, region_id, dates):
     start, end = get_and_validate_date_range(start, end)
     polygon = get_and_validate_polygon_by_geom(geom)
     folder = get_or_create_dir(settings.BASE_DIR, ["images", f"user-{str(user_id)}", f"region-{str(region_id)}"])
@@ -39,9 +40,11 @@ def download_images(start, end, geom, user_id, region_id):
 
         # Example: /media/images/user-1/region-1/2022-01-02.tif
         file_path = f"{folder}/{img_date}.tif"
+        dates += f"{file_path}\n"
         with requests.get(url) as response:
             with open(file_path, 'wb') as raster_file:
                 # ToDo: Test without wb
                 raster_file.write(response.content)
 
         cat.create_coveragestore(name=f"user_{user_id}--region_{region_id}", data=file_path)
+        Region.objects.filter(id=region_id).update(dates=dates)
