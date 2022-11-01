@@ -24,6 +24,4 @@ else:
 
 print(OKCYAN + "-- Debug mode is: " + mode + OKCYAN + " --" + ENDC)
 
-from config.celery import app as celery_app
 
-__all__ = ("celery_app",)
