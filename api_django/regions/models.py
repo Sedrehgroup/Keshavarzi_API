@@ -17,6 +17,7 @@ class Region(models.Model):
     date_created = models.DateField(default=now)
     is_active = models.BooleanField(default=True)  # ToDo: Is necessary or not?
     dates = models.TextField(null=True, blank=True)
+    task_id = models.CharField(null=True, blank=True, max_length=44)
 
     def __str__(self):
         return self.name
