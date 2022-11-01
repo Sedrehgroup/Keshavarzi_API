@@ -18,8 +18,9 @@ def get_or_create_dir(base_dir, dir_names: list):
     logger.info("Get or create dir")
     # Recursive function for create parent directories
     try:
-        os.makedirs(f"{base_dir}/{'/'.join(dir_names)}")
-        return os.path.join(base_dir, *dir_names)
+        file_path = f"{base_dir}/{'/'.join(dir_names)}"
+        os.makedirs(file_path)
+        return file_path
     except OSError as e:
         if e.errno == EEXIST:
             last_dir = dir_names.pop()
