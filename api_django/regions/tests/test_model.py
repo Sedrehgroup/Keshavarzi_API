@@ -16,12 +16,11 @@ class RegionModelTestCase(APITestCase):
 
     def test_create_region(self):
         user = UserFactory.create()
-        pl = fake_polygon
 
-        region = Region.objects.create(user_id=user.id, polygon=pl, name="test polygon")
+        region = Region.objects.create(user_id=user.id, polygon=fake_polygon, name="test polygon")
 
         self.assertTrue(region.is_active)
-        self.assertEqual(region.polygon, pl)
+        self.assertEqual(region.polygon, fake_polygon)
         self.assertEqual(region.user_id, user.id)
         self.assertIsNone(region.expert_id)
         self.assertIsNone(region.dates)
