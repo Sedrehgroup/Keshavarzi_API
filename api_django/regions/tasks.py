@@ -28,7 +28,7 @@ def get_or_create_dir(base_dir, dir_names: list):
 def download_images(start, end, geom, user_id, region_id, dates):
     start, end = get_and_validate_date_range(start, end)
     polygon = get_and_validate_polygon_by_geom(geom)
-    folder = get_or_create_dir(settings.BASE_DIR, ["images", f"user-{str(user_id)}", f"region-{str(region_id)}"])
+    folder = get_or_create_dir(settings.BASE_DIR, ["media", "images", f"user-{str(user_id)}", f"region-{str(region_id)}"])
 
     image_collection = get_image_collections(polygon, start, end)
     id_date_list = get_dates_of_image_collection(image_collection)
