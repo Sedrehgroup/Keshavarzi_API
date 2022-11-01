@@ -25,8 +25,6 @@ services:
       - DB_PORT=5432
     networks:
       - main
-    volumes:
-      - F:\computer\Project\Django\Sedreh\FirstPrj\api_django:/api_django
 
   postgis:
     image: kartoza/postgis:14-3.2
