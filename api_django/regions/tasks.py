@@ -1,3 +1,4 @@
+import logging
 import requests
 import ee
 import os
@@ -10,8 +11,11 @@ from regions.models import Region
 from utils.gee.utils import get_and_validate_date_range, get_and_validate_polygon_by_geom, get_dates_of_image_collection, get_image_collections
 from utils.geoserver.base import cat
 
+logger = logging.getLogger(__name__)
+
 
 def get_or_create_dir(base_dir, dir_names: list):
+    logger.info("Get or create dir")
     # Recursive function for create parent directories
     try:
         os.makedirs(f"{base_dir}/{'/'.join(dir_names)}")
@@ -34,6 +38,7 @@ def download_images(start, end, geom, user_id, region_id, dates):
     image_collection = get_image_collections(polygon, start, end)
     id_date_list = get_dates_of_image_collection(image_collection)
 
+    logger.info("Start downloading images")
     for img_id, img_date in id_date_list:
         url = ee.Image(img_id).getDownloadURL(params={
             'scale': 10, 'region': polygon, "bands": ['TCI_R', 'TCI_G', 'TCI_B'],
