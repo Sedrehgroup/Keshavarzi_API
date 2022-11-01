@@ -142,6 +142,15 @@ REST_FRAMEWORK = {
     )
 }
 
-CELERY_TIMEZONE = "Australia/Tasmania"
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
+GEOSERVER = {
+    'HOST': os.environ.get('GEOSERVER_HOST'),
+    'IP': os.environ.get('GEOSERVER_HOST_IP'),
+    'USERNAME': os.environ.get('GEOSERVER_USERNAME'),
+    'PASSWORD': os.environ.get('GEOSERVER_PASSWORD'),
+    'WORKSPACE': os.environ.get('GEOSERVER_WORKSPACE'),
+    'NAMESPACE': os.environ.get('GEOSERVER_NAMESPACE'),
+    'MEDIA_ROOT': 'media/geoserver/',
+    'RASTER_URL': os.path.join(BASE_DIR, 'images'),
+    'GEOSERVER_URL': '/opt/geoserver/data_dir',
+    'PORT': os.environ.get('GEOSERVER_PORT')
+}
