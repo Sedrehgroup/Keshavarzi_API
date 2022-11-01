@@ -1,9 +1,10 @@
 import datetime
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from regions.models import Region
 from notes.models import Note
+from regions.tasks import download_images
 from regions.utils import get_geojson_by_polygon
 
 
@@ -17,10 +18,11 @@ def create_note_after_attach_expert(sender, instance: Region, update_fields, **k
                                     text=note_text, user_role="E")
 
 
-@receiver(post_save, sender=Region)
+@receiver(pre_save, sender=Region)
 def download_images_after_region(sender, instance: Region, **kwargs):
     end = datetime.datetime.now()
     start = end - datetime.timedelta(days=30)
     geom = get_geojson_by_polygon(instance.polygon)
-    # download_images.delay(start.strftime('%Y-%m-%d'), end.strftime('%Y-%m-%d'),
-    #                       geom, instance.user_id, instance.id)
+    task = download_images.delay(start.strftime('%Y-%m-%d'), end.strftime('%Y-%m-%d'),
+                                 geom, instance.user_id, instance.id, instance.dates)
+    instance.task_id = task.id
