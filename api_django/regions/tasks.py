@@ -53,5 +53,5 @@ def download_images(start, end, geom, user_id, region_id, dates):
                 # ToDo: Test without wb
                 raster_file.write(response.content)
 
-        cat.create_coveragestore(name=f"user_{user_id}--region_{region_id}", data=file_path)
+        cat.create_coveragestore(name=f"user_{user_id}--region_{region_id}--{img_date}", data=file_path)
         Region.objects.filter(id=region_id).update(dates=dates)
