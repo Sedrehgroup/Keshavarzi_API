@@ -58,7 +58,7 @@ class RegionModelTestCase(APITestCase):
         self.assertNotEqual(res.state, "FAILURE", res.result)
         self.assertEqual(res.state, "SUCCESS")
 
-        dates_list = res.dates.split("\n")
+        dates_list = region.dates.split("\n")
         for date in dates_list:
             file_path = os.path.join("media", "images", f"user-{region.user_id}", f"region-{region.id}", f"{date}.tif")
             self.assertTrue(os.path.isfile(file_path))
