@@ -2,14 +2,33 @@ import os
 from time import sleep
 
 from celery.result import AsyncResult
-from rest_framework.test import APITestCase
 
+from config.celery import celery_app
 from regions.models import Region
 from regions.tests.factories import fake_polygon
 from users.tests.factories import UserFactory
+from celery.contrib.testing.worker import start_worker
+from django.test import SimpleTestCase
 
 
-class TestCeleryTestCase(APITestCase):
+class BatchSimulationTestCase(SimpleTestCase):
+    databases = '__all__'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        # Start up celery worker
+        cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
+        cls.celery_worker.__enter__()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+        # Close worker
+        cls.celery_worker.__exit__(None, None, None)
+
     def test_create_method_is_calling_download_image_signal(self):
         region = Region.objects.create(user_id=UserFactory.create().id, polygon=fake_polygon, name="test polygon")
 
