@@ -2,7 +2,6 @@ import logging
 import requests
 import ee
 import os
-from errno import EEXIST
 
 from celery import shared_task
 from django.conf import settings
@@ -14,26 +13,27 @@ from utils.geoserver.base import cat
 logger = logging.getLogger(__name__)
 
 
-def get_or_create_dir(base_dir, dir_names: list):
-    logger.info("Get or create dir")
-    # Recursive function for create parent directories
-    try:
-        file_path = f"{base_dir}/{'/'.join(dir_names)}"
-        os.makedirs(file_path)
-        return file_path
-    except OSError as e:
-        if e.errno == EEXIST:
-            last_dir = dir_names.pop()
-            result = get_or_create_dir(base_dir, dir_names)
-            os.makedirs(f"{result}/{last_dir}")
-            return os.path.join(result, last_dir)
+# def get_or_create_dir(base_dir, dir_names: list):
+#     logger.debug("Get or create directory")
+#     # Recursive function for create parent directories
+#     try:
+#         file_path = f"{base_dir}/{'/'.join(dir_names)}"
+#         os.makedirs(file_path)
+#         return file_path
+#     except OSError as e:
+#         if e.errno == EEXIST:
+#             last_dir = dir_names.pop()
+#             result = get_or_create_dir(base_dir, dir_names)
+#             os.makedirs(f"{result}/{last_dir}")
+#             return os.path.join(result, last_dir)
 
 
 @shared_task()
 def download_images(start, end, geom, user_id, region_id, dates):
     start, end = get_and_validate_date_range(start, end)
     polygon = get_and_validate_polygon_by_geom(geom)
-    folder = get_or_create_dir(settings.BASE_DIR, ["media", "images", f"user-{str(user_id)}", f"region-{str(region_id)}"])
+    folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', f'user-{str(user_id)}', f'region-{str(region_id)}'])}"
+    os.makedirs(folder_path, exist_ok=True)
     dates = dates if dates is not None else ""
 
     image_collection = get_image_collections(polygon, start, end)
@@ -46,7 +46,7 @@ def download_images(start, end, geom, user_id, region_id, dates):
             'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
 
         # Example: /media/images/user-1/region-1/2022-01-02.tif
-        file_path = f"{folder}/{img_date}.tif"
+        file_path = f"{folder_path}/{img_date}.tif"
         dates += f"{img_date}\n"
         with requests.get(url) as response:
             with open(file_path, 'wb') as raster_file:
