@@ -162,6 +162,11 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
         },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'debug.log',
+        },
     },
     'root': {
         'handlers': ['console'],
@@ -169,8 +174,8 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'handlers': ['console', 'file'],  # ToDo: Remove file
+            'level': "INFO",
             'propagate': False,
         },
     },
