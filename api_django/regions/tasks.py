@@ -54,7 +54,5 @@ def download_images(start, end, geom, user_id, region_id, dates):
                 raster_file.write(response.content)
 
         cat.create_coveragestore(name=f"user_{user_id}--region_{region_id}--{img_date}", data=file_path)
-        # Region.objects.filter(id=region_id).update(dates=dates) ToDo
-        region = Region.objects.get(id=region_id)
-        region.dates = dates
-        region.save(update_fields=["dates"])
+        updated_row = Region.objects.filter(id=region_id).update(dates=dates)
+        assert updated_row != 0
