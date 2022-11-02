@@ -42,6 +42,7 @@ class RegionModelTestCase(APITestCase):
         while res.state == "PENDING":
             sleep(5)
 
+        region.refresh_from_db()
         self.assertNotEqual(res.state, "FAILURE", res.result)
         self.assertEqual(res.state, "SUCCESS")
         self.assertIsNotNone(region.dates)
@@ -55,8 +56,10 @@ class RegionModelTestCase(APITestCase):
         while res.state == "PENDING":
             sleep(5)
 
+        region.refresh_from_db()
         self.assertNotEqual(res.state, "FAILURE", res.result)
         self.assertEqual(res.state, "SUCCESS")
+        self.assertIsNotNone(region.dates)
 
         dates_list = region.dates.split("\n")
         for date in dates_list:
