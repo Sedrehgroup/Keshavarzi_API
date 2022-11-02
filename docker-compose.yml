@@ -97,7 +97,7 @@ services:
     environment:
       - DB_HOST=postgis
       - DB_NAME=KeshavarziDB
-      - DB_USER=SedrehAdmin
+      - DB_USER=postgres
       - DB_PASS=ymEp331j5cI5jRI9
       - DB_PORT=5432
       - DB_SCHEMA=public
