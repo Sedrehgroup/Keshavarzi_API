@@ -2,7 +2,8 @@ import os
 from time import sleep
 
 from celery.result import AsyncResult
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from rest_framework.test import APITestCase
 
 from config.celery import celery_app
 from regions.models import Region
@@ -10,8 +11,22 @@ from regions.tests.factories import fake_polygon
 from users.tests.factories import UserFactory
 from celery.contrib.testing.worker import start_worker
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASS"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
+        "TEST": {"NAME": os.getenv("DB_NAME")}
+    }
+}
 
-class BatchSimulationTestCase(TestCase):
+
+@override_settings(DATABASE=DATABASES)
+class BatchSimulationTestCase(APITestCase):
+
     def test_create_method_is_calling_download_image_signal(self):
         region = Region.objects.create(user_id=UserFactory.create().id, polygon=fake_polygon, name="test polygon")
 
