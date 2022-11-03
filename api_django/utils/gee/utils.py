@@ -76,7 +76,9 @@ def get_and_validate_polygon_by_geom(polygon_geojson) -> ee.Geometry.Polygon:
     try:
         return ee.Geometry.Polygon(polygon_geojson['features'][0]['geometry']['coordinates'])
     except Exception as e:
-        raise ValidationError({"function name": "get_and_validate_polygon_by_geom", "message": e, "geom_data": geom})
+        msg = {"function name": "get_and_validate_polygon_by_geom",
+               "message": e, "geom_data": polygon_geojson}
+        raise ValidationError(msg)
 
 
 def get_clipped_image(image_name, polygon: ee.Geometry.Polygon) -> ee.Image:
@@ -85,120 +87,3 @@ def get_clipped_image(image_name, polygon: ee.Geometry.Polygon) -> ee.Image:
         return ee.Image(image_name).clip(polygon).select(['TCI_R', 'TCI_G', 'TCI_B'])
     except Exception as e:
         raise ValidationError({"function name": "get_clipped_image", "message": e})
-
-# def turn_image_to_raster(image: ee.Image, title, polygon: ee.Geometry.Polygon) -> None:
-#     # download image from google earth engine
-#     # ToDo: What if image is not exists?
-#     folder = os.path.join(settings.BASE_DIR, 'images/')
-#     url = image.getDownloadURL(params={
-#         'name': title, 'scale': 10, 'region': polygon,
-#         'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
-#
-#     if not os.path.exists(folder):
-#         os.mkdir(folder)
-#
-#     with requests.get(url) as response:
-#         with open(folder + title + '.tif', 'wb') as raster_file:
-#             # ToDo: Test without wb
-#             raster_file.write(response.content)
-
-
-# def add_layer(layer_name) -> None:
-#     filename = layer_name + '.tif'
-#     if not exist_layer(layer_name, settings.GEOSERVER.get('WORKSPACE')):
-#         create_layer_with_store(data_type='tiff', layer_name=layer_name, store_name=layer_name,
-#                                 url=os.path.join(settings.GEOSERVER.get('RASTER_URL'), filename))
-
-
-# geom = {
-#   "type": "FeatureCollection",
-#   "features": [
-#     {
-#       "type": "Feature",
-#       "properties": {},
-#       "geometry": {
-#         "type": "Polygon",
-#         "coordinates": [
-#           [
-#             [
-#               51.840362548828125,
-#               35.74386509767359
-#             ],
-#             [
-#               51.847829818725586,
-#               35.74386509767359
-#             ],
-#             [
-#               51.847829818725586,
-#               35.74922899279072
-#             ],
-#             [
-#               51.840362548828125,
-#               35.74922899279072
-#             ],
-#             [
-#               51.840362548828125,
-#               35.74386509767359
-#             ]
-#           ]
-#         ]
-#       }
-#     }
-#   ]
-# }
-# order_id = '1'
-# image_class = GetImage(start = '2020-01' , end = '2020-02' , polygon = geom)
-# image_names , image_dates = image_class.get_dates()
-# print(image_dates)
-# for item in image_names:
-#   image = image_class.get_image(item)
-#   image_class.turn_image_to_raster(image,order_id + '_' + item,image_class.polygon,)
-
-
-# def format_convert(path, filename, format):
-#     # path = os.path.join(settings.BASE_DIR , 'images')
-#     if format == 'tif':
-#         file_format = '.tif'
-#     else:
-#         # tif to jpeg
-#         source_file = cv2.imread(path + filename + '.tif')
-#         target_file = cv2.imwrite(path + filename + '.jpg', source_file)
-#         file_format = '.jpg'
-#
-#     target_file_path = path + filename + file_format
-#
-#     target_file_path_zip = path + filename + '.zip'
-#     with ZipFile(target_file_path_zip, 'w') as zip_file:
-#         zip_file.write(target_file_path, basename(target_file_path))
-#
-#     return target_file_path_zip
-
-
-# def add_image_to_geoserver(image_name: str, geom: list) -> str:
-#     # ToDo: Set a good docstring for this function
-#     polygon = get_and_validate_polygon_by_geom(geom)
-#
-#     image: ee.Image = get_clipped_image(image_name, polygon)
-#     layer_name = str(123) + '_' + image_name  # ToDo: Replace 123 with random or remove it
-#
-#     turn_image_to_raster(image, layer_name, polygon)
-#
-#     if not exist_layer(layer_name, settings.GEOSERVER.get('WORKSPACE')):
-#         url = os.path.join(settings.GEOSERVER.get('RASTER_URL'), layer_name + ".tif")
-#         create_layer_with_store(data_type='tiff', url=url, layer_name=layer_name, store_name=layer_name)
-#
-#     return layer_name
-
-
-# def get_regions_id_date(geom, date_range: Tuple[str, str]) -> list:
-#     """ Save every image of geom by using the celery """
-#     # ToDo: Test that date_range validator is working
-#     # if not isinstance(start_date, str) or not isinstance(end_date, str):
-#     #     return Response(status=status.HTTP_400_BAD_REQUEST, data={"fail": "dates not correct!"})
-#     start, end = get_and_validate_date_range(date_range)
-#     polygon = get_and_validate_polygon_by_geom(geom)
-#
-#     image_collection = get_image_collections(polygon, start, end)
-#     id_date_list = get_dates_of_image_collection(image_collection)
-#
-#     return id_date_list
