@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task()
-def download_images(start, end, geom, user_id, region_id, dates):
+def download_images(start, end, polygon_geojson, user_id, region_id, dates):
     region = Region.objects.get(id=region_id)
     start, end = get_and_validate_date_range(start, end)
-    polygon = get_and_validate_polygon_by_geom(geom)
+    polygon = get_and_validate_polygon_by_geom(polygon_geojson)
     folder_path = region.folder_path
     os.makedirs(folder_path, exist_ok=True)
     dates = dates if dates is not None else ""

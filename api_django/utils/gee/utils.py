@@ -67,14 +67,14 @@ def get_image_collections(polygon, start, end):
         .filterBounds(polygon)
 
 
-def get_and_validate_polygon_by_geom(geom) -> ee.Geometry.Polygon:
+def get_and_validate_polygon_by_geom(polygon_geojson) -> ee.Geometry.Polygon:
     logger.info("Get and validate polygon by geom")
     """
         Convert geom to Polygon.
         Hint: If geom is not the type of geojson -> raise BadRequest
     """
     try:
-        return ee.Geometry.Polygon(geom['features'][0]['geometry']['coordinates'])
+        return ee.Geometry.Polygon(polygon_geojson['features'][0]['geometry']['coordinates'])
     except Exception as e:
         raise ValidationError({"function name": "get_and_validate_polygon_by_geom", "message": e, "geom_data": geom})
 
