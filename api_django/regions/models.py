@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
@@ -32,3 +33,19 @@ class Region(models.Model):
         dates_list = self.dates.split("\n")  # ['2021-01-02', '']
         dates_list.pop()  # Pop the last and empty value
         return dates_list
+
+    @property
+    def folder_path(self):
+        return f"{settings.BASE_DIR}/{'/'.join(['media', 'images', f'user-{str(self.user_id)}', f'region-{str(self.id)}'])}"
+
+    @property
+    def images_path(self):
+        folder_path = self.folder_path
+        dates = self.dates_as_list
+        result = []
+        for date in dates:
+            result.append(f"{folder_path}/{date}.tif")
+        return result
+
+    def get_file_path_by_date_and_folder_path(self, date, folder_path):
+        return f"{folder_path}/{date}.tif"
