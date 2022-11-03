@@ -16,8 +16,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./api_django:/app
-      - ./celery:/celery
+      - ./api_django:./api_django
     environment:
       - ALLOW_ORIGIN=""
       - DB_SCHEMA=public
@@ -94,8 +93,7 @@ services:
     build:
       context: ./api_django
     volumes:
-      - .:/app
-      - ./celery:/celery
+      - ./api_django:./api_django
     depends_on:
       - api_django
       - postgis
@@ -117,10 +115,9 @@ services:
     command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     build:
       context: ./api_django
-#    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    #    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
-      - .:/app
-      - ./celery:/celery
+      - ./api_django:./api_django
     depends_on:
       - api_django
       - geoserver
