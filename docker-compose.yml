@@ -15,6 +15,8 @@ services:
       - geoserver
     ports:
       - 8000:8000
+    volumes:
+      - .:/app
     environment:
       - ALLOW_ORIGIN=""
       - DB_SCHEMA=public
@@ -90,6 +92,8 @@ services:
     command: celery -A config worker -l INFO
     build:
       context: ./api_django
+    volumes:
+      - .:/app
     depends_on:
       - api_django
       - postgis
@@ -112,6 +116,8 @@ services:
     build:
       context: ./api_django
 #    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - .:/app
     depends_on:
       - api_django
       - geoserver
