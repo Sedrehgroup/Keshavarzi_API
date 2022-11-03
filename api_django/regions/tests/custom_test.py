@@ -46,9 +46,7 @@ def test_create_is_save_images_in_directory():
     region.refresh_from_db()
     assert region.dates is not None
     for date in region.dates_as_list:
-        print(date)
         file_path = os.path.join("media", "images", f"user-{region.user_id}", f"region-{region.id}", f"{date}.tif")
-        print(file_path)
         assert os.path.isfile(file_path)
 
 
