@@ -189,10 +189,11 @@ class RegionViewsTestCase(APITestCase):
     def test_create_new_region_with_user(self):
         self.login(self.user.phone_number)
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             """
                 1- Check existence of user
                 2- Create region
+                3- Update task_id field of Region
             """
             data = {"name": "test_name", "polygon": fake_polygon_geojson}
             res = self.client.post(CREATE_REGION_URL, data, format="json")
