@@ -26,7 +26,7 @@ def create_note_after_attach_expert(sender, instance: Region, update_fields, **k
 @receiver(post_save, sender=Region)
 def download_images_after_region(sender, instance: Region, **kwargs):
     if kwargs["created"]:
-        logger.info("Signal: Download image after region")
+        logger.info(f"Signal: Download image of {instance.__str__()}")
         end = datetime.datetime.now()
         start = end - datetime.timedelta(days=30)
         geom = get_geojson_by_polygon(instance.polygon)
