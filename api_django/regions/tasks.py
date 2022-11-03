@@ -30,9 +30,10 @@ logger = logging.getLogger(__name__)
 
 @shared_task()
 def download_images(start, end, geom, user_id, region_id, dates):
+    region = Region.objects.get(id=region_id)
     start, end = get_and_validate_date_range(start, end)
     polygon = get_and_validate_polygon_by_geom(geom)
-    folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', f'user-{str(user_id)}', f'region-{str(region_id)}'])}"
+    folder_path = region.folder_path
     os.makedirs(folder_path, exist_ok=True)
     dates = dates if dates is not None else ""
 
@@ -46,7 +47,7 @@ def download_images(start, end, geom, user_id, region_id, dates):
             'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
 
         # Example: /media/images/user-1/region-1/2022-01-02.tif
-        file_path = f"{folder_path}/{img_date}.tif"
+        file_path = region.get_file_path_by_date_and_folder_path(img_date, folder_path)
         dates += f"{img_date}\n"
         with requests.get(url) as response:
             with open(file_path, 'wb') as raster_file:
@@ -55,5 +56,5 @@ def download_images(start, end, geom, user_id, region_id, dates):
 
         cat.create_coveragestore(name=f"user_{user_id}--region_{region_id}--{img_date}", data=file_path)
 
-    updated_row = Region.objects.filter(id=region_id).update(dates=dates)
-    assert updated_row != 0
+    region.dates = dates
+    region.save(update_fields=["dates"])
