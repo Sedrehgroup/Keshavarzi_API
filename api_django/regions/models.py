@@ -26,3 +26,9 @@ class Region(models.Model):
         if self.expert_id is not None and self.expert_id < 1:
             raise ValidationError({"Invalid expert id": "Expert id should be None or greater that 1"})
         super(Region, self).save(*args, **kwargs)
+
+    @property
+    def dates_as_list(self):
+        dates_list = self.dates.split("\n")  # ['2021-01-02', '']
+        dates_list.pop()  # Pop the last and empty value
+        return dates_list
