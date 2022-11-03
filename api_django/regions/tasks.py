@@ -13,21 +13,6 @@ from utils.geoserver.base import cat
 logger = logging.getLogger(__name__)
 
 
-# def get_or_create_dir(base_dir, dir_names: list):
-#     logger.debug("Get or create directory")
-#     # Recursive function for create parent directories
-#     try:
-#         file_path = f"{base_dir}/{'/'.join(dir_names)}"
-#         os.makedirs(file_path)
-#         return file_path
-#     except OSError as e:
-#         if e.errno == EEXIST:
-#             last_dir = dir_names.pop()
-#             result = get_or_create_dir(base_dir, dir_names)
-#             os.makedirs(f"{result}/{last_dir}")
-#             return os.path.join(result, last_dir)
-
-
 @shared_task()
 def download_images(start, end, geom, user_id, region_id, dates):
     region = Region.objects.get(id=region_id)
