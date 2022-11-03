@@ -1,7 +1,8 @@
 import datetime
 import logging
+import os
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from regions.models import Region
@@ -34,3 +35,10 @@ def download_images_after_region(sender, instance: Region, **kwargs):
                                      geom, instance.user_id, instance.id, instance.dates)
         instance.task_id = task.id
         instance.save(update_fields=["task_id"])
+
+
+@receiver(post_delete, sender=Region)
+def delete_images_after_deleting_the_region(sender, instance: Region, **kwargs):
+    logger.info(f"Signal: Remove images of {instance.__str__()}")
+    for image_path in instance.images_path:
+        os.remove(image_path)
