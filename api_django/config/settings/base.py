@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from celery.schedules import crontab
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -180,3 +182,12 @@ LOGGING = {
         },
     },
 }
+
+CELERY_BEAT_SCHEDULE = {
+    "get_user_regions": {
+        "task": "regions.tasks.get_user_regions",
+        "schedule": crontab(day_of_week="fri", hour="3", minute="30"),
+    },
+}
+
+MAXIMUM_DOWNLOAD_IMAGE_PER_TASK = 3
