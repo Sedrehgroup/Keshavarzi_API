@@ -51,9 +51,34 @@ def test_create_is_save_images_in_directory():
         print(file_path)
         assert os.path.isfile(file_path)
 
+
+def test_delete_images_after_delete_region(self):
+    """ Test that images of the region will be deleted after the region is deleted. """
+    user = UserFactory.create()
+    region = Region.objects.create(user_id=user.id, polygon=fake_polygon, name="test polygon")
+
+    res = AsyncResult(region.task_id)
+
+    while res.state == "PENDING":
+        sleep(5)
+    self.assertNotEqual(res.state, "FAILURE", res.result)
+    self.assertEqual(res.state, "SUCCESS")
+    region.refresh_from_db()
+
+    region.delete()
+
+    for image_path in region.images_path:
+        self.assertFalse(image_path)
+
+
 test_create_is_save_images_in_directory()
 print("test_create_is_save_images_in_directory")
+
 test_create_method_is_calling_download_image_signal()
 print("test_create_method_is_calling_download_image_signal")
+
 test_create_is_update_dates_field()
 print("test_create_is_update_dates_field")
+
+test_delete_images_after_delete_region()
+print("test_delete_images_after_delete_region")

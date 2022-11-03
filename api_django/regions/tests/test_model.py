@@ -1,7 +1,3 @@
-import os
-from time import sleep
-
-from celery.result import AsyncResult
 from django.core.exceptions import ValidationError
 from rest_framework.test import APITestCase
 
@@ -28,24 +24,6 @@ class RegionModelTestCase(APITestCase):
         self.assertEqual(region.user_id, user.id)
         self.assertIsNone(region.expert_id)
         self.assertIsNone(region.dates)
-
-    def test_delete_images_after_delete_region(self):
-        """ Test that images of the region will be deleted after the region is deleted. """
-        user = UserFactory.create()
-        region = Region.objects.create(user_id=user.id, polygon=fake_polygon, name="test polygon")
-
-        res = AsyncResult(region.task_id)
-
-        while res.state == "PENDING":
-            sleep(5)
-        self.assertNotEqual(res.state, "FAILURE", res.result)
-        self.assertEqual(res.state, "SUCCESS")
-        region.refresh_from_db()
-
-        region.delete()
-
-        for image_path in region.images_path:
-            self.assertFalse(image_path)
 
     def test_add_expert_will_create_note(self):
         """ Test that after adding expert to region, a note is created. """
