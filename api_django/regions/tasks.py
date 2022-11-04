@@ -10,6 +10,7 @@ from celery import shared_task
 from celery.result import AsyncResult
 from django.conf import settings
 from django.utils.timezone import now
+from geoserver.catalog import ConflictingDataError
 
 from regions.models import Region
 from regions.utils import get_geojson_by_polygon
@@ -45,7 +46,10 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
                 # ToDo: Test without wb
                 raster_file.write(response.content)
 
-        cat.create_coveragestore(name=f"user_{user_id}--region_{region_id}--{img_date}", data=file_path)
+        try:
+            cat.create_coveragestore(name=f"user_{user_id}--region_{region_id}--{img_date}", data=file_path)
+        except ConflictingDataError as e:
+            logger.error(e)
 
     region.dates = dates
     region.save(update_fields=["dates"])
