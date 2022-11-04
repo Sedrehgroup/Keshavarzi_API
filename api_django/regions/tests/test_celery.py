@@ -12,7 +12,7 @@ from users.tests.factories import UserFactory
 class CeleryTasksTestCase(SimpleTestCase):
     databases = ("default",)
 
-    def setUP(self):
+    def setUp(self):
         self.user = UserFactory.create()
         self.region = Region.objects.create(user_id=self.user.id, polygon=fake_polygon, name="test polygon")
         res = AsyncResult(self.region.task_id)
