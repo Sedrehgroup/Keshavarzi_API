@@ -41,8 +41,8 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
         file_path = region.get_file_path_by_date_and_folder_path(img_date, folder_path)
         dates += f"{img_date}\n"
         with requests.get(url) as response:
+            # Write Binary is important: https://stackoverflow.com/a/2665873/14449337
             with open(file_path, 'wb') as raster_file:
-                # ToDo: Test without wb
                 raster_file.write(response.content)
 
         try:
