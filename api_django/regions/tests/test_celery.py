@@ -8,27 +8,25 @@ from regions.models import Region
 from regions.tests.factories import fake_polygon
 from users.tests.factories import UserFactory
 
-#Test
+
 class CeleryTasksTestCase(SimpleTestCase):
     databases = ("default",)
 
-    @classmethod
-    def setUpClass(cls):
-        cls.user = UserFactory.create()
-        cls.region = Region.objects.create(user_id=cls.user.id, polygon=fake_polygon, name="test polygon")
-        res = AsyncResult(cls.region.task_id)
+    def setUp(self):
+        self.user = UserFactory.create()
+        self.region = Region.objects.create(user_id=self.user.id, polygon=fake_polygon, name="test polygon")
+        res = AsyncResult(self.region.task_id)
 
         while res.state == "PENDING":
             sleep(2)
 
-        cls.assertNotEqual(res.state, "FAILURE", res.result)
-        cls.assertEqual(res.state, "SUCCESS")
+        self.assertNotEqual(res.state, "FAILURE", res.result)
+        self.assertEqual(res.state, "SUCCESS")
 
-        cls.region.refresh_from_db()
+        self.region.refresh_from_db()
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        cls.user.delete()
+    def tearDown(self) -> None:
+        self.user.delete()
 
     def test_create_method_is_calling_download_image_signal(self):
         self.assertIsNotNone(self.region.task_id)
