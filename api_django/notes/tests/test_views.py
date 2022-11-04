@@ -153,3 +153,50 @@ class UpdateNoteTestCase(BaseNotesTestCase):
             res = self.client.patch(self.get_update_path(note.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class DeleteNoteTestCase(BaseNotesTestCase):
+    def get_delete_note_url(self, note_id):
+        return reverse("notes:delete", kwargs={"pk": note_id})
+
+    def test_delete_note_by_creator(self):
+        note = NoteFactory.create()
+        self.login(note.user.phone_number)
+
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Retrieve Note
+                3- Delete Note
+            """
+            res = self.client.delete(self.get_delete_note_url(note.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_delete_users_note_by_admin(self):
+        note = NoteFactory.create()
+        self.login(self.admin.phone_number)
+
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Retrieve Note
+                3- Delete Note
+            """
+            res = self.client.delete(self.get_delete_note_url(note.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_delete_user1s_note_by_user2(self):
+        user1, user2 = UserFactory.create(), UserFactory.create()
+        note = NoteFactory.create(user_id=user1.id)
+        self.login(user2.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Note
+            """
+            res = self.client.delete(self.get_delete_note_url(note.id))
+
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
