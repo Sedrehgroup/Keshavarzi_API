@@ -18,4 +18,4 @@ class Note(models.Model):
     user_role = models.CharField(max_length=1, choices=USER_ROLE_CHOICES)
     text = models.TextField()
     created_date = models.DateTimeField(default=now)
-    updated_date = models.DateTimeField(null=True, blank=True)
+    updated_date = models.DateTimeField(auto_now=True)  # Note: Not working with note.update()
