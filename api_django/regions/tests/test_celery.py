@@ -8,7 +8,7 @@ from regions.models import Region
 from regions.tests.factories import fake_polygon
 from users.tests.factories import UserFactory
 
-# Test
+
 class CeleryTasksTestCase(SimpleTestCase):
     databases = ("default",)
 
@@ -18,7 +18,7 @@ class CeleryTasksTestCase(SimpleTestCase):
         res = AsyncResult(self.region.task_id)
 
         while res.state == "PENDING":
-            sleep(5)
+            sleep(2)
 
         self.assertNotEqual(res.state, "FAILURE", res.result)
         self.assertEqual(res.state, "SUCCESS")
