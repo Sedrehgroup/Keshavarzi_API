@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from typing import Tuple
+from typing import Tuple, Union
 
 import ee
 
@@ -33,14 +33,20 @@ if not os.path.isdir(os.path.join(settings.BASE_DIR, 'images')):
     os.mkdir(os.path.join(settings.BASE_DIR, 'images'))
 
 
-def get_and_validate_date_range(start_date: str, end_date: str) -> Tuple[str, str]:
+def get_and_validate_date_range(start_date: Union[str, datetime], end_date: Union[str, datetime]) -> Tuple[str, str]:
     logger.info("Get and validate date range")
-    try:
-        datetime.strptime(start_date, '%Y-%m-%d')
-        datetime.strptime(end_date, '%Y-%m-%d')
-    except (ValueError, TypeError)  as e:
-        # Exception message example: time data '12/11/2018' does not match format '%Y-%m-%d'
-        raise ValidationError({"datetime": e})
+    date_format = '%Y-%m-%d'
+    if isinstance(start_date,datetime) and isinstance(end_date,datetime):
+        start_date = start_date.strftime(date_format)
+        end_date = end_date.strftime(date_format)
+    else:
+        try:
+            # Validate that input strings are in a correct format.
+            datetime.strptime(start_date, date_format)
+            datetime.strptime(end_date, date_format)
+        except (ValueError, TypeError) as e:
+            # Exception message example: time data '12/11/2018' does not match format '%Y-%m-%d'
+            raise ValidationError({"datetime": e})
     return start_date, end_date
 
 
