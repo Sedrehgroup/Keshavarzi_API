@@ -1,3 +1,5 @@
+# How to run this test:
+#    python manage.py test regions.tests.custom_test_celery --settings=config.settings.test --keepdb
 import os
 
 from time import sleep
