@@ -1,9 +1,9 @@
 import datetime
 import logging
-import os
 
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from shutil import rmtree
 
 from regions.models import Region
 from notes.models import Note
@@ -40,8 +40,4 @@ def download_images_after_region(sender, instance: Region, **kwargs):
 @receiver(post_delete, sender=Region)
 def delete_images_after_deleting_the_region(sender, instance: Region, **kwargs):
     logger.info(f"Signal: Remove images of {instance.__str__()}")
-    for image_path in instance.images_path:
-        try:
-            os.remove(image_path)
-        except FileNotFoundError as e:
-            logger.error(e)
+    rmtree(instance.main_folder_path)
