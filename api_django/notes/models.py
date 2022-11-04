@@ -19,3 +19,13 @@ class Note(models.Model):
     text = models.TextField()
     created_date = models.DateTimeField(default=now)
     updated_date = models.DateTimeField(auto_now=True)  # Note: Not working with note.update()
+
+    def save(self, *args, **kwargs):
+        if self.user_role is None:
+            if self.user.is_expert:
+                self.user_role = "E"
+            elif self.user.is_superuser and self.user.is_staff:
+                self.user_role = "A"
+            else:
+                self.user_role = "U"
+        super(Note, self).save(*args, **kwargs)
