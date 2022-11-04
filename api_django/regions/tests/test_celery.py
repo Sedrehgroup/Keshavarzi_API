@@ -20,7 +20,7 @@ class CeleryTasksTestCase(SimpleTestCase):
         while res.state == "PENDING":
             sleep(5)
 
-        self.assertNotEqual(res.statem, "FAILURE", res.result)
+        self.assertNotEqual(res.state, "FAILURE", res.result)
         self.assertEqual(res.state, "SUCCESS")
 
         self.region.refresh_from_db()
