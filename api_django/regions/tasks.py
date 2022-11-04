@@ -9,7 +9,6 @@ import os
 from celery import shared_task
 from celery.result import AsyncResult
 from django.conf import settings
-from django.utils.timezone import now
 from geoserver.catalog import ConflictingDataError
 
 from regions.models import Region
@@ -104,6 +103,6 @@ def get_new_images():
 
         bulk_list = []
         for region in region_slice:
-            region.date_last_download = now()
+            region.date_last_download = date_today
             bulk_list.append(region)
         Region.objects.bulk_update(bulk_list, ["date_last_download"])
