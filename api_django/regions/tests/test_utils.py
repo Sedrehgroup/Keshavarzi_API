@@ -28,14 +28,16 @@ class RegionUtilsTestCase(APITestCase):
 
     def test_date_validation(self):
         """ Test that invalid date format is raise exception """
+        valid_str = ("2022-02-01", "2022-03-01")
+        valid_date = (datetime.strptime("2022-02-01", '%Y-%m-%d'), datetime.strptime("2022-03-01", '%Y-%m-%d'))
         with_underline = ("2022_02_01", "2022_03_01")
         without_zero = ("2022-2-1", "2022-3-1")
-        in_date_format = (datetime.now(), datetime.now() - timedelta(days=30))
 
         func = utils.get_and_validate_date_range
-        self.assertEqual(without_zero, func(*without_zero))
+        self.assertEqual(valid_str, func(*valid_date))
+        self.assertEqual(valid_str, func(*valid_str))
+        self.assertEqual(valid_str, func(*without_zero))
         self.assertRaises(ValidationError, lambda: func(*with_underline))
-        self.assertRaises(ValidationError, lambda: func(*in_date_format))
 
     def test_date_of_image_collection(self):
         """ Test that this function is return list of [ID, Image_name] of every image that exists in image collection """
