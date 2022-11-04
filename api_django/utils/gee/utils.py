@@ -29,14 +29,11 @@ logger.info("Initialize Google earth engine ")
 ee.Initialize(credentials)
 logger.info("Google earth engine is Initialized")
 
-if not os.path.isdir(os.path.join(settings.BASE_DIR, 'images')):
-    os.mkdir(os.path.join(settings.BASE_DIR, 'images'))
-
 
 def get_and_validate_date_range(start_date: Union[str, datetime], end_date: Union[str, datetime]) -> Tuple[str, str]:
     logger.info("Get and validate date range")
     date_format = '%Y-%m-%d'
-    if isinstance(start_date,datetime) and isinstance(end_date,datetime):
+    if isinstance(start_date, datetime) and isinstance(end_date, datetime):
         start_date = start_date.strftime(date_format)
         end_date = end_date.strftime(date_format)
     else:
