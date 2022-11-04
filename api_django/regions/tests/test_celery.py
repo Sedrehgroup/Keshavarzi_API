@@ -25,11 +25,11 @@ class CeleryTasksTestCase(SimpleTestCase):
 
         self.region.refresh_from_db()
 
-    def tearDown(self) -> None:
-        self.user.delete()
-        if self.region.id:
-            # When region is being deleted, self.region.id is equals to None
-            self.region.delete()
+    # def tearDown(self) -> None:
+    #     self.user.delete()
+    #     if self.region.id:
+    #         # When region is being deleted, self.region.id is equals to None
+    #         self.region.delete()
 
     def test_create_method_is_calling_download_image_signal(self):
         self.assertIsNotNone(self.region.task_id)
