@@ -1,3 +1,4 @@
+import json
 import logging
 import ee
 import os
@@ -8,14 +9,14 @@ from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
 logger = logging.getLogger(__name__)
-if not os.path.isfile(os.path.join(settings.BASE_DIR, "utils", "gee", "geotest-privkey.json")):
+private_key_path = os.path.join(settings.BASE_DIR, "utils", "gee", "geotest-privkey.json")
+if not os.path.isfile(private_key_path):
     raise FileNotFoundError("geotest-privkey.json not found. This file should exists in utils.gee package.")
 
 service_account = 'geo-test@geotest-317218.iam.gserviceaccount.com'
-credentials = ee.ServiceAccountCredentials(service_account, key_file='geotest-privkey.json')
-logger.info("Initialize Google earth engine ")
+with open(private_key_path, 'r') as pk:
+    credentials = ee.ServiceAccountCredentials(service_account, key_data=json.load(pk))
 ee.Initialize(credentials)
-logger.info("Google earth engine is Initialized")
 
 
 def get_and_validate_date_range(start_date: Union[str, datetime], end_date: Union[str, datetime]) -> Tuple[str, str]:
