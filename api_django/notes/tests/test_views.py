@@ -129,7 +129,7 @@ class UpdateNoteTestCase(BaseNotesTestCase):
             data = {"text": "new_text"}
             res = self.client.patch(self.get_update_path(note.id), data)
 
-            self.assertEqual(res.status_code, status.HTTP_200_OK)
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
     def test_update_note_as_user(self):
         self.base_test_update_as(self.user, "U")
@@ -152,7 +152,7 @@ class UpdateNoteTestCase(BaseNotesTestCase):
             data = {"text": "This test should fail"}
             res = self.client.patch(self.get_update_path(note.id), data)
 
-            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
 
 class DeleteNoteTestCase(BaseNotesTestCase):
@@ -171,7 +171,7 @@ class DeleteNoteTestCase(BaseNotesTestCase):
             """
             res = self.client.delete(self.get_delete_note_url(note.id))
 
-            self.assertEqual(res.status_code, status.HTTP_200_OK)
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
     def test_delete_users_note_by_admin(self):
         note = NoteFactory.create()
@@ -185,7 +185,7 @@ class DeleteNoteTestCase(BaseNotesTestCase):
             """
             res = self.client.delete(self.get_delete_note_url(note.id))
 
-            self.assertEqual(res.status_code, status.HTTP_200_OK)
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
     def test_delete_user1s_note_by_user2(self):
         user1, user2 = UserFactory.create(), UserFactory.create()
