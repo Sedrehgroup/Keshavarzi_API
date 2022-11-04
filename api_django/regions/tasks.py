@@ -1,5 +1,5 @@
 import logging
-from datetime import timedelta
+from datetime import timedelta, datetime
 from time import sleep
 
 import requests
@@ -67,16 +67,19 @@ def get_new_images():
         ** DONE **
     """
     # ToDo: Clean this task.
-    today = now().today().strftime("%Y-%m-%d")
-    one_weak_ago = (now().today() - timedelta(days=7)).strftime("%Y-%m-%d")
-    regions = Region.objects.filter(date_last_download__lt=now().today() - timedelta(days=7)).only("id", "user_id", "polygon")
+    date_today = datetime.today()
+    date_weak_ago = date_today - timedelta(days=7)
+    regions = Region.objects \
+        .filter(date_last_download__lt=date_weak_ago) \
+        .only("id", "user_id", "polygon")
     mdipt = getattr(settings, "MAXIMUM_DOWNLOAD_IMAGE_PER_TASK", 3)
     sliced_regions = [regions[i:i + mdipt] for i in range(0, len(regions), mdipt)]
 
     def get_tasks(region_list: list):
         result = []
         for region in region_list:
-            task = download_images.delay(start=one_weak_ago, end=today, polygon_geojson=get_geojson_by_polygon(region.polygon),
+            task = download_images.delay(start=date_weak_ago, end=date_today,
+                                         polygon_geojson=get_geojson_by_polygon(region.polygon),
                                          user_id=region.user_id, region_id=region.id, dates=region.dates)
             result.append(task)
         return result
