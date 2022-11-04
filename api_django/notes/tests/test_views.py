@@ -120,7 +120,7 @@ class UpdateNoteTestCase(BaseNotesTestCase):
         self.login(user.phone_number)
         note = NoteFactory.create(user_id=user.id, user_role=user_role)
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             """
                 1- Retrieve user
                 2- Retrieve object
