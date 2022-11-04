@@ -31,3 +31,9 @@ class CreateNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = ("text", "region_id")
+
+
+class UpdateNoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Note
+        fields = ("text",)
