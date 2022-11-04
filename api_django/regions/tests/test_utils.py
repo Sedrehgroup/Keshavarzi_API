@@ -36,7 +36,7 @@ class RegionUtilsTestCase(APITestCase):
         func = utils.get_and_validate_date_range
         self.assertEqual(valid_str, func(*valid_date))
         self.assertEqual(valid_str, func(*valid_str))
-        self.assertEqual(valid_str, func(*without_zero))
+        self.assertEqual(without_zero, func(*without_zero))  # doesnt change it to with_zero
         self.assertRaises(ValidationError, lambda: func(*with_underline))
 
     def test_date_of_image_collection(self):
