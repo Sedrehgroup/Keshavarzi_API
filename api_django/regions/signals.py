@@ -41,4 +41,7 @@ def download_images_after_region(sender, instance: Region, **kwargs):
 def delete_images_after_deleting_the_region(sender, instance: Region, **kwargs):
     logger.info(f"Signal: Remove images of {instance.__str__()}")
     for image_path in instance.images_path:
-        os.remove(image_path)
+        try:
+            os.remove(image_path)
+        except FileNotFoundError as e:
+            logger.error(e)
