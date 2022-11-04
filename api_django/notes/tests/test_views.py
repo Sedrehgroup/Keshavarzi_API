@@ -6,6 +6,7 @@ from rest_framework.test import APITestCase
 
 from config.settings import BASE_DIR
 from notes.models import Note
+from notes.tests.factories import NoteFactory
 from regions.models import Region
 from regions.tests.factories import RegionFactory
 from users.tests.factories import AdminFactory, ExpertFactory, UserFactory
@@ -112,5 +113,43 @@ class CreateNoteTestCase(BaseNotesTestCase):
 
 
 class UpdateNoteTestCase(BaseNotesTestCase):
+    def get_update_path(self, note_id):
+        return reverse("notes:update", kwargs={"pk": note_id})
+
+    def base_test_update_as(self, user, user_role):
+        self.login(user.phone_number)
+        note = NoteFactory.create(user_id=user.id, user_role=user_role)
+
+        with self.assertNumQueries(4):
+            """
+                1- Retrieve user
+                2- Retrieve object
+                3- Update object
+            """
+            data = {"text": "new_text"}
+            res = self.client.patch(self.get_update_path(note.id), data)
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK)
+
     def test_update_note_as_user(self):
-        pass
+        self.base_test_update_as(self.user, "U")
+
+    def test_update_note_as_admin(self):
+        self.base_test_update_as(self.admin, "A")
+
+    def test_update_note_as_expert(self):
+        self.base_test_update_as(self.expert, "E")
+
+    def test_that_only_creator_can_edit_note(self):
+        note = NoteFactory.create(user_id=ExpertFactory.create().id)
+        self.login(self.expert.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Note
+            """
+            data = {"text": "This test should fail"}
+            res = self.client.patch(self.get_update_path(note.id), data)
+
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
