@@ -1,8 +1,6 @@
-# ToDo
 import os
-from time import sleep
 
-# Problem: Celery doesnt have access to django directory
+from time import sleep
 from celery.result import AsyncResult
 
 from regions.models import Region
