@@ -35,6 +35,10 @@ class Region(models.Model):
         return dates_list
 
     @property
+    def main_folder_path(self):
+        return f"{settings.BASE_DIR}/{'/'.join(['media', 'images', f'user-{str(self.user_id)}'])}"
+
+    @property
     def folder_path(self):
         return f"{settings.BASE_DIR}/{'/'.join(['media', 'images', f'user-{str(self.user_id)}', f'region-{str(self.id)}'])}"
 
