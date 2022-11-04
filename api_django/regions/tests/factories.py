@@ -97,7 +97,6 @@ fake_polygon = get_polygon_by_geojson(fake_polygon_geojson)
 
 
 class RegionFactory(factory.django.DjangoModelFactory):
-    id = factory.Faker("pyint", min_value=0)
     name = factory.Faker("pystr", max_chars=20)
     user = factory.SubFactory(UserFactory)
     polygon = fake_polygon
