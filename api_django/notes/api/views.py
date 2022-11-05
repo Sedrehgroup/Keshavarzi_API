@@ -1,7 +1,6 @@
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
-
-from notes.api.serializers import CreateNoteSerializer, UpdateNoteSerializer
+from notes.api.serializers import CreateNoteSerializer, ListUserNotesSerializer, UpdateNoteSerializer
 from notes.models import Note
 from notes.permissions import IsCreator
 from users.permissions import IsSuperUser
