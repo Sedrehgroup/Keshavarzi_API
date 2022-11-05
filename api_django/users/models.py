@@ -54,3 +54,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.phone_number
+
+    @property
+    def is_admin(self):
+        return self.is_staff and self.is_superuser
