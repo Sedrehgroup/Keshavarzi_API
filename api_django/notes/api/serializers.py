@@ -6,6 +6,20 @@ from regions.api.serializers import RegionSerializer
 from regions.models import Region
 
 
+class RetrieveNoteSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    def get_user(self, obj):
+        user = self.context['request'].user
+        if user.is_admin:
+            return obj.user
+        return user
+
+    class Meta:
+        model = Note
+        fields = '__all__'
+
+
 class CreateNoteSerializer(serializers.ModelSerializer):
     region_id = serializers.IntegerField(min_value=1, write_only=True)
 
