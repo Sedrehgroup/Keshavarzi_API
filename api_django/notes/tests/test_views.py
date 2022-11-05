@@ -151,10 +151,11 @@ class CreateNoteTestCase(BaseNotesTestCase):
         self.assertNotEqual(region.user, self.user)
         self.login(self.user.phone_number)
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             """
                 1- Retrieve User
-                2- Check Region
+                2- Check relation of user or expert to region
+                3- Check existence of region
             """
             data = {"text": "This test should fail", "region_id": region.id}
             res = self.client.post(CREATE_NOTE_URL, data)
