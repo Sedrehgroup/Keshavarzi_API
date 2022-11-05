@@ -150,9 +150,6 @@ class CreateNoteTestCase(BaseNotesTestCase):
 
 
 class UpdateNoteTestCase(BaseNotesTestCase):
-    def get_update_path(self, note_id):
-        return reverse("notes:update", kwargs={"pk": note_id})
-
     def base_test_update_as(self, user, user_role):
         self.login(user.phone_number)
         note = NoteFactory.create(user_id=user.id, user_role=user_role)
@@ -164,7 +161,7 @@ class UpdateNoteTestCase(BaseNotesTestCase):
                 3- Update object
             """
             data = {"text": "new_text"}
-            res = self.client.patch(self.get_update_path(note.id), data)
+            res = self.client.patch(RUD_URL(note.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
@@ -187,15 +184,12 @@ class UpdateNoteTestCase(BaseNotesTestCase):
                 2- Retrieve Note
             """
             data = {"text": "This test should fail"}
-            res = self.client.patch(self.get_update_path(note.id), data)
+            res = self.client.patch(RUD_URL(note.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
 
 class DeleteNoteTestCase(BaseNotesTestCase):
-    def get_delete_note_url(self, note_id):
-        return reverse("notes:delete", kwargs={"pk": note_id})
-
     def test_delete_note_by_creator(self):
         note = NoteFactory.create(user=self.user)
         self.login(self.user.phone_number)
@@ -206,7 +200,7 @@ class DeleteNoteTestCase(BaseNotesTestCase):
                 2- Retrieve Note
                 3- Delete Note
             """
-            res = self.client.delete(self.get_delete_note_url(note.id))
+            res = self.client.delete(RUD_URL(note.id))
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
@@ -220,7 +214,7 @@ class DeleteNoteTestCase(BaseNotesTestCase):
                 2- Retrieve Note
                 3- Delete Note
             """
-            res = self.client.delete(self.get_delete_note_url(note.id))
+            res = self.client.delete(RUD_URL(note.id))
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
@@ -234,6 +228,6 @@ class DeleteNoteTestCase(BaseNotesTestCase):
                 1- Retrieve User
                 2- Retrieve Note
             """
-            res = self.client.delete(self.get_delete_note_url(note.id))
+            res = self.client.delete(RUD_URL(note.id))
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
