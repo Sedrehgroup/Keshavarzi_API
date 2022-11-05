@@ -25,13 +25,21 @@ class RetrieveNoteSerializer(serializers.ModelSerializer):
 class CreateNoteSerializer(serializers.ModelSerializer):
     region_id = serializers.IntegerField(min_value=1, write_only=True)
 
-    def validate(self, attrs):
+    def get_region_by_id(self, attrs):
         user = self.context['request'].user
-        if user.is_admin:
-            return attrs
-        qs = Region.objects.filter(Q(expert_id=user.id) | Q(user_id=user.id), id=attrs['region_id'])
-        if not qs.exists():
-            raise ValidationError({"Region validation": "You are not user of expert of given region."})
+        qs = Region.objects.filter(id=attrs['region_id'])
+        if not user.is_admin:
+            qs = qs.filter(Q(expert_id=user.id) | Q(user_id=user.id))
+        region = qs.first()
+
+        if region is None:
+            if not Region.objects.filter(id=attrs['region_id']).exists():
+                raise ValidationError({"Region validation": "You are not user of expert of given region."})
+            raise NotFound({"Region not found": "Region with given ID is not exists."})
+        return region
+
+    def validate(self, attrs):
+        attrs['region'] = self.get_region_by_id(attrs)
         return attrs
 
     def get_user_role(self):
@@ -44,15 +52,9 @@ class CreateNoteSerializer(serializers.ModelSerializer):
             return "U"  # 'U' as User
 
     def create(self, validated_data):
-        # Get region object by passed region_id
-        region_id = validated_data["region_id"]
-        region = Region.objects.filter(id=region_id).only("id").first()
-        if region is None:
-            raise NotFound({"region not found": f"Region with given id({region_id}) not found"})
-
         # Get user_role by using the request
         validated_data["user_role"] = self.get_user_role()
-        return Note.objects.create(region=region, **validated_data)
+        return Note.objects.create(region=validated_data["region"], **validated_data)
 
     class Meta:
         model = Note
