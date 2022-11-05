@@ -37,7 +37,7 @@ class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
         return qs
 
     def get_serializer_class(self):
-        if self.request.method not in ("PUT", "PATCH"):
+        if self.request.method in ("PUT", "PATCH"):
             return UpdateNoteSerializer
         return RetrieveNoteSerializer
 
