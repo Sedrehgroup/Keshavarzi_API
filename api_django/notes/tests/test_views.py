@@ -71,9 +71,9 @@ class ListNoteTestCase(BaseNotesTestCase):
 
 
 class CreateNoteTestCase(BaseNotesTestCase):
-    def create_and_test_region(self, user_id):
-        region = RegionFactory.create(user_id=user_id)
-        self.login(self.expert.phone_number)
+    def create_and_test_region(self, user):
+        region = RegionFactory.create(user_id=user.id)
+        self.login(user.phone_number)
         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 
         with self.assertNumQueries(3):
@@ -106,14 +106,14 @@ class CreateNoteTestCase(BaseNotesTestCase):
             self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
 
     def test_create_note_as_user(self):
-        region = self.create_and_test_region(self.user.id)
+        region = self.create_and_test_region(self.user)
 
         note = Note.objects.filter(region_id=region.id)
         self.assertEqual(note.count(), 1)
         self.assertEqual(note.first().user_role, "U")
 
     def test_create_note_as_expert(self):
-        region = self.create_and_test_region(self.expert.id)
+        region = self.create_and_test_region(self.expert)
 
         note_by_region = Note.objects.filter(region_id=region.id)
         note_by_expert = Note.objects.filter(user_id=self.expert.id)
