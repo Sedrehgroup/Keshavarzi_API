@@ -13,6 +13,7 @@ from users.tests.factories import AdminFactory, ExpertFactory, UserFactory
 
 LOGIN_URL = reverse("users:token_obtain_pair")
 CREATE_NOTE_URL = reverse("notes:create")
+LIST_USER_NOTES_URL = reverse("notes:list")
 TEST_TIF = os.path.join(BASE_DIR, "regions", "tests", "tif_test.tif")
 
 

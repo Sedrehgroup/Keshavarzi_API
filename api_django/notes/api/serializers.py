@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 
 from notes.models import Note
+from regions.api.serializers import RegionSerializer
 from regions.models import Region
 
 
@@ -37,3 +38,11 @@ class UpdateNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = ("text",)
+
+
+class ListCreatorNotesSerializer(serializers.ModelSerializer):
+    region = RegionSerializer()
+
+    class Meta:
+        model = Note
+        exclude = ("user",)
