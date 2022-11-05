@@ -54,7 +54,7 @@ class CreateNoteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Get user_role by using the request
         validated_data["user_role"] = self.get_user_role()
-        return Note.objects.create(region=validated_data["region"], **validated_data)
+        return Note.objects.create(**validated_data)
 
     class Meta:
         model = Note
