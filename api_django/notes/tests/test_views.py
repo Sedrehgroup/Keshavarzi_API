@@ -201,7 +201,7 @@ class DeleteNoteTestCase(BaseNotesTestCase):
             """
             res = self.client.delete(RUD_URL(note.id))
 
-            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+            self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT, res.data)
 
     def test_delete_users_note_by_admin(self):
         note = NoteFactory.create()
@@ -215,7 +215,7 @@ class DeleteNoteTestCase(BaseNotesTestCase):
             """
             res = self.client.delete(RUD_URL(note.id))
 
-            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+            self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT, res.data)
 
     def test_delete_user1s_note_by_user2(self):
         user1, user2 = tuple(UserFactory.create_batch(password=self.password, size=2))
