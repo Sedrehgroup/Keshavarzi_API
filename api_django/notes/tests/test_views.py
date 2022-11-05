@@ -123,7 +123,7 @@ class CreateNoteTestCase(BaseNotesTestCase):
         self.assertEqual(note_by_region.first().user_role, "E")
 
     def test_create_note_as_admin_with_matching_region(self):
-        region = self.create_and_test_region(self.admin.id)
+        region = self.create_and_test_region(self.admin)
 
         note = Note.objects.filter(region_id=region.id)
         self.assertEqual(note.count(), 1)
