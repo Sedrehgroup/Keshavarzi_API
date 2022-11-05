@@ -1,6 +1,6 @@
 from django.urls import path
 
-from notes.api.views import CreateNote, UpdateNote, DeleteNote
+from notes.api.views import CreateNote, ListUserNotes, UpdateNote, DeleteNote
 
 app_name = "notes"
 
