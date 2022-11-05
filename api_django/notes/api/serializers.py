@@ -33,7 +33,7 @@ class CreateNoteSerializer(serializers.ModelSerializer):
         region = qs.first()
 
         if region is None:
-            if not Region.objects.filter(id=attrs['region_id']).exists():
+            if Region.objects.filter(id=attrs['region_id']).exists():
                 raise ValidationError({"Region validation": "You are not user of expert of given region."})
             raise NotFound({"Region not found": "Region with given ID is not exists."})
         return region
