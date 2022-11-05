@@ -27,10 +27,10 @@ class CreateNoteSerializer(serializers.ModelSerializer):
 
     def get_region_by_id(self, attrs):
         user = self.context['request'].user
-        qs = Region.objects.filter(id=attrs['region_id']).order_by()  # Order-by empty value = dont order the qs
+        qs = Region.objects.filter(id=attrs['region_id'])
         if not user.is_admin:
             qs = qs.filter(Q(expert_id=user.id) | Q(user_id=user.id)).only("id")
-        region = qs.first()
+        region = qs.order_by().first()  # Order-by empty value = dont order the qs
 
         if region is None:
             if Region.objects.filter(id=attrs['region_id']).order_by().exists():  # Order-by empty value = dont order the qs
