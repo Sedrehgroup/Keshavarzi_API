@@ -17,6 +17,12 @@ LIST_USER_NOTES_URL = reverse("notes:list")
 TEST_TIF = os.path.join(BASE_DIR, "regions", "tests", "tif_test.tif")
 
 
+@property
+def RUD_URL(note_id):
+    """ Retrieve Update Destroy URL """
+    return reverse("notes:retrieve_update_destroy", kwargs={"pk": note_id})
+
+
 class BaseNotesTestCase(APITestCase):
     def setUp(self) -> None:
         self.password = "VeryStrongPassword123#@!"
