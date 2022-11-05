@@ -191,8 +191,8 @@ class DeleteNoteTestCase(BaseNotesTestCase):
         return reverse("notes:delete", kwargs={"pk": note_id})
 
     def test_delete_note_by_creator(self):
-        note = NoteFactory.create()
-        self.login(note.user.phone_number)
+        note = NoteFactory.create(user=self.user)
+        self.login(self.user.phone_number)
 
         with self.assertNumQueries(3):
             """
