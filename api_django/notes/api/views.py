@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from notes.api.serializers import CreateNoteSerializer, ListUserNotesSerializer, UpdateNoteSerializer
 from notes.models import Note
 from notes.permissions import IsCreator
-from users.permissions import IsSuperUser
+from users.permissions import IsAdmin
 
 
 class ListUserNotes(ListAPIView):
@@ -35,5 +35,5 @@ class UpdateNote(UpdateAPIView):
 
 
 class DeleteNote(DestroyAPIView):
-    permission_classes = [IsAuthenticated, IsSuperUser | IsCreator]
+    permission_classes = [IsAuthenticated, IsAdmin | IsCreator]
     queryset = Note.objects.all()

@@ -4,11 +4,11 @@ from rest_framework.permissions import IsAuthenticated
 from regions.models import Region
 from regions.api.serializers import UpdateRegionExpertSerializer, \
     ListRegionExpertSerializer, ListRegionUserSerializer, CreateRegionSerializer
-from users.permissions import IsExpertUser, IsRegularUser, IsSuperUser
+from users.permissions import IsExpertUser, IsRegularUser, IsAdmin
 
 
 class UpdateRegionExpert(UpdateAPIView):
-    permission_classes = [IsSuperUser]
+    permission_classes = [IsAdmin]
     queryset = Region.objects.filter(is_active=True)
     serializer_class = UpdateRegionExpertSerializer
 
