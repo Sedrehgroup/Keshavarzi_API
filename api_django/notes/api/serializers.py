@@ -5,6 +5,7 @@ from rest_framework.exceptions import NotFound, ValidationError
 from notes.models import Note
 from regions.api.serializers import RegionSerializer
 from regions.models import Region
+from users.api.serializers import UserSerializer
 
 
 class RetrieveNoteSerializer(serializers.ModelSerializer):
@@ -13,8 +14,8 @@ class RetrieveNoteSerializer(serializers.ModelSerializer):
     def get_user(self, obj):
         user = self.context['request'].user
         if user.is_admin:
-            return obj.user
-        return user
+            user = obj.user
+        return UserSerializer(user).data
 
     class Meta:
         model = Note
