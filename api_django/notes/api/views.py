@@ -1,6 +1,7 @@
-from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
-from notes.api.serializers import CreateNoteSerializer, ListUserNotesSerializer, UpdateNoteSerializer
+
+from notes.api.serializers import CreateNoteSerializer, ListUserNotesSerializer, RetrieveNoteSerializer, UpdateNoteSerializer
 from notes.models import Note
 from notes.permissions import IsCreator
 from users.permissions import IsAdmin
@@ -23,6 +24,22 @@ class CreateNote(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsCreator | IsAdmin]
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = Note.objects.all()
+        if user.is_admin:
+            return qs.select_related("user")
+        return qs
+
+    def get_serializer_class(self):
+        if self.request.method not in ("PUT", "PATCH"):
+            return UpdateNoteSerializer
+        return RetrieveNoteSerializer
 
 
 class UpdateNote(UpdateAPIView):
