@@ -219,7 +219,7 @@ class DeleteNoteTestCase(BaseNotesTestCase):
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
     def test_delete_user1s_note_by_user2(self):
-        user1, user2 = UserFactory.create(), UserFactory.create()
+        user1, user2 = tuple(UserFactory.create_batch(password=self.password, size=2))
         note = NoteFactory.create(user_id=user1.id)
         self.login(user2.phone_number)
 
