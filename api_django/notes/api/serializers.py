@@ -29,7 +29,7 @@ class CreateNoteSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         qs = Region.objects.filter(id=attrs['region_id'])
         if not user.is_admin:
-            qs = qs.filter(Q(expert_id=user.id) | Q(user_id=user.id))
+            qs = qs.filter(Q(expert_id=user.id) | Q(user_id=user.id)).only("id")
         region = qs.first()
 
         if region is None:
