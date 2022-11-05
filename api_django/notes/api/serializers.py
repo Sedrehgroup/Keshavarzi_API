@@ -1,5 +1,6 @@
+from django.db.models import Q
 from rest_framework import serializers
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, ValidationError
 
 from notes.models import Note
 from regions.api.serializers import RegionSerializer
@@ -22,6 +23,15 @@ class RetrieveNoteSerializer(serializers.ModelSerializer):
 
 class CreateNoteSerializer(serializers.ModelSerializer):
     region_id = serializers.IntegerField(min_value=1, write_only=True)
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        if user.is_admin:
+            return attrs
+        qs = Region.objects.filter(Q(expert_id=user.id) | Q(user_id=user.id), id=attrs['region_id'])
+        if not qs.exists():
+            raise ValidationError({"Region validation": "You are not user of expert of given region."})
+        return attrs
 
     def get_user_role(self):
         user = self.context["request"].user
