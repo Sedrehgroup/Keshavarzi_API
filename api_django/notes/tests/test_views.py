@@ -94,10 +94,11 @@ class CreateNoteTestCase(BaseNotesTestCase):
         text = "<< test_create_note_with_invalid_region_id >> Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         max_region_id = Region.objects.order_by("id").only("id").last().id
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             """
                 1- Retrieve User
-                2- Check existence of region
+                2- Check relation of user or expert to region
+                3- Check existence of region
             """
             data = {"text": text, "region_id": max_region_id + 1}
             res = self.client.post(CREATE_NOTE_URL, data)
@@ -136,8 +137,8 @@ class CreateNoteTestCase(BaseNotesTestCase):
         with self.assertNumQueries(3):
             """
                 1- Retrieve User
-                2- Check region
-                3- Crete Note
+                2- Check relation of user or expert to region
+                3- Check existence of region
             """
             data = {"text": " I am admin. I am allowed to do whatever I want", "region_id": region.id}
             res = self.client.post(CREATE_NOTE_URL, data)
