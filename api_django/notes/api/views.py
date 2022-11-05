@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from notes.api.serializers import CreateNoteSerializer, UpdateNoteSerializer
