@@ -7,6 +7,17 @@ from notes.permissions import IsCreator
 from users.permissions import IsSuperUser
 
 
+class ListUserNotes(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ListCreatorNotesSerializer
+
+    def get_queryset(self):
+        return Note.objects \
+            .filter(user_id=self.request.user.id) \
+            .defer("user") \
+            .select_related("region")
+
+
 class CreateNote(CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CreateNoteSerializer
