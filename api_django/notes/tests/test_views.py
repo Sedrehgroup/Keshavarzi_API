@@ -35,6 +35,36 @@ class BaseNotesTestCase(APITestCase):
         return self
 
 
+class ListNoteTestCase(BaseNotesTestCase):
+    def test_creator_can_list_own_notes(self):
+        notes = NoteFactory.create_batch(user=self.user, size=15)
+        self.login(self.user.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Notes
+            """
+            res = self.client.get(LIST_USER_NOTES_URL)
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+    def test_only_creator_can_list_own_notes(self):
+        NoteFactory.create(user=self.user)
+        self.login(self.expert.phone_number)
+
+        Note.objects.filter(user_id=self.expert.id).delete()
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Notes
+            """
+            res = self.client.get(LIST_USER_NOTES_URL)
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+            self.assertEqual(len(res.data), 0)
+
+
 class CreateNoteTestCase(BaseNotesTestCase):
     def test_create_note_with_invalid_region_id(self):
         """ Test that posting not existing region_id, will return 404 response """
