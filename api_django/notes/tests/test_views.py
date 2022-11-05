@@ -128,6 +128,38 @@ class CreateNoteTestCase(BaseNotesTestCase):
         self.assertEqual(note.count(), 1)
         self.assertEqual(note.first().user_role, "A")
 
+    def test_create_note_as_admin_without_matching_region(self):
+        region = RegionFactory.create()
+        self.assertNotEqual(region.user, self.admin)
+        self.login(self.admin.phone_number)
+
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Check region
+                3- Crete Note
+            """
+            data = {"text": " I am admin. I am allowed to do whatever I want", "region_id": region.id}
+            res = self.client.post(CREATE_NOTE_URL, data)
+
+            self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_create_note_without_user_or_expert(self):
+        """ Test that if user is not region.user or region.expert, validation error is raising """
+        region = RegionFactory.create()
+        self.assertNotEqual(region.user, self.user)
+        self.login(self.user.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Check Region
+            """
+            data = {"text": "This test should fail", "region_id": region.id}
+            res = self.client.post(CREATE_NOTE_URL, data)
+
+            self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST, res.data)
+
 
 class UpdateNoteTestCase(BaseNotesTestCase):
     def base_test_update_as(self, user, user_role):
