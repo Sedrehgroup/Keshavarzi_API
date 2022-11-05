@@ -9,7 +9,7 @@ from users.permissions import IsSuperUser
 
 class ListUserNotes(ListAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = ListCreatorNotesSerializer
+    serializer_class = ListUserNotesSerializer
 
     def get_queryset(self):
         return Note.objects \

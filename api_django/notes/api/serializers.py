@@ -40,7 +40,7 @@ class UpdateNoteSerializer(serializers.ModelSerializer):
         fields = ("text",)
 
 
-class ListCreatorNotesSerializer(serializers.ModelSerializer):
+class ListUserNotesSerializer(serializers.ModelSerializer):
     region = RegionSerializer()
 
     class Meta:
