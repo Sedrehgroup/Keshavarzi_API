@@ -67,4 +67,4 @@ class CreateRegionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Region
-        exclude = ("date_created", "dates", "is_active", "expert", "user")
+        fields = ("polygon", "name")
