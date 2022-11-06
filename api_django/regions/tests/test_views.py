@@ -173,7 +173,7 @@ class ListRegions(BaseRegionViewsTestCase):
         RegionFactory.create_batch(2, expert=self.expert)
 
         self.login(self.expert.phone_number)
-        res = self.client.get(LIST_REGIONS_USER_URL)
+        res = self.client.get(LIST_REGIONS_EXPERT_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
         try:
