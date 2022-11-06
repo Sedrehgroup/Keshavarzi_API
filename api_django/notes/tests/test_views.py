@@ -113,6 +113,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
     def test_admin_can_get_notes_list(self):
         region = RegionFactory.create()
         NoteFactory.create_batch(user=region.user, region=region, size=12)
+        # ** -> Admin is not note creator or user/expert of region
         self.login(self.admin.phone_number)
 
         with self.assertNumQueries(3):
@@ -127,7 +128,22 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         self.assertEqual(res.data["count"], 12)
         self.assertEqual(len(res.data["results"]), 10)
 
-    # ToDo: Test result
+    def test_user_without_relation_to_region_can_not_get_notes_list(self):
+        user1, user2 = UserFactory.create(password=self.password), UserFactory.create(password=self.password)
+        region = RegionFactory.create(user=user1)
+        NoteFactory.create_batch(user=region.user, region=region, size=11)
+        self.login(user2.phone_number)  # Login the second user. Not the notes creator.
+
+        # Test
+        with self.assertNumQueries(1):
+            """
+                1- Retrieve User
+                2- Count Notes
+                3- Retrieve Notes
+            """
+            res = self.client.get(LNBR_URL(region.id))
+
+            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
 
 
 class CreateNoteTestCase(BaseNotesTestCase):
