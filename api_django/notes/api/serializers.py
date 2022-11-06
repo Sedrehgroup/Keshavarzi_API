@@ -1,5 +1,5 @@
 from django.db.models import Q
-from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import extend_schema_field, inline_serializer
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound, ValidationError
 
@@ -71,7 +71,11 @@ class UpdateNoteSerializer(serializers.ModelSerializer):
 class ListUserNotesSerializer(serializers.ModelSerializer):
     region = serializers.SerializerMethodField()
 
-    @extend_schema_field({"id": 1, "name": "region name"})
+    @extend_schema_field(
+        inline_serializer("Region serializer", {
+            "id": serializers.IntegerField(),
+            "name": serializers.CharField(max_length=20)
+        }))
     def get_region(self, obj):
         return {"id": obj.region.id, "name": obj.region.name}
 
