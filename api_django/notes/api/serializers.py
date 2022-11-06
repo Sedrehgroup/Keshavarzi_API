@@ -4,7 +4,6 @@ from rest_framework import serializers
 from rest_framework.exceptions import NotFound, ValidationError
 
 from notes.models import Note
-from regions.api.serializers import RegionSerializer
 from regions.models import Region
 from users.api.serializers import UserSerializer
 
@@ -70,7 +69,11 @@ class UpdateNoteSerializer(serializers.ModelSerializer):
 
 
 class ListUserNotesSerializer(serializers.ModelSerializer):
-    region = RegionSerializer()
+    region = serializers.SerializerMethodField()
+
+    @extend_schema_field({"id": 1, "name": "region name"})
+    def get_region(self, obj):
+        return {"id": obj.region.id, "name": obj.region.name}
 
     class Meta:
         model = Note
