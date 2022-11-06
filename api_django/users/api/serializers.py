@@ -13,7 +13,7 @@ examples = [
         summary="Return access and refresh token", value={'refresh': "Token", 'access': "Token"},
     ), OpenApiExample(
         name="Valid example", request_only=True, response_only=False,
-        summary="✔13 character phone number length with raw password.", value={"phone_number": "+989032567181", "password": "raw password"}
+        summary="✅13 character phone number length with raw password.", value={"phone_number": "+989032567181", "password": "raw password"}
     ), OpenApiExample(
         name="Invalid example 1", request_only=True, response_only=False,
         summary="❌Start with 0", value={"phone_number": "09032567181", "password": "raw_password"}
