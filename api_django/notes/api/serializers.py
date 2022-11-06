@@ -72,7 +72,7 @@ class ListUserNotesSerializer(serializers.ModelSerializer):
     region = serializers.SerializerMethodField()
 
     @extend_schema_field(
-        inline_serializer("Region serializer", {
+        inline_serializer("inline_region_serializer", {
             "id": serializers.IntegerField(),
             "name": serializers.CharField(max_length=20)
         }))
