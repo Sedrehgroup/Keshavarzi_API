@@ -79,6 +79,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
     def test_user_can_get_notes_list(self):
         region = RegionFactory.create(user=self.user)
         NoteFactory.create_batch(region=region, user=self.user, size=20)
+        self.login(self.user.phone_number)
 
         with self.assertNumQueries(2):
             """
@@ -94,6 +95,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
     def test_expert_can_get_notes_list(self):
         region = RegionFactory.create(user=self.expert)
         NoteFactory.create_batch(user=self.expert, region=region, size=15)
+        self.login(self.expert.phone_number)
 
         with self.assertNumQueries(2):
             """
@@ -109,6 +111,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
     def test_admin_can_get_notes_list(self):
         region = RegionFactory.create()
         NoteFactory.create_batch(user=region.user, region=region, size=12)
+        self.login(self.admin.phone_number)
 
         with self.assertNumQueries(2):
             """
