@@ -98,7 +98,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         self.assertIn("created_date", res.data["results"][0])
         self.assertIn("updated_date", res.data["results"][0])
 
-        self.assertTrue(res.data["results"][0]["user_role"] in ("U", "A", "E"))
+        self.assertTrue(res.data["results"][0]["user_role"] == "U", res.data["results"][0]["user_role"])
         self.assertIsNone(res.data["results"][0]["updated_date"])
 
     def test_user_can_get_notes_list(self):
