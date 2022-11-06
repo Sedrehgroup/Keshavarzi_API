@@ -170,7 +170,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
     def test_expert_without_relation_to_region_can_not_get_notes_list(self):
         expert1, expert2 = ExpertFactory.create(password=self.password), ExpertFactory.create(password=self.password)
         region = RegionFactory.create(user=expert1)
-        NoteFactory.create_batch(user=region.expert, region=region, size=11)
+        NoteFactory.create_batch(user=expert1, region=region, size=11)
         self.login(expert2.phone_number)  # Login the second expert. Note the notes creator
 
         with self.assertNumQueries(2):
