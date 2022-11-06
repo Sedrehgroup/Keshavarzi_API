@@ -37,8 +37,8 @@ class ListNotesByRegion(ListAPIView):
         user = self.request.user
         qs = Note.objects.filter(region_id=self.kwargs['pk']).select_related("user")
         if not user.is_admin:
-            qs = qs.filter(Q(region__user_id=user.id) | Q(region__expert_id=user.id))
-        return get_list_or_404(qs)
+            return qs.filter(Q(region__user_id=user.id) | Q(region__expert_id=user.id))
+        return qs
 
 
 class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
