@@ -59,6 +59,20 @@ class UpdateRegionExpertSerializer(serializers.ModelSerializer):
         return instance
 
 
+class UpdateRegionUserSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(min_value=1, allow_null=False)
+
+    def validate_user_id(self, val):
+        if val and not User.objects.filter(id=val, is_expert=False,
+                                           is_superuser=False, is_staff=False).exists():
+            raise ValidationError({"Expert": "Expert user with given ID not found"})
+        return val
+
+    class Meta:
+        model = Region
+        fields = ("user_id",)
+
+
 class CreateRegionSerializer(serializers.ModelSerializer):
     def validate_polygon(self, value):
         return get_polygon_by_geojson(value)
