@@ -91,7 +91,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertEqual(res.data["count"], 20)
-        self.assertEqual(len(res.data["result"]), 10)
+        self.assertEqual(len(res.data["results"]), 10)
 
     def test_expert_can_get_notes_list(self):
         region = RegionFactory.create(user=self.expert)
@@ -108,7 +108,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertEqual(res.data["count"], 15)
-        self.assertEqual(len(res.data["result"]), 10)
+        self.assertEqual(len(res.data["results"]), 10)
 
     def test_admin_can_get_notes_list(self):
         region = RegionFactory.create()
@@ -125,7 +125,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertEqual(res.data["count"], 12)
-        self.assertEqual(len(res.data["result"]), 10)
+        self.assertEqual(len(res.data["results"]), 10)
 
     # ToDo: Test result
 
