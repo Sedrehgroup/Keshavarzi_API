@@ -50,6 +50,6 @@ class CreateRegion(CreateAPIView):
 
 
 class UpdateRegion(UpdateAPIView):
-    permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert]
+    permission_classes = [IsAuthenticated, ~IsExpertUser, IsRegionUser | IsAdmin]
     queryset = Region.objects.all()
     serializer_class = UpdateRegionSerializer
