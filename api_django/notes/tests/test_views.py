@@ -76,6 +76,30 @@ class ListNoteTestCase(BaseNotesTestCase):
 
 
 class ListNoteByRegionTestCase(BaseNotesTestCase):
+    def test_result_schema(self):
+        region = RegionFactory.create(user=self.user)
+        NoteFactory.create_batch(user=region.user, region=region, size=12)
+
+        res = self.client.get(LNBR_URL(region.id))
+        self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+        self.assertIn("count", res.data)
+        self.assertIn("next", res.data)
+        self.assertIn("previous", res.data)
+        self.assertIn("results", res.data)
+
+        self.assertEqual(len(res.data["results"]), 10)
+
+        self.assertIn("id", res.data["results"][0])
+        self.assertIn("user", res.data["results"][0])
+        self.assertIn("user_role", res.data["results"][0])
+        self.assertIn("text", res.data["results"][0])
+        self.assertIn("created_date", res.data["results"][0])
+        self.assertIn("updated_date", res.data["results"][0])
+
+        self.assertTrue(res.data["results"][0]["user_role"] in ("U", "A", "E"))
+        self.assertIsNone(res.data["results"][0]["updated_date"])
+
     def test_user_can_get_notes_list(self):
         region = RegionFactory.create(user=self.user)
         NoteFactory.create_batch(region=region, user=self.user, size=20)
@@ -140,6 +164,34 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
                 2- Count Notes
             """
             res = self.client.get(LNBR_URL(region.id))
+
+            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
+
+    def test_expert_without_relation_to_region_can_not_get_notes_list(self):
+        expert1, expert2 = ExpertFactory.create(password=self.password), ExpertFactory.create(password=self.password)
+        region = RegionFactory.create(user=expert1)
+        NoteFactory.create_batch(user=region.expert, region=region, size=11)
+        self.login(expert2.phone_number)  # Login the second expert. Note the notes creator
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Count Notes
+            """
+            res = self.client.get(LNBR_URL(region.id))
+
+            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
+
+    def test_list_notes_with_not_exists_region(self):
+        invalid_region_id = Region.objects.order_by("id").only("id").last().id + 1
+        self.login(self.user.phone_number)
+
+        with self.assertNumQueries(2):
+            """ 
+                1- Retrieve User
+                2- Count Notes
+            """
+            res = self.client.get(LNBR_URL(invalid_region_id))
 
             self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
 
