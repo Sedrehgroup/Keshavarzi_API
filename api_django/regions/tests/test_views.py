@@ -338,8 +338,8 @@ class UpdateRegion(BaseRegionViewsTestCase):
         self.assertEqual(region.name, "Update test name")
 
     def test_update_region_with_admin(self):
-        region = RegionFactory.create(expert=self.expert)
-        self.login(self.expert.phone_number)
+        region = RegionFactory.create()
+        self.login(self.admin.phone_number)
 
         with self.assertNumQueries(3):
             """
