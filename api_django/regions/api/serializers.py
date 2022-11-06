@@ -80,3 +80,12 @@ class CreateRegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
         fields = ("polygon", "name")
+
+
+class UpdateRegionSerializer(serializers.ModelSerializer):
+    def validate_polygon(self, value):
+        return get_polygon_by_geojson(value)
+
+    class Meta:
+        model = Region
+        fields = ("name", "polygon", "is_active")

@@ -2,9 +2,10 @@ from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from regions.models import Region
-from regions.api.serializers import UpdateRegionExpertSerializer, UpdateRegionUserSerializer, \
-    ListRegionExpertSerializer, ListRegionUserSerializer,\
+from regions.api.serializers import UpdateRegionExpertSerializer, UpdateRegionSerializer, UpdateRegionUserSerializer, \
+    ListRegionExpertSerializer, ListRegionUserSerializer, \
     CreateRegionSerializer
+from regions.permissions import IsRegionExpert, IsRegionUser
 from users.permissions import IsExpertUser, IsRegularUser, IsAdmin
 
 
@@ -46,3 +47,9 @@ class CreateRegion(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class UpdateRegion(UpdateAPIView):
+    permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert]
+    queryset = Region.objects.all()
+    serializer_class = UpdateRegionSerializer
