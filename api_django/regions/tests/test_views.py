@@ -360,10 +360,10 @@ class UpdateRegion(BaseRegionViewsTestCase):
         region_name = region.name
         self.login(self.expert.phone_number)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
-                2- Check Permission of object
+                2- Retrieve Region
             """
             data = {"name": "Update test name"}
             res = self.client.patch(UR_URL(region.id), data)
@@ -397,10 +397,10 @@ class UpdateRegion(BaseRegionViewsTestCase):
         RegionFactory.create(expert=self.expert)
         self.login(self.expert.phone_number)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
-                2- Check permission of object
+                2- Retrieve Region
             """
             data = {"name": "Update test name"}
             res = self.client.patch(UR_URL(region.id), data)
