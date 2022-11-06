@@ -80,6 +80,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         region = RegionFactory.create(user=self.user)
         NoteFactory.create_batch(user=region.user, region=region, size=12)
 
+        self.login(self.user.phone_number)
         res = self.client.get(LNBR_URL(region.id))
         self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
