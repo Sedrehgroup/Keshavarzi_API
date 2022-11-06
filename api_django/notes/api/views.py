@@ -57,8 +57,3 @@ class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
-
-
-class DeleteNote(DestroyAPIView):
-    permission_classes = [IsAuthenticated, IsAdmin | IsCreator]
-    queryset = Note.objects.all()
