@@ -24,7 +24,7 @@ class Note(models.Model):
         if self.user_role is None:
             if self.user.is_expert:
                 self.user_role = "E"
-            elif self.user.is_superuser and self.user.is_staff:
+            elif self.user.is_admin:
                 self.user_role = "A"
             else:
                 self.user_role = "U"
