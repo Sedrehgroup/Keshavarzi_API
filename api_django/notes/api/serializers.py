@@ -1,4 +1,5 @@
 from django.db.models import Q
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound, ValidationError
 
@@ -11,6 +12,7 @@ from users.api.serializers import UserSerializer
 class RetrieveNoteSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
 
+    @extend_schema_field(UserSerializer)
     def get_user(self, obj):
         user = self.context['request'].user
         if user.is_admin:
