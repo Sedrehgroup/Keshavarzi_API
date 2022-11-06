@@ -14,7 +14,7 @@ from users.models import User
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        exclude = ("dates",)
+        exclude = ("dates", "task_id")
 
 
 class BaseListRegionSerializer(serializers.ModelSerializer):
