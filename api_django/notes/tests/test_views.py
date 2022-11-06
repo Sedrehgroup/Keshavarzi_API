@@ -134,12 +134,10 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         NoteFactory.create_batch(user=region.user, region=region, size=11)
         self.login(user2.phone_number)  # Login the second user. Not the notes creator.
 
-        # Test
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
                 2- Count Notes
-                3- Retrieve Notes
             """
             res = self.client.get(LNBR_URL(region.id))
 
