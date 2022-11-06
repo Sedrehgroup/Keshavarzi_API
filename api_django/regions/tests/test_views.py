@@ -330,7 +330,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 3- Update region
             """
             data = {"name": "Update test name"}
-            res = self.client.put(UR_URL(region.id), data)
+            res = self.client.patch(UR_URL(region.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
@@ -348,7 +348,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 3- Update region
             """
             data = {"name": "Update test name"}
-            res = self.client.put(UR_URL(region.id), data)
+            res = self.client.patch(UR_URL(region.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
@@ -366,7 +366,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 2- Check Permission of object
             """
             data = {"name": "Update test name"}
-            res = self.client.put(UR_URL(region.id), data)
+            res = self.client.patch(UR_URL(region.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
@@ -385,7 +385,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 2- Check permission of object
             """
             data = {"name": "Update test name"}
-            res = self.client.put(UR_URL(region.id), data)
+            res = self.client.patch(UR_URL(region.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
         region.refresh_from_db()
@@ -403,7 +403,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 2- Check permission of object
             """
             data = {"name": "Update test name"}
-            res = self.client.put(UR_URL(region.id), data)
+            res = self.client.patch(UR_URL(region.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
         region.refresh_from_db()
