@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.shortcuts import get_list_or_404
 from rest_framework.generics import DestroyAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -36,8 +37,8 @@ class ListNotesByRegion(ListAPIView):
         user = self.request.user
         qs = Note.objects.filter(region_id=self.kwargs['pk']).select_related("user")
         if not user.is_admin:
-            return qs.filter(Q(region__user_id=user.id) | Q(region__expert_id=user.id))
-        return qs
+            qs = qs.filter(Q(region__user_id=user.id) | Q(region__expert_id=user.id))
+        return get_list_or_404(qs)
 
 
 class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
