@@ -45,9 +45,8 @@ class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsCreator | IsAdmin]
 
     def get_queryset(self):
-        user = self.request.user
         qs = Note.objects.all()
-        if user.is_admin:
+        if self.request.method == "GET" and self.request.user.is_admin:
             return qs.select_related("user")
         return qs
 
@@ -55,12 +54,6 @@ class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
         if self.request.method in ("PUT", "PATCH"):
             return UpdateNoteSerializer
         return RetrieveNoteSerializer
-
-
-class UpdateNote(UpdateAPIView):
-    permission_classes = [IsAuthenticated, IsCreator]
-    serializer_class = UpdateNoteSerializer
-    queryset = Note.objects.all()
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
