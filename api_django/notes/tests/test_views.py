@@ -22,6 +22,11 @@ def RUD_URL(note_id):
     return reverse("notes:retrieve_update_destroy", kwargs={"pk": note_id})
 
 
+def LNBR_URL(region_id):
+    """ List Notes By Region URL """
+    return reverse("notes:list_notes_by_region", kwargs={"pk": region_id})
+
+
 class BaseNotesTestCase(APITestCase):
     def setUp(self) -> None:
         self.password = "VeryStrongPassword123#@!"
@@ -68,6 +73,55 @@ class ListNoteTestCase(BaseNotesTestCase):
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
             self.assertEqual(len(res.data), 0)
+
+
+class ListNoteByRegionTestCase(BaseNotesTestCase):
+    def test_user_can_get_notes_list(self):
+        region = RegionFactory.create(user=self.user)
+        NoteFactory.create_batch(region=region, user=self.user, size=20)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Note
+            """
+            res = self.client.get(LNBR_URL(region.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.assertEqual(res.data["count"], 20)
+        self.assertEqual(len(res.data["result"]), 10)
+
+    def test_expert_can_get_notes_list(self):
+        region = RegionFactory.create(user=self.expert)
+        NoteFactory.create_batch(user=self.expert, region=region, size=15)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Note
+            """
+            res = self.client.get(LNBR_URL(region.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.assertEqual(res.data["count"], 15)
+        self.assertEqual(len(res.data["result"]), 10)
+
+    def test_admin_can_get_notes_list(self):
+        region = RegionFactory.create()
+        NoteFactory.create_batch(user=region.user, region=region, size=12)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Note
+            """
+            res = self.client.get(LNBR_URL(region.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.assertEqual(res.data["count"], 12)
+        self.assertEqual(len(res.data["result"]), 10)
+
+    # ToDo: Test result
 
 
 class CreateNoteTestCase(BaseNotesTestCase):
