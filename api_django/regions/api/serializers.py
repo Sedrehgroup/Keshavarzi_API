@@ -1,12 +1,16 @@
+from drf_spectacular.utils import OpenApiExample, extend_schema_serializer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from regions.models import Region
+from regions.tests.factories import fake_polygon_geojson
 from regions.utils import get_geojson_by_polygon, get_polygon_by_geojson
 from users.api.serializers import UserSerializer
 from users.models import User
 
 
+@extend_schema_serializer(examples=[
+    OpenApiExample('polygon', summary='geojson polygon', value=fake_polygon_geojson)])
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
