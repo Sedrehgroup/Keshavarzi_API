@@ -1,5 +1,5 @@
 from django.db.models import Q
-from django.shortcuts import get_list_or_404
+from drf_spectacular.utils import extend_schema
 from rest_framework.generics import DestroyAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -12,6 +12,14 @@ from users.permissions import IsAdmin
 
 class ListCreateNote(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(description="Get list of created notes of logged in user")
+    def list(self, request, *args, **kwargs):
+        return super(ListCreateNote, self).list(request, *args, **kwargs)
+
+    @extend_schema(description="Create a note object for logged in user")
+    def create(self, request, *args, **kwargs):
+        return super(ListCreateNote, self).create(request, *args, **kwargs)
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -33,6 +41,10 @@ class ListNotesByRegion(ListAPIView):
     serializer_class = ListNotesByRegionSerializer
     pagination_class = NotePagination
 
+    @extend_schema(description="List created notes that are related to a specific region.")
+    def list(self, request, *args, **kwargs):
+        return super(ListNotesByRegion, self).list(request, *args, **kwargs)
+
     def get_queryset(self):
         user = self.request.user
         qs = Note.objects.filter(region_id=self.kwargs['pk']).select_related("user")
@@ -43,6 +55,19 @@ class ListNotesByRegion(ListAPIView):
 
 class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsCreator | IsAdmin]
+    default_description = "Only creator or admin can {} the note."
+
+    @extend_schema(summary="Get note by id", description=default_description.format("get"))
+    def retrieve(self, request, *args, **kwargs):
+        return super(RetrieveUpdateDestroyNote, self).retrieve(request, *args, **kwargs)
+
+    @extend_schema(summary="Delete note by id", description=default_description.format("delete"))
+    def destroy(self, request, *args, **kwargs):
+        return super(RetrieveUpdateDestroyNote, self).destroy(request, *args, **kwargs)
+
+    @extend_schema(summary="Update note by id", description=default_description.format("update"))
+    def update(self, request, *args, **kwargs):
+        return super(RetrieveUpdateDestroyNote, self).update(request, *args, **kwargs)
 
     def get_queryset(self):
         qs = Note.objects.all()
