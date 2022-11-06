@@ -1,8 +1,10 @@
-from rest_framework.generics import DestroyAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
+from django.db.models import Q
+from rest_framework.generics import DestroyAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from notes.api.serializers import CreateNoteSerializer, ListUserNotesSerializer, RetrieveNoteSerializer, UpdateNoteSerializer
+from notes.api.serializers import CreateNoteSerializer, ListNotesByRegionSerializer, ListUserNotesSerializer, RetrieveNoteSerializer, UpdateNoteSerializer
 from notes.models import Note
+from notes.paginations import NotePagination
 from notes.permissions import IsCreator
 from users.permissions import IsAdmin
 
@@ -23,6 +25,19 @@ class ListCreateNote(ListCreateAPIView):
             .filter(user_id=self.request.user.id) \
             .defer("user") \
             .select_related("region")
+
+
+class ListNotesByRegion(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ListNotesByRegionSerializer
+    pagination_class = NotePagination
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = Note.objects.filter(region_id=self.kwargs['pk']).select_related("user")
+        if not user.is_admin:
+            return qs.filter(Q(region__user_id=user.id) | Q(region__expert_id=user.id))
+        return qs
 
 
 class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):

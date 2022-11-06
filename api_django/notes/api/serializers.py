@@ -73,3 +73,11 @@ class ListUserNotesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         exclude = ("user",)
+
+
+class ListNotesByRegionSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Note
+        exclude = ("region",)
