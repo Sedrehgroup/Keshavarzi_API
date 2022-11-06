@@ -10,7 +10,18 @@ from users.models import User
 
 
 @extend_schema_serializer(examples=[
-    OpenApiExample('polygon', summary='geojson polygon', value=fake_polygon_geojson)])
+    OpenApiExample('polygon', summary='geojson polygon', value={
+        {
+            "id": 0,
+            "polygon": fake_polygon_geojson,
+            "name": "lorem",
+            "date_created": "2022-11-06",
+            "date_last_download": "2022-11-06",
+            "is_active": True,
+            "user": 0,
+            "expert": 0
+        }
+    })])
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
