@@ -402,7 +402,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
         self.assertEqual(region.name, region_name)
 
     def test_dates_field_is_not_updatable(self):
-        self.login(self.region.user.phone_number)
+        self.login(self.user.phone_number)
         with self.assertNumQueries(2):
             """
                 1- Retrieve User
@@ -452,7 +452,8 @@ class RetrieveRegion(BaseRegionViewsTestCase):
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
     def test_retrieve_region_by_not_related_user(self):
-        self.assertEqual(self.region.user, self.user)
+        region = RegionFactory.create()
+        self.assertEqual(region.user, self.user)
         self.login(self.user.phone_number)
 
         with self.assertNumQueries(2):
@@ -460,7 +461,7 @@ class RetrieveRegion(BaseRegionViewsTestCase):
                 1- Retrieve User
                 2- Retrieve Region
             """
-            res = self.client.get(RUR_URL(self.region.id))
+            res = self.client.get(RUR_URL(region.id))
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
     def test_retrieve_region_by_not_related_expert(self):
@@ -477,26 +478,28 @@ class RetrieveRegion(BaseRegionViewsTestCase):
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
     def test_polygon_of_region_is_valid_geojson(self):
-        self.login(self.region.user.phone_number)
+        region = RegionFactory.create(user=self.user)
+        self.login(self.user.phone_number)
 
         with self.assertNumQueries(2):
             """
                 1- Retrieve User
                 2- Retrieve Region
             """
-            res = self.client.get(RUR_URL(self.region.id))
+            res = self.client.get(RUR_URL(region.id))
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertIn('polygon', res.data)
         get_polygon_by_geojson(res.data["polygon"])
 
     def test_schema_of_response(self):
-        self.login(self.region.user.phone_number)
+        region = RegionFactory.create(user=self.user)
+        self.login(self.user.phone_number)
         with self.assertNumQueries(2):
             """
                 1- Retrieve User
                 2- Retrieve Region
             """
-            res = self.client.get(RUR_URL(self.region.id))
+            res = self.client.get(RUR_URL(region.id))
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertIn("name", res.data)
         self.assertIn("polygon", res.data)
