@@ -20,7 +20,7 @@ TEST_TIF = os.path.join(BASE_DIR, "regions", "tests", "tif_test.tif")
 
 def RUR_URL(region_id):
     """ Retrieve Update Region URL """
-    return reverse("regions:update_region", kwargs={"pk": region_id})
+    return reverse("regions:retrieve_update_region", kwargs={"pk": region_id})
 
 
 class BaseRegionViewsTestCase(APITestCase):
