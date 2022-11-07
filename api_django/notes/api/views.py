@@ -42,14 +42,15 @@ class ListCreateNote(ListCreateAPIView):
 
 @extend_schema_view(get=extend_schema(summary="List notes by region ID",
                                       description="List created notes that are related to a specific region.",
+                                      examples=[],
                                       responses={200: OpenApiResponse(ListNotesByRegionSerializer),
                                                  403: OpenApiResponse(description="User is not authenticated.\nUser doesn't have permission to access this region."),
                                                  404: OpenApiResponse(inline_serializer("error_message", {"field_name": serializers.CharField()}),
                                                                       description="Region or any note, not found",
                                                                       examples=[OpenApiExample(name="Region", summary="Region not found", response_only=True,
-                                                                                               value=[{"Region": "Region with given ID is not exists."}]),
+                                                                                               value=[{"field_name": "Region with given ID is not exists."}]),
                                                                                 OpenApiExample(name="Note", summary="Note not found", response_only=True,
-                                                                                               value=[{"Notes": "We didn't find any matching note."}])])
+                                                                                               value=[{"field_name": "We didn't find any matching note."}])])
                                                  }))
 class ListNotesByRegion(ListAPIView):
     permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
