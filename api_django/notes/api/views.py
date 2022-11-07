@@ -39,6 +39,11 @@ class ListCreateNote(ListCreateAPIView):
             .select_related("region")
 
 
+@extend_schema_view(get=extend_schema(summary="List notes by region ID",
+                                      description="List created notes that are related to a specific region.",
+                                      responses={403: {"description": "User is not authenticated.\nUser doesn't have permission to access this region."},
+                                                 404: {"description": "Region not found -> {'Region': 'message'}\nNotes not found -> {'Notes':'message'}"},
+                                                 }))
 class ListNotesByRegion(ListAPIView):
     permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
     serializer_class = ListNotesByRegionSerializer
@@ -64,18 +69,6 @@ class ListNotesByRegion(ListAPIView):
 class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsCreator | IsAdmin]
     default_description = "Only creator or admin can {} the note."
-
-    @extend_schema(summary="Get note by id", description=default_description.format("get"))
-    def retrieve(self, request, *args, **kwargs):
-        return super(RetrieveUpdateDestroyNote, self).retrieve(request, *args, **kwargs)
-
-    @extend_schema(summary="Delete note by id", description=default_description.format("delete"))
-    def destroy(self, request, *args, **kwargs):
-        return super(RetrieveUpdateDestroyNote, self).destroy(request, *args, **kwargs)
-
-    @extend_schema(summary="Update note by id", description=default_description.format("update"))
-    def update(self, request, *args, **kwargs):
-        return super(RetrieveUpdateDestroyNote, self).update(request, *args, **kwargs)
 
     def get_queryset(self):
         qs = Note.objects.all()
