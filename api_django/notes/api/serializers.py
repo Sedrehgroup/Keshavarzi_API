@@ -1,5 +1,4 @@
 from django.db.models import Q
-from drf_spectacular.utils import extend_schema_field, inline_serializer
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound, ValidationError
 
@@ -11,7 +10,6 @@ from users.api.serializers import UserSerializer
 class RetrieveNoteSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
 
-    @extend_schema_field(UserSerializer)
     def get_user(self, obj):
         user = self.context['request'].user
         if user.is_admin:
@@ -71,12 +69,7 @@ class UpdateNoteSerializer(serializers.ModelSerializer):
 class ListUserNotesSerializer(serializers.ModelSerializer):
     region = serializers.SerializerMethodField()
 
-    @extend_schema_field(
-        inline_serializer("inline_region_serializer", {
-            "id": serializers.IntegerField(),
-            "name": serializers.CharField(max_length=20)
-        }))
-    def get_region(self, obj):
+    def get_region(self, obj):  # ToDo: Optimize the query.
         return {"id": obj.region.id, "name": obj.region.name}
 
     class Meta:
