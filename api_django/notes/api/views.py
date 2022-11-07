@@ -1,5 +1,5 @@
 from django.db.models import Q
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import DestroyAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -53,6 +53,11 @@ class ListNotesByRegion(ListAPIView):
         return qs
 
 
+@extend_schema_view(get=extend_schema(summary="Get note by id", description="Only creator or admin can get the note."),
+                    delete=extend_schema(summary="Delete note by id", description="Only creator or admin can delete the note."),
+                    put=extend_schema(summary="Update note by id", description="Only creator or admin can update the note."),
+                    patch=extend_schema(summary="Update note by id", description="Only creator or admin can update the note."),
+                    )
 class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsCreator | IsAdmin]
     default_description = "Only creator or admin can {} the note."
