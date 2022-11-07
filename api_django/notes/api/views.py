@@ -41,9 +41,9 @@ class ListCreateNote(ListCreateAPIView):
 
 @extend_schema_view(get=extend_schema(summary="List notes by region ID",
                                       description="List created notes that are related to a specific region.",
-                                      responses={OpenApiResponse(ListNotesByRegionSerializer),
-                                                 OpenApiResponse(403, "User is not authenticated.\nUser doesn't have permission to access this region."),
-                                                 OpenApiResponse(404, "Region not found -> {'Region': 'message'}\nNotes not found -> {'Notes':'message'}")
+                                      responses={200: OpenApiResponse(ListNotesByRegionSerializer),
+                                                 403: OpenApiResponse(None, "User is not authenticated.\nUser doesn't have permission to access this region."),
+                                                 404: OpenApiResponse(None, "Region not found -> {'Region': 'message'}\nNotes not found -> {'Notes':'message'}")
                                                  }))
 class ListNotesByRegion(ListAPIView):
     permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
