@@ -2,7 +2,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, R
 from rest_framework.permissions import IsAuthenticated
 
 from regions.models import Region
-from regions.api.serializers import UpdateRegionExpertSerializer, UpdateRegionSerializer, UpdateRegionUserSerializer, \
+from regions.api.serializers import UpdateRegionExpertSerializer, RetrieveUpdateRegionSerializer, UpdateRegionUserSerializer, \
     ListRegionExpertSerializer, ListRegionUserSerializer, \
     CreateRegionSerializer
 from regions.permissions import IsRegionUser
