@@ -1,5 +1,6 @@
 from django.db.models import Q
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import DestroyAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -7,6 +8,8 @@ from notes.api.serializers import CreateNoteSerializer, ListNotesByRegionSeriali
 from notes.models import Note
 from notes.paginations import NotePagination
 from notes.permissions import IsCreator
+from regions.models import Region
+from regions.permissions import IsRegionExpert, IsRegionUser
 from users.permissions import IsAdmin
 
 
@@ -41,16 +44,16 @@ class ListNotesByRegion(ListAPIView):
     serializer_class = ListNotesByRegionSerializer
     pagination_class = NotePagination
 
-    @extend_schema(description="List created notes that are related to a specific region.")
-    def list(self, request, *args, **kwargs):
-        return super(ListNotesByRegion, self).list(request, *args, **kwargs)
+    def get_object(self):
+        region = Region.objects.filter(id=self.kwargs['pk']).order_by().first()
+        if not region:
+            raise NotFound({"Region": "Region with given ID is not exists."})
+        self.check_object_permissions(self.request, region)
+        return region
 
     def get_queryset(self):
-        user = self.request.user
-        qs = Note.objects.filter(region_id=self.kwargs['pk']).select_related("user")
-        if not user.is_admin:
-            return qs.filter(Q(region__user_id=user.id) | Q(region__expert_id=user.id))
-        return qs
+        region = self.get_object()
+        return Note.objects.filter(region_id=region.id).select_related("user")
 
 
 @extend_schema_view(get=extend_schema(summary="Get note by id", description="Only creator or admin can get the note."),
