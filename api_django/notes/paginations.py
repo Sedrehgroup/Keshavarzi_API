@@ -12,7 +12,7 @@ class NotePagination(PageNumberPagination):
     def get_paginated_response(self, data):
         count = self.page.paginator.count
         if count is 0:
-            raise NotFound({"Not found": "We didn't find any matching note."})
+            raise NotFound({"Notes": "We didn't find any matching note."})
         return Response(OrderedDict([
             ('count', count),
             ('next', self.get_next_link()),
