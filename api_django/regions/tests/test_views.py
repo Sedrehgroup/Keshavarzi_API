@@ -1,5 +1,6 @@
 import os
 
+from celery.result import AsyncResult
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -399,3 +400,116 @@ class UpdateRegion(BaseRegionViewsTestCase):
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
         region.refresh_from_db()
         self.assertEqual(region.name, region_name)
+
+    def test_dates_field_is_not_updatable(self):
+        self.login(self.region.user.phone_number)
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+            """
+            data = {"dates": "invalid_dates"}
+            res = self.client.patch(RUR_URL(self.region))
+            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
+        self.region.refresh_from_db()
+        self.assertNotEqual(self.region.dates, data["dates"])
+
+
+class RetrieveRegion(BaseRegionViewsTestCase):
+    def test_retrieve_region_by_user(self):
+        region = RegionFactory.create(expert=self.expert)
+        self.login(self.user.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+            """
+            res = self.client.get(RUR_URL(region.id))
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+    def test_retrieve_region_by_expert(self):
+        region = RegionFactory.create(expert=self.expert)
+        self.login(region.expert.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+            """
+            res = self.client.get(RUR_URL(region.id))
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+    def test_retrieve_region_by_admin(self):
+        self.login(self.admin.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+            """
+            res = self.client.get(RUR_URL(self.region.id))
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+    def test_retrieve_region_by_not_related_user(self):
+        self.assertEqual(self.region.user, self.user)
+        self.login(self.user.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+            """
+            res = self.client.get(RUR_URL(self.region.id))
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
+
+    def test_retrieve_region_by_not_related_expert(self):
+        region = RegionFactory.create(with_expert=True)
+        self.assertEqual(region.expert, self.expert)
+        self.login(self.expert.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+            """
+            res = self.client.get(RUR_URL(region.id))
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
+
+    def test_polygon_of_region_is_valid_geojson(self):
+        self.login(self.region.user.phone_number)
+
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+            """
+            res = self.client.get(RUR_URL(self.region.id))
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.assertIn('polygon', res.data)
+        get_polygon_by_geojson(res.data["polygon"])
+
+    def test_schema_of_response(self):
+        self.login(self.region.user.phone_number)
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+            """
+            res = self.client.get(RUR_URL(self.region.id))
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.assertIn("name", res.data)
+        self.assertIn("polygon", res.data)
+        self.assertIn("dates", res.data)
+        self.assertIn("is_active", res.data)
+
+    def test_endpoint_with_not_exists_region(self):
+        invalid_region_id = Region.objects.order_by('id').only("id").last().id + 1
+        self.login(self.user.phone_number)
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+            """
+            res = self.client.get(RUR_URL(invalid_region_id))
+            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
