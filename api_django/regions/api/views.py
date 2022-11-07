@@ -5,7 +5,7 @@ from regions.models import Region
 from regions.api.serializers import UpdateRegionExpertSerializer, RetrieveUpdateRegionSerializer, UpdateRegionUserSerializer, \
     ListRegionExpertSerializer, ListRegionUserSerializer, \
     CreateRegionSerializer
-from regions.permissions import IsRegionUser
+from regions.permissions import IsRegionExpert, IsRegionUser
 from users.permissions import IsExpertUser, IsRegularUser, IsAdmin
 
 
@@ -50,6 +50,12 @@ class CreateRegion(CreateAPIView):
 
 
 class RetrieveUpdateRegion(RetrieveUpdateAPIView):
-    permission_classes = [IsAuthenticated, IsRegionUser | IsAdmin]
     queryset = Region.objects.all()
     serializer_class = RetrieveUpdateRegionSerializer
+
+    def get_permissions(self):
+        permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
+        if self.request.method == "GET":
+            permission_classes = [IsAuthenticated, IsRegionUser | IsAdmin]
+        self.permission_classes = permission_classes
+        return super(RetrieveUpdateRegion, self).get_permissions()
