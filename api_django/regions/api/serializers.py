@@ -82,7 +82,12 @@ class CreateRegionSerializer(serializers.ModelSerializer):
         fields = ("polygon", "name")
 
 
-class UpdateRegionSerializer(serializers.ModelSerializer):
+class RetrieveUpdateRegionSerializer(serializers.ModelSerializer):
+    dates = serializers.SerializerMethodField(read_only=True)
+
+    def get_dates(self, obj: Region):
+        return obj.dates_as_list
+
     def validate_polygon(self, value):
         return get_polygon_by_geojson(value)
 

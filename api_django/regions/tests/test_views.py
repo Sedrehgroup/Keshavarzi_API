@@ -17,8 +17,8 @@ CREATE_REGION_URL = reverse("regions:create")
 TEST_TIF = os.path.join(BASE_DIR, "regions", "tests", "tif_test.tif")
 
 
-def UR_URL(region_id):
-    """ Update Region URL """
+def RUR_URL(region_id):
+    """ Retrieve Update Region URL """
     return reverse("regions:update_region", kwargs={"pk": region_id})
 
 
@@ -51,9 +51,8 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
                 4- Update Region
                 5- Create Note
             """
-            url = reverse("regions:update_region_expert", kwargs={"pk": self.region.id})
             data = {"expert_id": self.expert.id}
-            res = self.client.put(url, data)
+            res = self.client.put(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
             self.assertEqual(res.data, {"expert_id": self.expert.id})
 
@@ -66,9 +65,8 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
             """
                 1- Retrieve User
             """
-            url = reverse("regions:update_region_expert", kwargs={"pk": self.region.id})
             data = {"expert_id": self.expert.id}
-            res = self.client.put(url, data)
+            res = self.client.put(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
         self.region.refresh_from_db()
@@ -80,9 +78,8 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
             """
                 1- Retrieve User
             """
-            url = reverse("regions:update_region_expert", kwargs={"pk": self.region.id})
             data = {"expert_id": self.expert.id}
-            res = self.client.put(url, data)
+            res = self.client.put(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
         self.region.refresh_from_db()
@@ -96,9 +93,8 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
                 2- Retrieve Region
                 3- Update Region
             """
-            url = reverse("regions:update_region_expert", kwargs={"pk": self.region.id})
             data = {"expert_id": ""}
-            res = self.client.put(url, data)
+            res = self.client.put(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
             self.assertEqual(res.data, {"expert_id": None})
 
@@ -113,9 +109,8 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
             """
                 1- Retrieve User
             """
-            url = reverse("regions:update_region_expert", kwargs={"pk": region.id})
             data = {"expert_id": ""}
-            res = self.client.put(url, data)
+            res = self.client.put(RUR_URL(region.id), data)
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
         self.region.refresh_from_db()
@@ -130,9 +125,8 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
             """
                 1- Retrieve User
             """
-            url = reverse("regions:update_region_expert", kwargs={"pk": region.id})
             data = {"expert_id": ""}
-            res = self.client.put(url, data)
+            res = self.client.put(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
         self.region.refresh_from_db()
@@ -146,9 +140,8 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
                 2- Retrieve Region
                 3- Check expert
             """
-            url = reverse("regions:update_region_expert", kwargs={"pk": self.region.id})
             data = {"expert_id": self.user.id}
-            res = self.client.put(url, data)
+            res = self.client.put(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST, res.data)
 
         self.region.refresh_from_db()
@@ -330,7 +323,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 3- Update region
             """
             data = {"name": "Update test name"}
-            res = self.client.patch(UR_URL(region.id), data)
+            res = self.client.patch(RUR_URL(region.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
@@ -348,7 +341,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 3- Update region
             """
             data = {"name": "Update test name"}
-            res = self.client.patch(UR_URL(region.id), data)
+            res = self.client.patch(RUR_URL(region.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
@@ -365,7 +358,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 1- Retrieve User
             """
             data = {"name": "Update test name"}
-            res = self.client.patch(UR_URL(region.id), data)
+            res = self.client.patch(RUR_URL(region.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
@@ -384,7 +377,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 2- Retrieve Region
             """
             data = {"name": "Update test name"}
-            res = self.client.patch(UR_URL(region.id), data)
+            res = self.client.patch(RUR_URL(region.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
         region.refresh_from_db()
@@ -401,7 +394,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 1- Retrieve User
             """
             data = {"name": "Update test name"}
-            res = self.client.patch(UR_URL(region.id), data)
+            res = self.client.patch(RUR_URL(region.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
         region.refresh_from_db()
