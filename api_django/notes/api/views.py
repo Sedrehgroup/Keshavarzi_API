@@ -1,5 +1,5 @@
 from django.db.models import Q
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import DestroyAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -41,8 +41,9 @@ class ListCreateNote(ListCreateAPIView):
 
 @extend_schema_view(get=extend_schema(summary="List notes by region ID",
                                       description="List created notes that are related to a specific region.",
-                                      responses={403: {"description": "User is not authenticated.\nUser doesn't have permission to access this region."},
-                                                 404: {"description": "Region not found -> {'Region': 'message'}\nNotes not found -> {'Notes':'message'}"},
+                                      responses={OpenApiResponse(ListNotesByRegionSerializer),
+                                                 OpenApiResponse(403, "User is not authenticated.\nUser doesn't have permission to access this region."),
+                                                 OpenApiResponse(404, "Region not found -> {'Region': 'message'}\nNotes not found -> {'Notes':'message'}")
                                                  }))
 class ListNotesByRegion(ListAPIView):
     permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
