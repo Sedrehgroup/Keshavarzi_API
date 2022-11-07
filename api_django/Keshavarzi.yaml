@@ -6,6 +6,12 @@ info:
 paths:
   /notes/:
     get:
+      summary: List notes of regular OR expert user
+      description: |-
+        User should be authenticated. \
+        Authenticated user should be an instance of Regular user or expert user. \
+        Admin user doesn't have access to this endpoint.
+
       operationId: notes_list
       tags:
       - notes
@@ -21,6 +27,13 @@ paths:
                   $ref: '#/components/schemas/ListUserNotes'
           description: ''
     post:
+      summary: Create note
+      description: |
+        User should be authenticated. \
+        Every logged in user can create a note. \
+        Note creator should be regular OR expert user of given region. \
+        Admin can create note for every region that he want. \
+
       operationId: notes_create
       tags:
       - notes
@@ -48,7 +61,10 @@ paths:
   /notes/{id}/:
     get:
       operationId: notes_retrieve
-      description: Only creator or admin can get the note.
+      description: |
+        User should be authenticated. \
+        Only admin OR note creator can retrieve specefic note.
+
       summary: Get note by id
       parameters:
       - in: path
@@ -69,7 +85,9 @@ paths:
           description: ''
     put:
       operationId: notes_update
-      description: Only creator or admin can update the note.
+      description: |
+        User should be authenticated. \
+        Only admin OR note creator can update specefic note.
       summary: Update note by id
       parameters:
       - in: path
@@ -102,7 +120,9 @@ paths:
           description: ''
     patch:
       operationId: notes_partial_update
-      description: Only creator or admin can update the note.
+      description: |
+        User should be authenticated. \
+        Only admin OR note creator can update specefic note.
       summary: Update note by id
       parameters:
       - in: path
@@ -134,8 +154,10 @@ paths:
           description: ''
     delete:
       operationId: notes_destroy
-      description: Only creator or admin can delete the note.
       summary: Delete note by id
+      description: |
+        User should be authenticated. \
+        Only admin OR note creator can retrieve specefic note.
       parameters:
       - in: path
         name: id
@@ -152,8 +174,15 @@ paths:
   /notes/regions/{id}/:
     get:
       operationId: notes_regions_list
-      description: List created notes that are related to a specific region.
       summary: List notes by region ID
+      description: |
+        User should be authenticated. \
+        Only admin OR users that have a relation to
+        the given region, can retrieve the list of notes.
+
+        - This endpoint supports the pagination feature.
+          - Default page_size is 10
+          - Maximum page_size is 25
       parameters:
       - in: path
         name: id
@@ -206,18 +235,19 @@ paths:
 
   /regions/:
     post:
+      summary: Create region
+      description: |-
+        1. User should be authenticated.
+        2. Authenticated user should be an instance of **regular** user or **expert** user.
+        3. Admin user doesn't have access to this endpoint.
+        4. Polygon object should be valid geojson object.
+            1. Link for valid geojson -> [geojson.io](https://geojson.io)
       operationId: regions_create
       tags:
       - regions
       requestBody:
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/CreateRegion'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/CreateRegion'
-          multipart/form-data:
             schema:
               $ref: '#/components/schemas/CreateRegion'
         required: true
@@ -448,6 +478,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/ListRegionUser'
           description: ''
+
   /users/:
     post:
       operationId: users_create
@@ -590,6 +621,7 @@ components:
       properties:
         text:
           type: string
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         region_id:
           type: integer
           minimum: 1
@@ -600,12 +632,13 @@ components:
     CreateRegion:
       type: object
       properties:
-        polygon:
-          type: string
         name:
           type: string
           description: Maximum length for this field is 20 character
           maxLength: 20
+        polygon:
+          description: This fields should be a geojson
+          $ref: '#/components/schemas/GeojsonPolygon'
       required:
       - name
       - polygon
@@ -952,6 +985,54 @@ components:
           type: string
         message:
           type: string
+
+    GeojsonPolygonFeatureGeometry:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "Polygon"
+        coordinates:
+          type: array
+          items:
+            type: array
+            example:  [
+                        [51.40940355971463, 35.71186958113398],
+                        [51.38012363053096, 35.69960676446529],
+                        [51.40219311800959, 35.68167819599533],
+                        [51.42898799466354, 35.69355360445098],
+                        [51.42502575827493, 35.71394249867582],
+                        [51.41510206917434, 35.71826702024353],
+                        [51.40642561112406, 35.71949939177594],
+                        [51.40940355971463, 35.71186958113398]
+          ]
+            items:
+              type: number
+
+    GeojsonPolygonFeature:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "Feature"
+        property:
+          type: object
+        geometry:
+          type: object
+          $ref: '#/components/schemas/GeojsonPolygonFeatureGeometry'
+    GeojsonPolygon:
+      type: object
+      properties:
+        type:
+          type: string
+          example: FeatureCollection
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeojsonPolygonFeature'
+
+
+
   securitySchemes:
     jwtAuth:
       type: http
