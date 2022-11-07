@@ -1,5 +1,5 @@
 from django.db.models import Q
-from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema, extend_schema_view
+from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema, extend_schema_view, inline_serializer
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import DestroyAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -42,10 +42,10 @@ class ListCreateNote(ListCreateAPIView):
 @extend_schema_view(get=extend_schema(summary="List notes by region ID",
                                       description="List created notes that are related to a specific region.",
                                       responses={200: OpenApiResponse(ListNotesByRegionSerializer),
-                                                 403: OpenApiResponse(None, "User is not authenticated.\nUser doesn't have permission to access this region."),
-                                                 404: OpenApiResponse(None, "Region or any note, not found",
-                                                                      examples=[OpenApiExample("Region not found", value={"Region": "Region with given ID is not exists."}),
-                                                                                OpenApiExample("Note not found", value={"Notes": "We didn't find any matching note."})])
+                                                 403: OpenApiResponse(description="User is not authenticated.\nUser doesn't have permission to access this region."),
+                                                 404: OpenApiResponse(description="Region or any note, not found",
+                                                                      examples=[OpenApiExample("Region not found", value=[{"Region": "Region with given ID is not exists."}]),
+                                                                                OpenApiExample("Note not found", value=[{"Notes": "We didn't find any matching note."}])])
                                                  }))
 class ListNotesByRegion(ListAPIView):
     permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
