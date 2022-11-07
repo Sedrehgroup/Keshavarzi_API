@@ -37,7 +37,7 @@ class ListCreateNote(ListCreateAPIView):
 
 
 class ListNotesByRegion(ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
     serializer_class = ListNotesByRegionSerializer
     pagination_class = NotePagination
 
