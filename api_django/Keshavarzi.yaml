@@ -1,0 +1,959 @@
+openapi: 3.0.3
+info:
+  title: Keshavarzi
+  version: 1.0.0
+  description: Created by Sedreh group
+paths:
+  /notes/:
+    get:
+      operationId: notes_list
+      tags:
+      - notes
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListUserNotes'
+          description: ''
+    post:
+      operationId: notes_create
+      tags:
+      - notes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateNote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateNote'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateNote'
+          description: ''
+  /notes/{id}/:
+    get:
+      operationId: notes_retrieve
+      description: Only creator or admin can get the note.
+      summary: Get note by id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - notes
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrieveNote'
+          description: ''
+    put:
+      operationId: notes_update
+      description: Only creator or admin can update the note.
+      summary: Update note by id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - notes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateNote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateNote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateNote'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateNote'
+          description: ''
+    patch:
+      operationId: notes_partial_update
+      description: Only creator or admin can update the note.
+      summary: Update note by id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - notes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateNote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateNote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateNote'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateNote'
+          description: ''
+    delete:
+      operationId: notes_destroy
+      description: Only creator or admin can delete the note.
+      summary: Delete note by id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - notes
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /notes/regions/{id}/:
+    get:
+      operationId: notes_regions_list
+      description: List created notes that are related to a specific region.
+      summary: List notes by region ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - notes
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListNotesByRegionList'
+          description: ''
+        '403':
+          description: |-
+            User is not authenticated.
+            User doesn't have permission to access this region.
+        '404':
+          description: |-
+            List created notes that are related to a specific region.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListByRegionErrorMessage'
+              examples:
+                Note:
+                  summary: Note not found
+                  value:
+                    Notes: We didn't find any matching note.
+                Region:
+                  summary: Region not found
+                  value:
+                    Region: Region with given ID is not exists.
+
+  /regions/:
+    post:
+      operationId: regions_create
+      tags:
+      - regions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRegion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateRegion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateRegion'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRegion'
+          description: ''
+  /regions/{id}/:
+    put:
+      operationId: regions_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - regions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRegion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateRegion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateRegion'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRegion'
+          description: ''
+    patch:
+      operationId: regions_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - regions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateRegion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateRegion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateRegion'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRegion'
+          description: ''
+  /regions/{id}/expert/:
+    put:
+      operationId: regions_expert_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - regions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRegionExpert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateRegionExpert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateRegionExpert'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRegionExpert'
+          description: ''
+    patch:
+      operationId: regions_expert_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - regions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateRegionExpert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateRegionExpert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateRegionExpert'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRegionExpert'
+          description: ''
+  /regions/{id}/user/:
+    put:
+      operationId: regions_user_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - regions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRegionUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateRegionUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateRegionUser'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRegionUser'
+          description: ''
+    patch:
+      operationId: regions_user_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - regions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateRegionUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateRegionUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateRegionUser'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRegionUser'
+          description: ''
+  /regions/expert/:
+    get:
+      operationId: regions_expert_list
+      tags:
+      - regions
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListRegionExpert'
+          description: ''
+  /regions/user/:
+    get:
+      operationId: regions_user_list
+      tags:
+      - regions
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListRegionUser'
+          description: ''
+  /users/:
+    post:
+      operationId: users_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+            examples:
+              ValidExample:
+                value:
+                  phone_number: '+989032567181'
+                  password: raw password
+                summary: ✅13 character phone number length with raw password.
+              InvalidExample1:
+                value:
+                  phone_number: 09032567181
+                  password: raw_password
+                summary: ❌Start with 0
+              InvalidExample2:
+                value:
+                  phone_number: '+979032567181'
+                  password: raw_password
+                summary: ❌Doesn't start with '+98'
+              InvalidExample3:
+                value:
+                  phone_number: '+9890325671812'
+                  password: raw_password
+                summary: ❌The length of phone number is not 13 character
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUser'
+              examples:
+                ValidExample:
+                  value:
+                    refresh: Token
+                    access: Token
+                  summary: Return access and refresh token
+          description: ''
+  /users/token/:
+    post:
+      operationId: users_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPair'
+            examples:
+              ValidExample:
+                value:
+                  phone_number: '+989032567181'
+                  password: raw password
+                summary: ✅13 character phone number length with raw password.
+              InvalidExample1:
+                value:
+                  phone_number: 09032567181
+                  password: raw_password
+                summary: ❌Start with 0
+              InvalidExample2:
+                value:
+                  phone_number: '+979032567181'
+                  password: raw_password
+                summary: ❌Doesn't start with '+98'
+              InvalidExample3:
+                value:
+                  phone_number: '+9890325671812'
+                  password: raw_password
+                summary: ❌The length of phone number is not 13 character
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTokenObtainPair'
+              examples:
+                ValidExample:
+                  value:
+                    refresh: Token
+                    access: Token
+                  summary: Return access and refresh token
+          description: ''
+  /users/token/refresh/:
+    post:
+      operationId: users_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+components:
+  schemas:
+    CreateNote:
+      type: object
+      properties:
+        text:
+          type: string
+        region_id:
+          type: integer
+          minimum: 1
+          writeOnly: true
+      required:
+      - region_id
+      - text
+    CreateRegion:
+      type: object
+      properties:
+        polygon:
+          type: string
+        name:
+          type: string
+          description: Maximum length for this field is 20 character
+          maxLength: 20
+      required:
+      - name
+      - polygon
+    CreateUser:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          description: |-
+            Phone number should start with '+98'.
+            This field should contain 13 character.
+          maxLength: 13
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+    CustomTokenObtainPair:
+      type: object
+      properties:
+        phone_number:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - phone_number
+    ListNotesByRegion:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/User'
+        user_role:
+          $ref: '#/components/schemas/UserRoleEnum'
+        text:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        updated_date:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - text
+      - updated_date
+      - user
+      - user_role
+    ListRegionExpert:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/User'
+        polygon:
+          type: string
+        name:
+          type: string
+          description: Maximum length for this field is 20 character
+          maxLength: 20
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_download:
+          type: string
+          format: date
+          nullable: true
+        is_active:
+          type: boolean
+        task_id:
+          type: string
+          nullable: true
+          maxLength: 44
+      required:
+      - date_created
+      - id
+      - name
+      - polygon
+      - user
+    ListRegionUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        expert:
+          $ref: '#/components/schemas/User'
+        polygon:
+          type: string
+        name:
+          type: string
+          description: Maximum length for this field is 20 character
+          maxLength: 20
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_download:
+          type: string
+          format: date
+          nullable: true
+        is_active:
+          type: boolean
+        task_id:
+          type: string
+          nullable: true
+          maxLength: 44
+      required:
+      - date_created
+      - expert
+      - id
+      - name
+      - polygon
+    ListUserNotes:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        region:
+          allOf:
+          - $ref: '#/components/schemas/inline_region_serializer'
+          readOnly: true
+        user_role:
+          $ref: '#/components/schemas/UserRoleEnum'
+        text:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        updated_date:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - region
+      - text
+      - updated_date
+      - user_role
+    PaginatedListNotesByRegionList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListNotesByRegion'
+    PatchedUpdateNote:
+      type: object
+      properties:
+        text:
+          type: string
+    PatchedUpdateRegion:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Maximum length for this field is 20 character
+          maxLength: 20
+        polygon:
+          type: string
+        is_active:
+          type: boolean
+    PatchedUpdateRegionExpert:
+      type: object
+      properties:
+        expert_id:
+          type: integer
+          minimum: 1
+          nullable: true
+    PatchedUpdateRegionUser:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          minimum: 1
+    RetrieveNote:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        user_role:
+          $ref: '#/components/schemas/UserRoleEnum'
+        text:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        updated_date:
+          type: string
+          format: date-time
+          readOnly: true
+        region:
+          type: integer
+      required:
+      - id
+      - region
+      - text
+      - updated_date
+      - user
+      - user_role
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    UpdateNote:
+      type: object
+      properties:
+        text:
+          type: string
+      required:
+      - text
+    UpdateRegion:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Maximum length for this field is 20 character
+          maxLength: 20
+        polygon:
+          type: string
+        is_active:
+          type: boolean
+      required:
+      - name
+      - polygon
+    UpdateRegionExpert:
+      type: object
+      properties:
+        expert_id:
+          type: integer
+          minimum: 1
+          nullable: true
+      required:
+      - expert_id
+    UpdateRegionUser:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          minimum: 1
+      required:
+      - user_id
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        phone_number:
+          type: string
+          description: |-
+            Phone number should start with '+98'.
+            This field should contain 13 character.
+          maxLength: 13
+        national_code:
+          type: string
+          description: National code should contain 10 character.
+          maxLength: 10
+        is_expert:
+          type: boolean
+      required:
+      - id
+    UserRoleEnum:
+      enum:
+      - U
+      - E
+      - A
+      type: string
+    inline_region_serializer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          maxLength: 20
+      required:
+      - id
+      - name
+    ListByRegionErrorMessage:
+      type: object
+      properties:
+        field_name:
+          type: string
+        message:
+          type: string
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
