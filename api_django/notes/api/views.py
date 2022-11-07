@@ -44,8 +44,7 @@ class ListCreateNote(ListCreateAPIView):
                                       description="List created notes that are related to a specific region.",
                                       responses={200: OpenApiResponse(ListNotesByRegionSerializer),
                                                  403: OpenApiResponse(description="User is not authenticated.\nUser doesn't have permission to access this region."),
-                                                 404: OpenApiResponse(description="{'Region': 'Region with given ID is not exists.'}"
-                                                                                  "{'Notes': 'We didn't find any matching note.'}")
+                                                 404: OpenApiResponse(description="{'Region': 'Region with given ID is not exists.'}\t{'Notes': 'We didn't find any matching note.'}")
                                                  }))
 class ListNotesByRegion(ListAPIView):
     permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
