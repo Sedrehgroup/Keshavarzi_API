@@ -93,4 +93,4 @@ class RetrieveUpdateRegionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Region
-        fields = ("name", "polygon", "is_active")
+        fields = ("name", "polygon", "dates", "is_active")
