@@ -9,6 +9,8 @@ services:
     command: sh -c "python manage.py makemigrations --noinput
       && python manage.py migrate
       && python manage.py collectstatic --no-input
+      && celery -A config worker -l INFO --detach
+      && celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler --detach
       && gunicorn --reload config.wsgi --bind 0.0.0.0:8000"
     depends_on:
       - postgis
@@ -19,12 +21,16 @@ services:
       - ./api_django:/api_django
     environment:
       - ALLOW_ORIGIN=""
+      -
+      # Database
       - DB_SCHEMA=public
       - DB_HOST=postgis
       - DB_NAME=KeshavarziDB
       - DB_USER=postgres
       - DB_PASS=ymEp331j5cI5jRI9
       - DB_PORT=5432
+
+       # Geoserver
       - GEOSERVER_USERNAME=sedreh
       - GEOSERVER_PASSWORD=ABcd1234!@
       - GEOSERVER_WORKSPACE=zamin2
@@ -32,6 +38,9 @@ services:
       - GEOSERVER_HOST=geoserver
       - GEOSERVER_PORT=8080
       - GEOSERVER_HOST_IP=localhost
+
+      # Celery
+      - C_FORCE_ROOT="true"
     networks:
       - main
 
@@ -86,68 +95,6 @@ services:
     expose:
       - 5672
 
-  celery_worker:
-    container_name: celery_worker
-    restart: on-failure
-    command: celery -A config worker -l INFO
-    build:
-      context: ./api_django
-    volumes:
-      - ./api_django:/api_django
-    depends_on:
-      - api_django
-      - postgis
-      - rabbitmq
-    environment:
-      - DB_HOST=postgis
-      - DB_NAME=KeshavarziDB
-      - DB_USER=postgres
-      - DB_PASS=ymEp331j5cI5jRI9
-      - DB_PORT=5432
-      - DB_SCHEMA=public
-      - C_FORCE_ROOT=true
-    networks:
-      - main
-
-  celery_beat:
-    container_name: celery_beat
-    restart: always
-    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    build:
-      context: ./api_django
-    #    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    volumes:
-      - ./api_django:/api_django
-    depends_on:
-      - api_django
-      - geoserver
-      - rabbitmq
-    environment:
-      - DB_HOST=postgis
-      - DB_NAME=KeshavarziDB
-      - DB_USER=postgres
-      - DB_PASS=ymEp331j5cI5jRI9
-      - DB_PORT=5432
-      - DB_SCHEMA=public
-      - C_FORCE_ROOT="true"
-    networks:
-      - main
-#  nginx:
-#    image: nginx:latest
-#    restart: on-failure
-#    container_name: nginx_f
-#    command: nginx -g 'daemon off;'
-#    depends_on:
-#      - api_django
-##      - ai_django
-#    networks:
-#      - main
-#    ports:
-#      - 80:80
-#      - 443:443
-#    volumes:
-#      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-#      - ./ssl:/ssl
 
 networks:
   main:
