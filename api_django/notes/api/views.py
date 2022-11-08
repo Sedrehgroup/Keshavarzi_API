@@ -1,6 +1,3 @@
-from django.db.models import Q
-from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema, extend_schema_view, inline_serializer
-from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -17,14 +14,6 @@ from users.permissions import IsAdmin
 class ListCreateNote(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(description="Get list of created notes of logged in user")
-    def list(self, request, *args, **kwargs):
-        return super(ListCreateNote, self).list(request, *args, **kwargs)
-
-    @extend_schema(description="Create a note object for logged in user")
-    def create(self, request, *args, **kwargs):
-        return super(ListCreateNote, self).create(request, *args, **kwargs)
-
     def get_serializer_class(self):
         if self.request.method == "GET":
             return ListUserNotesSerializer
@@ -40,12 +29,6 @@ class ListCreateNote(ListCreateAPIView):
             .select_related("region")
 
 
-@extend_schema_view(get=extend_schema(summary="List notes by region ID",
-                                      description="List created notes that are related to a specific region.",
-                                      responses={200: OpenApiResponse(ListNotesByRegionSerializer),
-                                                 403: OpenApiResponse(description="User is not authenticated.\nUser doesn't have permission to access this region."),
-                                                 404: OpenApiResponse(description="{'Region': 'Region with given ID is not exists.'}\t{'Notes': 'We didn't find any matching note.'}")
-                                                 }))
 class ListNotesByRegion(ListAPIView):
     permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
     serializer_class = ListNotesByRegionSerializer
