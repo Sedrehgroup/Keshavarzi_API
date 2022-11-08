@@ -34,11 +34,6 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 #     permission_classes=[permissions.AllowAny],
 # )
 urlpatterns = [
-    path('doc/download/', SpectacularAPIView.as_view(), name='schema'),
-    # Optional UI:
-    path('doc/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('doc/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-
     path('__debug__/', include('debug_toolbar.urls')),
 
     path('admin/', admin.site.urls),
