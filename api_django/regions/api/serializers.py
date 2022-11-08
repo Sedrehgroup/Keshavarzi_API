@@ -83,10 +83,12 @@ class CreateRegionSerializer(serializers.ModelSerializer):
 
 
 class RetrieveUpdateRegionSerializer(serializers.ModelSerializer):
-    dates = serializers.SerializerMethodField(read_only=True)
+    dates = serializers.SerializerMethodField(read_only=True, allow_null=True)
 
     def get_dates(self, obj: Region):
-        return obj.dates_as_list
+        if obj.dates is not None:
+            return obj.dates_as_list
+        return None
 
     def validate_polygon(self, value):
         return get_polygon_by_geojson(value)
