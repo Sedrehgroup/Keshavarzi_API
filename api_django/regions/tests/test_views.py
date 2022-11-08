@@ -75,9 +75,10 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
 
     def test_attach_expert_to_region_with_expert(self):
         self.login(self.expert.phone_number)
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
+                2- Retrieve Region
             """
             data = {"expert_id": self.expert.id}
             res = self.client.patch(RUR_URL(self.region.id), data)
@@ -106,9 +107,10 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
         region = RegionFactory.create(with_expert=True)
         region_expert_id = region.expert_id
         self.login(self.user.phone_number)
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
+                2- Retrieve Region
             """
             data = {"expert_id": ""}
             res = self.client.patch(RUR_URL(region.id), data)
@@ -122,9 +124,10 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
         region = RegionFactory.create(with_expert=True)
         region_expert_id = region.expert_id
         self.login(self.expert.phone_number)
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
+                2- Retrieve Region
             """
             data = {"expert_id": ""}
             res = self.client.patch(RUR_URL(self.region.id), data)
