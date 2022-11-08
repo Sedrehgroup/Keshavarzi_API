@@ -21,7 +21,7 @@ services:
       - ./api_django:/api_django
     environment:
       - ALLOW_ORIGIN=""
-      -
+
       # Database
       - DB_SCHEMA=public
       - DB_HOST=postgis
