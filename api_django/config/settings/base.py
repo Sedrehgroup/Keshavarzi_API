@@ -157,6 +157,10 @@ GEOSERVER = {
     'GEOSERVER_URL': '/opt/geoserver/data_dir',
     'PORT': os.environ.get('GEOSERVER_PORT')
 }
+ADMINS = [
+    ('Hossein Shayesteh', 'shayestehhs1@gmail.com'),
+    # ('Sedreh', 'info@sedreh.ir')
+]
 
 LOGGING = {
     'version': 1,
