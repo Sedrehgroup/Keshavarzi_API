@@ -255,14 +255,16 @@ paths:
       - jwtAuth: []
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateRegion'
           description: ''
   /regions/{id}/:
     put:
       operationId: regions_update
+      summary: Update region
+      description: |
+        User should be authenticated. \
+        Authenticated user should be an instance of **regular** user or **admin** user. \
+        Expert user doesn't have access to this endpoint. \
+        Regular user should have relation to region.
       parameters:
       - in: path
         name: id
@@ -274,12 +276,6 @@ paths:
       requestBody:
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateRegion'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UpdateRegion'
-          multipart/form-data:
             schema:
               $ref: '#/components/schemas/UpdateRegion'
         required: true
@@ -294,6 +290,12 @@ paths:
           description: ''
     patch:
       operationId: regions_partial_update
+      summary: Update region
+      description: |
+        User should be authenticated. \
+        Authenticated user should be an instance of **regular** user or **admin** user. \
+        Expert user doesn't have access to this endpoint. \
+        Regular user should have relation to region.
       parameters:
       - in: path
         name: id
@@ -305,12 +307,6 @@ paths:
       requestBody:
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedUpdateRegion'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedUpdateRegion'
-          multipart/form-data:
             schema:
               $ref: '#/components/schemas/PatchedUpdateRegion'
       security:
@@ -325,6 +321,12 @@ paths:
   /regions/{id}/expert/:
     put:
       operationId: regions_expert_update
+      summary: Change expert of the region
+      description: |
+        User should be authenticated. \
+        Authenticated user should be an instance **admin** user.
+          1. Expert user doesn't have access to this endpoint.
+          2. Regular user doesn't have access to this endpoint.
       parameters:
       - in: path
         name: id
@@ -338,24 +340,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdateRegionExpert'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UpdateRegionExpert'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UpdateRegionExpert'
         required: true
       security:
       - jwtAuth: []
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UpdateRegionExpert'
           description: ''
     patch:
       operationId: regions_expert_partial_update
+      summary: Change expert of the region
+      description: |
+        User should be authenticated. \
+        Authenticated user should be an instance **admin** user.
+          1. Expert user doesn't have access to this endpoint.
+          2. Regular user doesn't have access to this endpoint.
       parameters:
       - in: path
         name: id
@@ -387,6 +385,12 @@ paths:
   /regions/{id}/user/:
     put:
       operationId: regions_user_update
+      summary: Change user of the region
+      description: |
+        User should be authenticated. \
+        Authenticated user should be an instance **admin** user.
+          1. Expert user doesn't have access to this endpoint.
+          2. Regular user doesn't have access to this endpoint.
       parameters:
       - in: path
         name: id
@@ -418,6 +422,12 @@ paths:
           description: ''
     patch:
       operationId: regions_user_partial_update
+      summary: Change user of the region
+      description: |
+        User should be authenticated. \
+        Authenticated user should be an instance **admin** user.
+          1. Expert user doesn't have access to this endpoint.
+          2. Regular user doesn't have access to this endpoint.
       parameters:
       - in: path
         name: id
@@ -449,6 +459,13 @@ paths:
   /regions/expert/:
     get:
       operationId: regions_expert_list
+      summary: Retrieve list of the related regions
+      description: |
+        User should be authenticated. \
+        Authenticated user should be an instance of **expert** user.
+          1. Admin user doesn't have access to this endpoint.
+          2. Regular user doesn't have access to this endpoint.
+
       tags:
       - regions
       security:
@@ -465,6 +482,12 @@ paths:
   /regions/user/:
     get:
       operationId: regions_user_list
+      summary: Retrieve list of the realated regions
+      description: |
+        User should be authenticated. \
+        Authenticated user should be an instance of **regular** user.
+          1. Admin user doesn't have access to this endpoint.
+          2. Expert user doesn't have access to this endpoint.
       tags:
       - regions
       security:
@@ -616,6 +639,7 @@ paths:
           description: ''
 components:
   schemas:
+    # Notes
     CreateNote:
       type: object
       properties:
@@ -629,44 +653,48 @@ components:
       required:
       - region_id
       - text
-    CreateRegion:
+    RetrieveNote:
       type: object
       properties:
-        name:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        user_role:
+          $ref: '#/components/schemas/UserRoleEnum'
+        text:
           type: string
-          description: Maximum length for this field is 20 character
-          maxLength: 20
-        polygon:
-          description: This fields should be a geojson
-          $ref: '#/components/schemas/GeojsonPolygon'
+        created_date:
+          type: string
+          format: date-time
+        updated_date:
+          type: string
+          format: date-time
+          readOnly: true
+        region:
+          type: integer
       required:
-      - name
-      - polygon
-    CreateUser:
+      - id
+      - region
+      - text
+      - updated_date
+      - user
+      - user_role
+    UpdateNote:
       type: object
       properties:
-        phone_number:
+        text:
           type: string
-          description: |-
-            Phone number should start with '+98'.
-            This field should contain 13 character.
-          maxLength: 13
-        password:
-          type: string
-          writeOnly: true
       required:
-      - password
-    CustomTokenObtainPair:
+      - text
+    PatchedUpdateNote:
       type: object
       properties:
-        phone_number:
+        text:
           type: string
-        password:
-          type: string
-          writeOnly: true
-      required:
-      - password
-      - phone_number
     ListNotesByRegion:
       type: object
       properties:
@@ -692,74 +720,6 @@ components:
       - updated_date
       - user
       - user_role
-    ListRegionExpert:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        user:
-          $ref: '#/components/schemas/User'
-        polygon:
-          type: string
-        name:
-          type: string
-          description: Maximum length for this field is 20 character
-          maxLength: 20
-        date_created:
-          type: string
-          format: date
-          readOnly: true
-        date_last_download:
-          type: string
-          format: date
-          nullable: true
-        is_active:
-          type: boolean
-        task_id:
-          type: string
-          nullable: true
-          maxLength: 44
-      required:
-      - date_created
-      - id
-      - name
-      - polygon
-      - user
-    ListRegionUser:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        expert:
-          $ref: '#/components/schemas/User'
-        polygon:
-          type: string
-        name:
-          type: string
-          description: Maximum length for this field is 20 character
-          maxLength: 20
-        date_created:
-          type: string
-          format: date
-          readOnly: true
-        date_last_download:
-          type: string
-          format: date
-          nullable: true
-        is_active:
-          type: boolean
-        task_id:
-          type: string
-          nullable: true
-          maxLength: 44
-      required:
-      - date_created
-      - expert
-      - id
-      - name
-      - polygon
     ListUserNotes:
       type: object
       properties:
@@ -807,11 +767,34 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ListNotesByRegion'
-    PatchedUpdateNote:
+
+    # Regions
+    UpdateRegion:
       type: object
       properties:
-        text:
+        name:
           type: string
+          description: Maximum length for this field is 20 character
+          maxLength: 20
+        is_active:
+          type: boolean
+        polygon:
+          $ref: '#/components/schemas/GeojsonPolygon'
+      required:
+      - name
+      - polygon
+    CreateRegion:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Maximum length for this field is 20 character
+          maxLength: 20
+        polygon:
+          $ref: '#/components/schemas/GeojsonPolygon'
+      required:
+      - name
+      - polygon
     PatchedUpdateRegion:
       type: object
       properties:
@@ -820,7 +803,7 @@ components:
           description: Maximum length for this field is 20 character
           maxLength: 20
         polygon:
-          type: string
+          $ref: '#/components/schemas/GeojsonPolygon'
         is_active:
           type: boolean
     PatchedUpdateRegionExpert:
@@ -836,67 +819,71 @@ components:
         user_id:
           type: integer
           minimum: 1
-    RetrieveNote:
+    ListByRegionErrorMessage:
+      type: object
+      properties:
+        field_name:
+          type: string
+        message:
+          type: string
+    ListRegionExpert:
       type: object
       properties:
         id:
           type: integer
           readOnly: true
-        user:
-          allOf:
-          - $ref: '#/components/schemas/User'
-          readOnly: true
-        user_role:
-          $ref: '#/components/schemas/UserRoleEnum'
-        text:
-          type: string
-        created_date:
-          type: string
-          format: date-time
-        updated_date:
-          type: string
-          format: date-time
-          readOnly: true
-        region:
-          type: integer
-      required:
-      - id
-      - region
-      - text
-      - updated_date
-      - user
-      - user_role
-    TokenRefresh:
-      type: object
-      properties:
-        access:
-          type: string
-          readOnly: true
-        refresh:
-          type: string
-          writeOnly: true
-      required:
-      - access
-      - refresh
-    UpdateNote:
-      type: object
-      properties:
-        text:
-          type: string
-      required:
-      - text
-    UpdateRegion:
-      type: object
-      properties:
         name:
           type: string
           description: Maximum length for this field is 20 character
           maxLength: 20
-        polygon:
-          type: string
         is_active:
           type: boolean
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_download:
+          type: string
+          format: date
+          nullable: true
+        user:
+          $ref: '#/components/schemas/User'
+        polygon:
+          $ref: '#/components/schemas/GeojsonPolygon'
       required:
+      - date_created
+      - id
+      - name
+      - polygon
+      - user
+    ListRegionUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Maximum length for this field is 20 character
+          maxLength: 20
+        is_active:
+          type: boolean
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_download:
+          type: string
+          format: date
+          nullable: true
+        expert:
+          $ref: '#/components/schemas/User'
+        polygon:
+          $ref: '#/components/schemas/GeojsonPolygon'
+      required:
+      - date_created
+      - expert
+      - id
       - name
       - polygon
     UpdateRegionExpert:
@@ -916,57 +903,6 @@ components:
           minimum: 1
       required:
       - user_id
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        is_superuser:
-          type: boolean
-          title: Superuser status
-          description: Designates that this user has all permissions without explicitly
-            assigning them.
-        first_name:
-          type: string
-          maxLength: 150
-        last_name:
-          type: string
-          maxLength: 150
-        is_staff:
-          type: boolean
-          title: Staff status
-          description: Designates whether the user can log into this admin site.
-        is_active:
-          type: boolean
-          title: Active
-          description: Designates whether this user should be treated as active. Unselect
-            this instead of deleting accounts.
-        email:
-          type: string
-          format: email
-          nullable: true
-          maxLength: 254
-        phone_number:
-          type: string
-          description: |-
-            Phone number should start with '+98'.
-            This field should contain 13 character.
-          maxLength: 13
-        national_code:
-          type: string
-          description: National code should contain 10 character.
-          maxLength: 10
-        is_expert:
-          type: boolean
-      required:
-      - id
-    UserRoleEnum:
-      enum:
-      - U
-      - E
-      - A
-      type: string
     inline_region_serializer:
       type: object
       properties:
@@ -978,14 +914,85 @@ components:
       required:
       - id
       - name
-    ListByRegionErrorMessage:
+
+    # Users
+    User:
       type: object
       properties:
-        field_name:
+        id:
+          type: integer
+          readOnly: true
+        is_expert:
+          type: boolean
+        is_admin:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        first_name:
           type: string
-        message:
+          maxLength: 150
+        last_name:
           type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        phone_number:
+          type: string
+          description: |-
+            Phone number should start with '+98'.
+            This field should contain 13 character.
+          maxLength: 13
+      required:
+      - id
+    CreateUser:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          description: |-
+            Phone number should start with '+98'.
+            This field should contain 13 character.
+          maxLength: 13
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+    UserRoleEnum:
+      enum:
+      - U
+      - E
+      - A
+      type: string
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    CustomTokenObtainPair:
+      type: object
+      properties:
+        phone_number:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - phone_number
 
+    # Polygon
     GeojsonPolygonFeatureGeometry:
       type: object
       properties:
@@ -1008,7 +1015,6 @@ components:
           ]
             items:
               type: number
-
     GeojsonPolygonFeature:
       type: object
       properties:
@@ -1018,7 +1024,6 @@ components:
         property:
           type: object
         geometry:
-          type: object
           $ref: '#/components/schemas/GeojsonPolygonFeatureGeometry'
     GeojsonPolygon:
       type: object
@@ -1030,8 +1035,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/GeojsonPolygonFeature'
-
-
 
   securitySchemes:
     jwtAuth:
