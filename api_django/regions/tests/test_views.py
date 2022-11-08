@@ -53,7 +53,7 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
                 5- Create Note
             """
             data = {"expert_id": self.expert.id}
-            res = self.client.put(RUR_URL(self.region.id), data)
+            res = self.client.patch(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
             self.assertEqual(res.data, {"expert_id": self.expert.id})
 
@@ -67,20 +67,20 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
                 1- Retrieve User
             """
             data = {"expert_id": self.expert.id}
-            res = self.client.put(RUR_URL(self.region.id), data)
+            res = self.client.patch(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
         self.region.refresh_from_db()
         self.assertEqual(self.region.expert_id, None)
 
-    def test_attack_expert_to_region_with_expert(self):
+    def test_attach_expert_to_region_with_expert(self):
         self.login(self.expert.phone_number)
         with self.assertNumQueries(1):
             """
                 1- Retrieve User
             """
             data = {"expert_id": self.expert.id}
-            res = self.client.put(RUR_URL(self.region.id), data)
+            res = self.client.patch(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
         self.region.refresh_from_db()
@@ -95,7 +95,7 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
                 3- Update Region
             """
             data = {"expert_id": ""}
-            res = self.client.put(RUR_URL(self.region.id), data)
+            res = self.client.patch(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
             self.assertEqual(res.data, {"expert_id": None})
 
@@ -111,7 +111,7 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
                 1- Retrieve User
             """
             data = {"expert_id": ""}
-            res = self.client.put(RUR_URL(region.id), data)
+            res = self.client.patch(RUR_URL(region.id), data)
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
         self.region.refresh_from_db()
@@ -127,7 +127,7 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
                 1- Retrieve User
             """
             data = {"expert_id": ""}
-            res = self.client.put(RUR_URL(self.region.id), data)
+            res = self.client.patch(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
         self.region.refresh_from_db()
@@ -142,7 +142,7 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
                 3- Check expert
             """
             data = {"expert_id": self.user.id}
-            res = self.client.put(RUR_URL(self.region.id), data)
+            res = self.client.patch(RUR_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST, res.data)
 
         self.region.refresh_from_db()
