@@ -257,6 +257,30 @@ paths:
         '201':
           description: ''
   /regions/{id}/:
+    get:
+      operationId: regions_update
+      summary: Retrive region
+      description: |
+        User should be authenticated. \
+        Every authenticated role user have access to this endpoint. \
+        Regular or Expert user should have relation to the region.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - regions
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrieveRegion'
+          description: ''
     put:
       operationId: regions_update
       summary: Update region
@@ -790,6 +814,25 @@ components:
           type: string
           description: Maximum length for this field is 20 character
           maxLength: 20
+        polygon:
+          $ref: '#/components/schemas/GeojsonPolygon'
+      required:
+      - name
+      - polygon
+    RetrieveRegion:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Maximum length for this field is 20 character
+          maxLength: 20
+        is_active:
+         type: boolean
+        dates:
+          type: array
+          example: ['2022-01-01','2022-01-07','2022-01-13']
+          items:
+            type: string
         polygon:
           $ref: '#/components/schemas/GeojsonPolygon'
       required:
