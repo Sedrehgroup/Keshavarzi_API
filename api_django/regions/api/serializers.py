@@ -96,6 +96,8 @@ class UpdateRegionUserSerializer(serializers.ModelSerializer):
 
 
 class CreateRegionSerializer(serializers.ModelSerializer):
+    polygon = PolygonSerializer()
+
     def validate_polygon(self, value):
         return get_polygon_by_geojson(value)
 
