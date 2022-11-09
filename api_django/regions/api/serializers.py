@@ -93,6 +93,11 @@ class RetrieveUpdateRegionSerializer(serializers.ModelSerializer):
     def validate_polygon(self, value):
         return get_polygon_by_geojson(value)
 
+    def to_representation(self, instance):
+        ret = super(RetrieveUpdateRegionSerializer, self).to_representation(instance)
+        ret["polygon"] = get_geojson_by_polygon(instance.geom_class)
+        return ret
+
     class Meta:
         model = Region
         fields = ("name", "polygon", "dates", "is_active")
