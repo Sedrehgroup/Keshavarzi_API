@@ -95,7 +95,7 @@ class RetrieveUpdateRegionSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super(RetrieveUpdateRegionSerializer, self).to_representation(instance)
-        ret["polygon"] = get_geojson_by_polygon(instance.geom_class)
+        ret["polygon"] = get_geojson_by_polygon(instance.polygon.geom_class)
         return ret
 
     class Meta:
