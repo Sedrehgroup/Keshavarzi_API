@@ -106,11 +106,12 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         NoteFactory.create_batch(region=region, user=self.user, size=20)
         self.login(self.user.phone_number)
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             """
                 1- Retrieve User
-                2- Count the number of notes(Pagination)
-                3- Retrieve Note
+                2- Retrieve Region
+                3- Count the number of notes(Pagination)
+                4- Retrieve Note
             """
             res = self.client.get(LNBR_URL(region.id))
 
