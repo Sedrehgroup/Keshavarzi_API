@@ -7,6 +7,28 @@ from users.api.serializers import UserSerializer
 from users.models import User
 
 
+class GeometrySerializer(serializers.Serializer):
+    type = serializers.CharField()
+    coordinates = serializers.ListField(child=serializers.ListField(child=serializers.IntegerField()))
+
+
+class FeatureSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    property = serializers.DictField(allow_null=True)
+    geometry = GeometrySerializer()
+
+
+class PolygonSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    features = FeatureSerializer(many=True)
+
+    def validate(self, attrs):
+        return get_polygon_by_geojson(attrs)
+
+    def to_representation(self, instance):
+        return get_geojson_by_polygon(instance)
+
+
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
@@ -84,19 +106,20 @@ class CreateRegionSerializer(serializers.ModelSerializer):
 
 class RetrieveUpdateRegionSerializer(serializers.ModelSerializer):
     dates = serializers.SerializerMethodField(read_only=True, allow_null=True)
+    polygon = PolygonSerializer()
 
     def get_dates(self, obj: Region):
         if obj.dates is not None:
             return obj.dates_as_list
         return None
 
-    def validate_polygon(self, value):
-        return get_polygon_by_geojson(value)
-
-    def to_representation(self, instance):
-        ret = super(RetrieveUpdateRegionSerializer, self).to_representation(instance)
-        ret["polygon"] = get_geojson_by_polygon(instance.polygon)
-        return ret
+    # def validate_polygon(self, value):
+    #     return get_polygon_by_geojson(value)
+    #
+    # def to_representation(self, instance):
+    #     ret = super(RetrieveUpdateRegionSerializer, self).to_representation(instance)
+    #     ret["polygon"] = get_geojson_by_polygon(instance.polygon)
+    #     return ret
 
     class Meta:
         model = Region
