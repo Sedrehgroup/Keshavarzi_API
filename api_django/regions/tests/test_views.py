@@ -1,10 +1,13 @@
 import os
+from time import sleep
 
+from celery.contrib.testing.worker import start_worker
 from celery.result import AsyncResult
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APISimpleTestCase
 
+from config import celery_app
 from config.settings import BASE_DIR
 from regions.models import Region
 from regions.tests.factories import RegionFactory, fake_polygon_geojson
@@ -39,6 +42,50 @@ class BaseRegionViewsTestCase(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK, f"{res.data}\ncredential => {data}")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + res.data['access'])
         return self
+
+
+class BaseRegionWithConfiguredDatabase(APISimpleTestCase):
+    databases = '__all__'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        # Start up celery worker
+        cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
+        cls.celery_worker.__enter__()
+
+        cls.password = "VeryStrongPassword123#@!"
+        cls.user = UserFactory.create(password=cls.password)
+        cls.admin = AdminFactory.create(password=cls.password)
+        cls.expert = ExpertFactory.create(password=cls.password)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        # Close worker
+        cls.celery_worker.__exit__(None, None, None)
+
+    def login(self, phone_number, password=None):
+        password = password if password is not None else self.password
+        data = {"phone_number": phone_number, "password": password}
+        res = self.client.post(LOGIN_URL, data)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK, f"{res.data}\ncredential => {data}")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + res.data['access'])
+        return self
+
+    def wait_for_region_tasks(self, task_id):
+        res = AsyncResult(task_id)
+        while res.state == "PENDING":
+            sleep(1)
+        self.assertNotEqual(res.state, "FAILURE", res.result)
+        self.assertEqual(res.state, "SUCCESS")
+
+    def create_region_and_wait(self, **kwargs):
+        region = RegionFactory.create(**kwargs)
+        self.wait_for_region_tasks(region.task_id)
+        return region
 
 
 class UpdateRegionExpert(BaseRegionViewsTestCase):
@@ -315,6 +362,21 @@ class CreateRegion(BaseRegionViewsTestCase):
         self.assertEqual(qs.count(), 0)
 
 
+class CreateRegionWithTestAfterCeleryTasks(BaseRegionWithConfiguredDatabase):
+    def test_create_region_is_download_images(self):
+        self.login(self.user.phone_number)
+
+        data = {"name": "test create region is download images", "polygon": fake_polygon_geojson}
+        res = self.client.post(CREATE_REGION_URL, data)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED, res.data)
+        region = Region.objects.get(name=data["name"])
+        self.wait_for_region_tasks(region.task_id)
+        self.assertIsNotNone(region.dates)
+        for path in region.images_path:
+            self.assertTrue(os.path.isfile(path))
+
+
 class UpdateRegion(BaseRegionViewsTestCase):
     def test_update_region_with_user(self):
         region = RegionFactory.create(user=self.user)
@@ -338,16 +400,10 @@ class UpdateRegion(BaseRegionViewsTestCase):
         region = RegionFactory.create()
         self.login(self.admin.phone_number)
 
-        with self.assertNumQueries(3):
-            """
-                1- Retrieve User
-                2- Check existence of Region
-                3- Update region
-            """
-            data = {"name": "Update test name"}
-            res = self.client.patch(RUR_URL(region.id), data)
+        data = {"name": "Update test name"}
+        res = self.client.patch(RUR_URL(region.id), data)
 
-            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
         region.refresh_from_db()
         self.assertEqual(region.name, "Update test name")
@@ -420,7 +476,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
 
 class RetrieveRegion(BaseRegionViewsTestCase):
     def test_retrieve_region_by_user(self):
-        region = RegionFactory.create(expert=self.expert)
+        region = RegionFactory.create(user=self.user)
         self.login(self.user.phone_number)
 
         with self.assertNumQueries(2):
@@ -456,7 +512,7 @@ class RetrieveRegion(BaseRegionViewsTestCase):
 
     def test_retrieve_region_by_not_related_user(self):
         region = RegionFactory.create()
-        self.assertEqual(region.user, self.user)
+        self.assertNotEqual(region.user, self.user)
         self.login(self.user.phone_number)
 
         with self.assertNumQueries(2):
@@ -469,7 +525,7 @@ class RetrieveRegion(BaseRegionViewsTestCase):
 
     def test_retrieve_region_by_not_related_expert(self):
         region = RegionFactory.create(with_expert=True)
-        self.assertEqual(region.expert, self.expert)
+        self.assertNotEqual(region.expert, self.expert)
         self.login(self.expert.phone_number)
 
         with self.assertNumQueries(2):
@@ -519,3 +575,16 @@ class RetrieveRegion(BaseRegionViewsTestCase):
             """
             res = self.client.get(RUR_URL(invalid_region_id))
             self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
+
+
+class RetrieveRegionWithTestAfterCeleryTasks(BaseRegionWithConfiguredDatabase):
+    def test_that_dates_field_is_not_empty(self):
+        region = self.create_region_and_wait(user=self.user)
+        self.login(self.user.phone_number)
+
+        res = self.client.get(RUR_URL(region.id))
+        self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.assertContains("dates", res.data)
+        self.assertIsNotNone(res.data["dates"])
+
+
