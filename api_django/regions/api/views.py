@@ -56,6 +56,6 @@ class RetrieveUpdateRegion(RetrieveUpdateAPIView):
     def get_permissions(self):
         permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
         if self.request.method == "GET":
-            permission_classes = [IsAuthenticated, IsRegionUser | IsAdmin]
+            permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
         self.permission_classes = permission_classes
         return super(RetrieveUpdateRegion, self).get_permissions()
