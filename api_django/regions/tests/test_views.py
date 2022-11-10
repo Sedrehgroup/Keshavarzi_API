@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase, APISimpleTestCase
 from config import celery_app
 from config.settings import BASE_DIR
 from regions.models import Region
-from regions.tests.factories import RegionFactory, fake_polygon_geojson
+from regions.tests.factories import RegionFactory, fake_polygon_geojson, fake_polygon_geojson_2
 from regions.utils import get_polygon_by_geojson
 from users.tests.factories import AdminFactory, ExpertFactory, UserFactory
 
@@ -473,6 +473,87 @@ class UpdateRegion(BaseRegionViewsTestCase):
         self.region.refresh_from_db()
         self.assertNotEqual(self.region.dates, data["dates"])
 
+    def test_update_not_exists_region(self):
+        invalid_region_id = Region.objects.order_by("id").only("id").last().id + 1
+        self.login(self.user.phone_number)
+        with self.assertNumQueries(2):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+            """
+            data = {"name": "This test should fail"}
+            res = self.client.patch(RUR_URL(invalid_region_id), data)
+
+            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
+
+    def test_update_name(self):
+        region = RegionFactory.create(user=self.user)
+        self.login(self.user.phone_number)
+
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+                3- Update Region
+            """
+            data = {"name": "test update name"}
+            res = self.client.patch(RUR_URL(region.id), data)
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.assertContains("name", res.data)
+        self.assertEqual(res.data["name"], data["name"])
+        self.assertContains("dates", res.data)
+        self.assertIsNotNone(res.data["dates"])
+
+    def test_update_polygon(self):
+        region = RegionFactory.create(user=self.user)
+        self.login(self.user.phone_number)
+
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+                3- Update Region
+            """
+            data = {"polygon": fake_polygon_geojson_2}
+            res = self.client.patch(RUR_URL(region.id), data)
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.assertContains("polygon", res.data)
+        self.assertEqual(res.data["polygon"], fake_polygon_geojson_2)
+        self.assertNotEqual(res.data["polygon"], fake_polygon_geojson)
+        self.assertContains("dates", res.data)
+        self.assertIsNone(res.data["dates"])
+
+    def test_update_images_after_update_polygon(self):
+        region = RegionFactory.create(user=self.user)
+        old_res = AsyncResult(region.task_id)
+        old_date_last_download = region.date_last_download
+        old_task_id = region.task_id
+        while old_res.state == "PENDING":
+            sleep(1)
+        self.assertNotEqual(old_res.state, "FAILURE", old_res.result)
+        self.assertEqual(old_res.state, "SUCCESS")
+        self.login(self.user.phone_number)
+
+        data = {"polygon": fake_polygon_geojson_2}
+        res = self.client.patch(RUR_URL(region.id), data)
+        self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        region.refresh_from_db()
+
+        self.assertNotEqual(region.task_id, old_task_id)
+        self.assertNotEqual(region.date_last_download, old_date_last_download)
+
+        res = AsyncResult(region.task_id)
+        while res.state == "PENDING":
+            sleep(1)
+        self.assertNotEqual(res.state, "FAILURE", res.result)
+        self.assertEqual(res.state, "SUCCESS")
+        region.refresh_from_db()
+
+        self.assertIsNotNone(region.dates)
+        for path in region.images_path:
+            self.assertTrue(os.path.isfile(path))
+
 
 class RetrieveRegion(BaseRegionViewsTestCase):
     def test_retrieve_region_by_user(self):
@@ -586,5 +667,3 @@ class RetrieveRegionWithTestAfterCeleryTasks(BaseRegionWithConfiguredDatabase):
         self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertContains("dates", res.data)
         self.assertIsNotNone(res.data["dates"])
-
-
