@@ -78,7 +78,7 @@ class ListNoteTestCase(BaseNotesTestCase):
 class ListNoteByRegionTestCase(BaseNotesTestCase):
     def test_result_schema(self):
         region = RegionFactory.create(user=self.user)
-        NoteFactory.create_batch(user=region.user, region=region, size=12)
+        NoteFactory.create_batch(user=self.user, region=region, size=12)
 
         self.login(self.user.phone_number)
         res = self.client.get(LNBR_URL(region.id))
@@ -99,7 +99,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         self.assertIn("updated_date", res.data["results"][0])
 
         self.assertTrue(res.data["results"][0]["user_role"] == "U", res.data["results"][0]["user_role"])
-        self.assertIsNone(res.data["results"][0]["updated_date"])
+        self.assertIsNotNone(res.data["results"][0]["updated_date"])
 
     def test_user_can_get_notes_list(self):
         region = RegionFactory.create(user=self.user)
