@@ -68,7 +68,6 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
             data = {"expert_id": self.expert.id}
             res = self.client.patch(UR_EXPERT_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
-            self.assertEqual(res.data, {"expert_id": self.expert.id})
 
         self.region.refresh_from_db()
         self.assertIsNotNone(self.region.expert_id)
