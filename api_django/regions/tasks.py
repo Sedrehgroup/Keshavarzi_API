@@ -9,6 +9,7 @@ import os
 from celery import shared_task
 from celery.result import AsyncResult
 from django.conf import settings
+from django.utils.timezone import now
 from geoserver.catalog import ConflictingDataError
 
 from regions.models import Region
@@ -51,7 +52,8 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
             logger.error(e)
 
     region.dates = dates
-    region.save(update_fields=["dates"])
+    region.date_last_download = now()
+    region.save(update_fields=["dates", "date_last_download"])
 
 
 @shared_task()
