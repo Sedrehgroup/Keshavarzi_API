@@ -112,7 +112,7 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
                 1- Retrieve User
             """
             data = {"expert_id": self.expert.id}
-            res = self.client.patch(RUR_URL(self.region.id), data)
+            res = self.client.patch(UR_EXPERT_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
         self.region.refresh_from_db()
