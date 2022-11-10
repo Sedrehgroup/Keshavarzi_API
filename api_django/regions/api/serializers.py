@@ -25,9 +25,9 @@ class PolygonSerializer(serializers.Serializer):
     type = serializers.CharField()
     features = FeatureSerializer(many=True)
 
-    def validate(self, attrs):
-        print(attrs)
-        return get_polygon_by_geojson(attrs)
+    # def validate(self, attrs):
+    #     print(attrs)
+    #     return get_polygon_by_geojson(attrs)
 
     def to_representation(self, instance):
         return get_geojson_by_polygon(instance)
@@ -119,8 +119,8 @@ class RetrieveUpdateRegionSerializer(serializers.ModelSerializer):
             return obj.dates_as_list
         return None
 
-    # def validate_polygon(self, value):
-    #     return get_polygon_by_geojson(value)
+    def validate_polygon(self, value):
+        return get_polygon_by_geojson(value)
     #
     # def to_representation(self, instance):
     #     ret = super(RetrieveUpdateRegionSerializer, self).to_representation(instance)

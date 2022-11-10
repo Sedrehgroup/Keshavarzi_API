@@ -1,7 +1,7 @@
 import os
 import json
 from time import sleep
-
+from django.contrib.gis.geos import mutable_list
 from celery.contrib.testing.worker import start_worker
 from celery.result import AsyncResult
 from rest_framework import status
