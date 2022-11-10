@@ -8,6 +8,7 @@ from users.tests.factories import UserFactory
 class NoteFactory(factory.django.DjangoModelFactory):
     region = factory.SubFactory(RegionFactory)
     user = factory.SubFactory(UserFactory)
+    user_role = "U"
     text = factory.Faker("text", max_nb_chars=200)
 
     class Meta:
