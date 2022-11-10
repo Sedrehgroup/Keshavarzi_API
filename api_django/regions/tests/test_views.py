@@ -435,26 +435,6 @@ class UpdateRegion(BaseRegionViewsTestCase):
         self.assertIn("name", res.data)
         self.assertEqual(res.data["name"], data["name"])
 
-    def test_update_polygon(self):
-        region = RegionFactory.create(user=self.user)
-        self.login(self.user.phone_number)
-
-        with self.assertNumQueries(3):
-            """
-                1- Retrieve User
-                2- Retrieve Region
-                3- Update Region
-            """
-            data = {"polygon": fake_polygon_geojson_2}
-            res = self.client.patch(RUR_URL(region.id), data, format="json")
-
-            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
-        self.assertIn("polygon", res.data)
-        self.assertEqual(res.data["polygon"], fake_polygon_geojson_2)
-        self.assertNotEqual(res.data["polygon"], fake_polygon_geojson)
-        self.assertIn("dates", res.data)
-        self.assertIsNone(res.data["dates"])
-
 
 class RetrieveRegion(BaseRegionViewsTestCase):
     def test_retrieve_region_by_user(self):
