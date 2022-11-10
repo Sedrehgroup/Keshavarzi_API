@@ -260,8 +260,8 @@ class CreateRegion(BaseRegionViewsTestCase):
                 2- Create region
                 3- Update task_id field of Region
             """
-            data = {"name": "test_name", "polygon": json.dumps(fake_polygon_geojson)}
-            res = self.client.post(CREATE_REGION_URL, data, content_type="application/json")
+            data = {"name": "test_name", "polygon": fake_polygon_geojson}
+            res = self.client.post(CREATE_REGION_URL, data, format='json')
             self.assertEqual(res.status_code, status.HTTP_201_CREATED, res.data)
 
         qs = Region.objects.filter(user_id=self.user.id)
