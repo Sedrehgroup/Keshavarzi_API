@@ -329,7 +329,7 @@ class CreateRegionWithTestAfterCeleryTasks(APISimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(CreateRegionWithTestAfterCeleryTasks).setUpClass()
+        super(CreateRegionWithTestAfterCeleryTasks, cls).setUpClass()
 
         # Start up celery worker
         cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
@@ -532,7 +532,7 @@ class UpdateRegionWithTestAfterCeleryTasks(APISimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(UpdateRegionWithTestAfterCeleryTasks).setUpClass()
+        super(UpdateRegionWithTestAfterCeleryTasks, cls).setUpClass()
 
         # Start up celery worker
         cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
@@ -697,7 +697,7 @@ class RetrieveRegionWithTestAfterCeleryTasks(APISimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(RetrieveRegionWithTestAfterCeleryTasks).setUpClass()
+        super(RetrieveRegionWithTestAfterCeleryTasks, cls).setUpClass()
 
         # Start up celery worker
         cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
