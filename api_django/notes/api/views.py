@@ -35,10 +35,10 @@ class ListNotesByRegion(ListAPIView):
     pagination_class = NotePagination
 
     def get_object(self):
-        region = Region.objects\
-            .filter(id=self.kwargs['pk'])\
-            .only("id")\
-            .order_by()\
+        region = Region.objects \
+            .filter(id=self.kwargs['pk']) \
+            .only("id", "user_id", "expert_id") \
+            .order_by() \
             .first()
         if not region:
             raise NotFound({"Region": "Region with given ID is not exists."})
