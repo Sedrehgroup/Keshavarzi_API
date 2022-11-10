@@ -433,8 +433,6 @@ class UpdateRegion(BaseRegionViewsTestCase):
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertIn("name", res.data)
         self.assertEqual(res.data["name"], data["name"])
-        self.assertIn("dates", res.data)
-        self.assertIsNotNone(res.data["dates"])
 
     def test_update_polygon(self):
         region = RegionFactory.create(user=self.user)
