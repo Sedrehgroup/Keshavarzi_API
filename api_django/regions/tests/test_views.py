@@ -468,7 +468,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 2- Retrieve Region
             """
             data = {"dates": "invalid_dates"}
-            res = self.client.patch(RUR_URL(self.region))
+            res = self.client.patch(RUR_URL(self.region.id))
             self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
         self.region.refresh_from_db()
         self.assertNotEqual(self.region.dates, data["dates"])
