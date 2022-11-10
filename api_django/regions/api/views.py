@@ -59,5 +59,5 @@ class RetrieveUpdateRegion(RetrieveUpdateAPIView):
             self.permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
         else:
             # Update
-            self.permission_classes = [IsAuthenticated, ~IsExpertUser, IsRegionUser | IsAdmin]
+            self.permission_classes = [IsAuthenticated, IsRegularUser | IsAdmin, IsRegionUser | IsAdmin]
         return super(RetrieveUpdateRegion, self).get_permissions()
