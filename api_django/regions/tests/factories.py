@@ -1,5 +1,4 @@
 import factory.fuzzy
-import json
 
 from regions.models import Region
 from regions.utils import get_polygon_by_geojson
@@ -46,7 +45,7 @@ from users.tests.factories import ExpertFactory, UserFactory
 #         polygons = [FuzzyPolygon().fuzz() for __ in range(self.length)]
 #         return MultiPolygon(*polygons)
 
-fake_polygon_geojson = json.dumps({
+fake_polygon_geojson = {
     "type": "FeatureCollection",
     "features": [
         {
@@ -93,42 +92,42 @@ fake_polygon_geojson = json.dumps({
             }
         }
     ]
-})
+}
 fake_polygon_geojson_2 = {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-                "coordinates": [
-                    [
-                        [
-                            51.41582963231906,
-                            35.81320244123718
-                        ],
-                        [
-                            51.41582963231906,
-                            35.77913173065596
-                        ],
-                        [
-                            51.48472569361576,
-                            35.786258677906346
-                        ],
-                        [
-                            51.479383271521186,
-                            35.81320244123718
-                        ],
-                        [
-                            51.41582963231906,
-                            35.81320244123718
-                        ]
-                    ]
-                ],
-                "type": "Polygon"
-            }
-        }
-    ]
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              51.41582963231906,
+              35.81320244123718
+            ],
+            [
+              51.41582963231906,
+              35.77913173065596
+            ],
+            [
+              51.48472569361576,
+              35.786258677906346
+            ],
+            [
+              51.479383271521186,
+              35.81320244123718
+            ],
+            [
+              51.41582963231906,
+              35.81320244123718
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      }
+    }
+  ]
 }
 fake_polygon = get_polygon_by_geojson(fake_polygon_geojson)
 
