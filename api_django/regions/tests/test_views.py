@@ -498,6 +498,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
             """
             data = {"name": "test update name"}
             res = self.client.patch(RUR_URL(region.id), data)
+            print(res)
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertContains("name", res.data)
         self.assertEqual(res.data["name"], data["name"])
