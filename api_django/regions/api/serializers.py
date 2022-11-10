@@ -14,7 +14,7 @@ class GeometrySerializer(serializers.Serializer):
 
 class FeatureSerializer(serializers.Serializer):
     type = serializers.CharField()
-    property = serializers.DictField(allow_null=True, allow_empty=True)
+    property = serializers.DictField(allow_null=True, allow_empty=True, required=False)
     geometry = GeometrySerializer()
 
 
