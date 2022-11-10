@@ -25,8 +25,9 @@ class PolygonSerializer(serializers.Serializer):
     type = serializers.CharField()
     features = FeatureSerializer(many=True)
 
-    def to_internal_value(self, data):
-        return get_polygon_by_geojson(data)
+    def validate(self, attrs):
+        print(attrs)
+        return get_polygon_by_geojson(attrs)
 
     def to_representation(self, instance):
         return get_geojson_by_polygon(instance)
