@@ -7,7 +7,6 @@ from rest_framework.exceptions import ValidationError
 def get_polygon_by_geojson(geojson) -> Polygon:
     features = geojson["features"][0]
     coordinates = features["geometry"]["coordinates"][0]
-    print(coordinates)
     if len(coordinates) == 0:
         raise ValidationError({"Invalid coordinates": "Coordinates is empty"})
     return Polygon(coordinates)
