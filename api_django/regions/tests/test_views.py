@@ -448,9 +448,10 @@ class UpdateRegion(BaseRegionViewsTestCase):
         RegionFactory.create(expert=self.expert)
         self.login(self.expert.phone_number)
 
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
+                2- Retrieve Region
             """
             data = {"name": "Update test name"}
             res = self.client.patch(RUR_URL(region.id), data)
