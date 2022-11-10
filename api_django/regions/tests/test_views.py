@@ -419,7 +419,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
             data = {"name": "Update test name"}
             res = self.client.patch(RUR_URL(region.id), data)
 
-            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
         region.refresh_from_db()
         self.assertEqual(region.name, region_name)
