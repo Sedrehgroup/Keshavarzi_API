@@ -123,7 +123,8 @@ class RetrieveUpdateRegionSerializer(serializers.ModelSerializer):
         return None
 
     def update(self, instance, validated_data):
-        if instance.polygon != validated_data["polygon"]:
+        old_polygon = validated_data.get("polygon")
+        if old_polygon and instance.polygon != old_polygon:
             # Polygon of region is updated
             for path in instance.images_path:
                 os.remove(path)
