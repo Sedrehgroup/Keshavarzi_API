@@ -54,7 +54,7 @@ class RetrieveUpdateRegion(RetrieveUpdateAPIView):
     serializer_class = RetrieveUpdateRegionSerializer
 
     def get_permissions(self):
-        permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
+        permission_classes = [IsAuthenticated, IsRegionUser | IsAdmin]
         if self.request.method == "GET":
             permission_classes = [IsAuthenticated, IsRegionUser | IsRegionExpert | IsAdmin]
         self.permission_classes = permission_classes
