@@ -461,12 +461,14 @@ class UpdateRegion(BaseRegionViewsTestCase):
     def test_dates_field_is_not_updatable(self):
         region = RegionFactory.create(user=self.user)
         self.login(self.user.phone_number)
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
+            # ToDo: Remove third query
             """
                 1- Retrieve User
                 2- Retrieve Region
+                3- Update Region
             """
-            data = {"dates": "invalid_dates"}
+            data = {"dates": "2022-01-02\n2022-01-08\n"}
             res = self.client.patch(RUR_URL(region.id))
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.region.refresh_from_db()
