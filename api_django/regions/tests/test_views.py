@@ -430,9 +430,10 @@ class UpdateRegion(BaseRegionViewsTestCase):
             """
             data = {"name": "test update name"}
             res = self.client.patch(RUR_URL(region.id), data)
-        self.assertContains("name", res.data)
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.assertIn("name", res.data)
         self.assertEqual(res.data["name"], data["name"])
-        self.assertContains("dates", res.data)
+        self.assertIn("dates", res.data)
         self.assertIsNotNone(res.data["dates"])
 
     def test_update_polygon(self):
