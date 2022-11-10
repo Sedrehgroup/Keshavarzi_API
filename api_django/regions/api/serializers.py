@@ -9,12 +9,12 @@ from users.models import User
 
 class GeometrySerializer(serializers.Serializer):
     type = serializers.CharField()
-    coordinates = serializers.ListField(child=serializers.ListField(child=serializers.IntegerField()))
+    coordinates = serializers.ListField(child=serializers.ListField(child=serializers.FloatField()))
 
 
 class FeatureSerializer(serializers.Serializer):
     type = serializers.CharField()
-    property = serializers.DictField(allow_null=True)
+    property = serializers.DictField(allow_null=True, allow_empty=True)
     geometry = GeometrySerializer()
 
 
