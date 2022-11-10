@@ -67,6 +67,38 @@ class TestAfterCeleryTasks(APISimpleTestCase):
         self.assertIn("dates", res.data)
         self.assertIsNotNone(res.data["dates"])
 
+
+class TestUpdateImagesAfterUpdatePolygon(APISimpleTestCase):
+    databases = '__all__'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        # Start up celery worker
+        cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
+        cls.celery_worker.__enter__()
+
+        cls.password = "VeryStrongPassword123#@!"
+        cls.user = UserFactory.create(password=cls.password)
+        cls.admin = AdminFactory.create(password=cls.password)
+        cls.expert = ExpertFactory.create(password=cls.password)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        # Close worker
+        cls.celery_worker.__exit__(None, None, None)
+
+    def login(self, phone_number, password=None):
+        password = password if password is not None else self.password
+        data = {"phone_number": phone_number, "password": password}
+        res = self.client.post(LOGIN_URL, data)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK, f"{res.data}\ncredential => {data}")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + res.data['access'])
+        return self
+
     def test_update_images_after_update_polygon(self):
         region = RegionFactory.create(user=self.user)
         old_res = AsyncResult(region.task_id)
@@ -96,6 +128,38 @@ class TestAfterCeleryTasks(APISimpleTestCase):
         self.assertIsNotNone(region.dates)
         for path in region.images_path:
             self.assertTrue(os.path.isfile(path))
+
+
+class TestCreateRegionIsDownloadImages(APISimpleTestCase):
+    databases = '__all__'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        # Start up celery worker
+        cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
+        cls.celery_worker.__enter__()
+
+        cls.password = "VeryStrongPassword123#@!"
+        cls.user = UserFactory.create(password=cls.password)
+        cls.admin = AdminFactory.create(password=cls.password)
+        cls.expert = ExpertFactory.create(password=cls.password)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        # Close worker
+        cls.celery_worker.__exit__(None, None, None)
+
+    def login(self, phone_number, password=None):
+        password = password if password is not None else self.password
+        data = {"phone_number": phone_number, "password": password}
+        res = self.client.post(LOGIN_URL, data)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK, f"{res.data}\ncredential => {data}")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + res.data['access'])
+        return self
 
     def test_create_region_is_download_images(self):
         self.login(self.user.phone_number)
