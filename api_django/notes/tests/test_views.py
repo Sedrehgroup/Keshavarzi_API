@@ -169,7 +169,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
             """
             res = self.client.get(LNBR_URL(region.id))
 
-            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
     def test_expert_without_relation_to_region_can_not_get_notes_list(self):
         expert1, expert2 = ExpertFactory.create(password=self.password), ExpertFactory.create(password=self.password)
@@ -184,7 +184,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
             """
             res = self.client.get(LNBR_URL(region.id))
 
-            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
     def test_list_notes_with_not_exists_region(self):
         invalid_region_id = Region.objects.order_by("id").only("id").last().id + 1
