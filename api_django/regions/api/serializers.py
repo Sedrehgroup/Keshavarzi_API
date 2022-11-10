@@ -1,7 +1,10 @@
+import os
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from regions.models import Region
+from regions.tasks import call_download_images_celery_task
 from regions.utils import get_geojson_by_polygon, get_polygon_by_geojson
 from users.api.serializers import UserSerializer
 from users.models import User
@@ -119,8 +122,21 @@ class RetrieveUpdateRegionSerializer(serializers.ModelSerializer):
             return obj.dates_as_list
         return None
 
+    def update(self, instance, validated_data):
+        if instance.polygon != validated_data["polygon"]:
+            # Polygon of region is updated
+            for path in instance.images_path:
+                os.remove(path)
+
+            task = call_download_images_celery_task(instance)
+            instance.task_id = task.id
+            instance.dates = None
+
+        return super(RetrieveUpdateRegionSerializer, self).update(instance, validated_data)
+
     def validate_polygon(self, value):
         return get_polygon_by_geojson(value)
+
     #
     # def to_representation(self, instance):
     #     ret = super(RetrieveUpdateRegionSerializer, self).to_representation(instance)

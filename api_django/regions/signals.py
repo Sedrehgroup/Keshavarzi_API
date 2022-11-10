@@ -1,4 +1,3 @@
-import datetime
 import logging
 import os
 
@@ -32,22 +31,6 @@ def download_images_after_region(sender, instance: Region, **kwargs):
 
         instance.task_id = task.id
         instance.save(update_fields=["task_id"])
-
-
-@receiver(pre_save, sender=Region)
-def download_images_after_update_polygon(sender, instance: Region, *args, **kwargs):
-    if instance.id:  # Save for update
-        old_polygon = Region.objects.filter(id=instance.id).only("polygon").first().polygon
-        new_polygon = instance.polygon
-        if old_polygon != new_polygon:
-            # Polygon of region is updated
-            for path in instance.images_path:
-                os.remove(path)
-
-            task = call_download_images_celery_task(instance)
-            instance.task_id = task.id
-            instance.dates = None
-            instance.save(update_fields=["dates", "task_id"])
 
 
 @receiver(post_delete, sender=Region)
