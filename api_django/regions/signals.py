@@ -49,7 +49,7 @@ def download_images_after_update_polygon(sender, instance: Region, *args, **kwar
     if instance.id:  # Save for update
         old_polygon = Region.objects.filter(id=instance.id).only("polygon").first().polygon
         new_polygon = instance.polygon
-        if old_polygon.geom_class.coords != new_polygon.geom_class.coords:
+        if old_polygon != new_polygon:
             # Polygon of region is updated
             for path in instance.images_path:
                 os.remove(path)
