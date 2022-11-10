@@ -93,6 +93,42 @@ fake_polygon_geojson = {
         }
     ]
 }
+fake_polygon_geojson_2 = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              51.41582963231906,
+              35.81320244123718
+            ],
+            [
+              51.41582963231906,
+              35.77913173065596
+            ],
+            [
+              51.48472569361576,
+              35.786258677906346
+            ],
+            [
+              51.479383271521186,
+              35.81320244123718
+            ],
+            [
+              51.41582963231906,
+              35.81320244123718
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      }
+    }
+  ]
+}
 fake_polygon = get_polygon_by_geojson(fake_polygon_geojson)
 
 
