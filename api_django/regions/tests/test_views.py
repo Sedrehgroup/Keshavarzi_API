@@ -143,7 +143,6 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
             data = {"expert_id": ""}
             res = self.client.patch(UR_EXPERT_URL(self.region.id), data)
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
-            self.assertEqual(res.data, {"expert_id": None})
 
         self.region.refresh_from_db()
         self.assertIsNone(self.region.expert_id)
@@ -365,8 +364,7 @@ class CreateRegionWithTestAfterCeleryTasks(BaseRegionWithConfiguredDatabase):
         self.login(self.user.phone_number)
 
         data = {"name": "test create region is download images", "polygon": fake_polygon_geojson}
-        res = self.client.post(CREATE_REGION_URL, data)
-
+        res = self.client.post(CREATE_REGION_URL, data, content_type="application/json")
         self.assertEqual(res.status_code, status.HTTP_201_CREATED, res.data)
 
         region = Region.objects.get(name=data["name"])
@@ -528,6 +526,8 @@ class UpdateRegion(BaseRegionViewsTestCase):
         self.assertContains("dates", res.data)
         self.assertIsNone(res.data["dates"])
 
+
+class UpdateRegionWithTestAfterCeleryTasks(BaseRegionWithConfiguredDatabase):
     def test_update_images_after_update_polygon(self):
         region = RegionFactory.create(user=self.user)
         old_res = AsyncResult(region.task_id)
