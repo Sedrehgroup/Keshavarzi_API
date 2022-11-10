@@ -87,10 +87,9 @@ class UpdateRegionExpert(BaseRegionViewsTestCase):
 
     def test_attach_expert_to_region_with_expert(self):
         self.login(self.expert.phone_number)
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             """
                 1- Retrieve User
-                2- Retrieve Region
             """
             data = {"expert_id": self.expert.id}
             res = self.client.patch(RUR_URL(self.region.id), data)
@@ -329,7 +328,7 @@ class CreateRegionWithTestAfterCeleryTasks(APISimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(CreateRegionWithTestAfterCeleryTasks, cls).setUpClass()
+        super().setUpClass()
 
         # Start up celery worker
         cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
@@ -342,7 +341,7 @@ class CreateRegionWithTestAfterCeleryTasks(APISimpleTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super(CreateRegionWithTestAfterCeleryTasks).tearDownClass()
+        super().tearDownClass()
         # Close worker
         cls.celery_worker.__exit__(None, None, None)
 
@@ -532,7 +531,7 @@ class UpdateRegionWithTestAfterCeleryTasks(APISimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(UpdateRegionWithTestAfterCeleryTasks, cls).setUpClass()
+        super().setUpClass()
 
         # Start up celery worker
         cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
@@ -545,7 +544,7 @@ class UpdateRegionWithTestAfterCeleryTasks(APISimpleTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super(UpdateRegionWithTestAfterCeleryTasks).tearDownClass()
+        super().tearDownClass()
         # Close worker
         cls.celery_worker.__exit__(None, None, None)
 
@@ -697,7 +696,7 @@ class RetrieveRegionWithTestAfterCeleryTasks(APISimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(RetrieveRegionWithTestAfterCeleryTasks, cls).setUpClass()
+        super().setUpClass()
 
         # Start up celery worker
         cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
@@ -710,7 +709,7 @@ class RetrieveRegionWithTestAfterCeleryTasks(APISimpleTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super(RetrieveRegionWithTestAfterCeleryTasks).tearDownClass()
+        super().tearDownClass()
         # Close worker
         cls.celery_worker.__exit__(None, None, None)
 
