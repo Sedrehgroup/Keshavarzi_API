@@ -85,18 +85,6 @@ class BaseRegionWithConfiguredDatabase(APISimpleTestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + res.data['access'])
         return self
 
-    def wait_for_region_tasks(self, task_id):
-        res = AsyncResult(task_id)
-        while res.state == "PENDING":
-            sleep(1)
-        self.assertNotEqual(res.state, "FAILURE", res.result)
-        self.assertEqual(res.state, "SUCCESS")
-
-    def create_region_and_wait(self, **kwargs):
-        region = RegionFactory.create(**kwargs)
-        self.wait_for_region_tasks(region.task_id)
-        return region
-
 
 class UpdateRegionExpert(BaseRegionViewsTestCase):
     def test_attach_expert_to_region_with_admin(self):
@@ -380,8 +368,14 @@ class CreateRegionWithTestAfterCeleryTasks(BaseRegionWithConfiguredDatabase):
         res = self.client.post(CREATE_REGION_URL, data)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED, res.data)
+
         region = Region.objects.get(name=data["name"])
-        self.wait_for_region_tasks(region.task_id)
+        res = AsyncResult(region.task_id)
+        while res.state == "PENDING":
+            sleep(1)
+        self.assertNotEqual(res.state, "FAILURE", res.result)
+        self.assertEqual(res.state, "SUCCESS")
+
         self.assertIsNotNone(region.dates)
         for path in region.images_path:
             self.assertTrue(os.path.isfile(path))
@@ -670,9 +664,14 @@ class RetrieveRegion(BaseRegionViewsTestCase):
 
 class RetrieveRegionWithTestAfterCeleryTasks(BaseRegionWithConfiguredDatabase):
     def test_that_dates_field_is_not_empty(self):
-        region = self.create_region_and_wait(user=self.user)
-        self.login(self.user.phone_number)
+        region = RegionFactory.create(user=self.user)
+        res = AsyncResult(region.task_id)
+        while res.state == "PENDING":
+            sleep(1)
+        self.assertNotEqual(res.state, "FAILURE", res.result)
+        self.assertEqual(res.state, "SUCCESS")
 
+        self.login(self.user.phone_number)
         res = self.client.get(RUR_URL(region.id))
         self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertContains("dates", res.data)
