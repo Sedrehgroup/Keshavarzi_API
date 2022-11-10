@@ -515,7 +515,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 3- Update Region
             """
             data = {"polygon": fake_polygon_geojson_2}
-            res = self.client.patch(RUR_URL(region.id), data)
+            res = self.client.patch(RUR_URL(region.id), data, content_type="application/json")
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertContains("polygon", res.data)
