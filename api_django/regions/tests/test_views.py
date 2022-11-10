@@ -459,6 +459,7 @@ class UpdateRegion(BaseRegionViewsTestCase):
         self.assertEqual(region.name, region_name)
 
     def test_dates_field_is_not_updatable(self):
+        region = RegionFactory.create(user=self.user)
         self.login(self.user.phone_number)
         with self.assertNumQueries(2):
             """
@@ -466,8 +467,8 @@ class UpdateRegion(BaseRegionViewsTestCase):
                 2- Retrieve Region
             """
             data = {"dates": "invalid_dates"}
-            res = self.client.patch(RUR_URL(self.region.id))
-            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
+            res = self.client.patch(RUR_URL(region.id))
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.region.refresh_from_db()
         self.assertNotEqual(self.region.dates, data["dates"])
 
