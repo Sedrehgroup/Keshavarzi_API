@@ -124,10 +124,11 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         NoteFactory.create_batch(user=self.expert, region=region, size=15)
         self.login(self.expert.phone_number)
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             """
                 1- Retrieve User
-                2- Count the number of notes(Pagination)
+                2- Retrieve Region
+                3- Count the number of notes(Pagination)
                 3- Retrieve Note
             """
             res = self.client.get(LNBR_URL(region.id))
@@ -142,9 +143,10 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         # ** -> Admin is not note creator or user/expert of region
         self.login(self.admin.phone_number)
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             """
                 1- Retrieve User
+                2- Retrieve Region
                 2- Count the number of notes(Pagination)
                 3- Retrieve Note
             """
@@ -163,7 +165,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         with self.assertNumQueries(2):
             """
                 1- Retrieve User
-                2- Count Notes
+                2- Retrieve Region
             """
             res = self.client.get(LNBR_URL(region.id))
 
@@ -178,7 +180,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         with self.assertNumQueries(2):
             """
                 1- Retrieve User
-                2- Count Notes
+                2- Retrieve Region
             """
             res = self.client.get(LNBR_URL(region.id))
 
