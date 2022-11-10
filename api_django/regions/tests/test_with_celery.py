@@ -100,7 +100,7 @@ class TestAfterCeleryTasks(APISimpleTestCase):
     def test_create_region_is_download_images(self):
         self.login(self.user.phone_number)
 
-        data = {"name": "test create region is download images", "polygon": fake_polygon_geojson}
+        data = {"name": "test create region", "polygon": fake_polygon_geojson}
         res = self.client.post(CREATE_REGION_URL, data, format="json")
         self.assertEqual(res.status_code, status.HTTP_201_CREATED, res.data)
 
