@@ -2,7 +2,7 @@ import datetime
 import logging
 import os
 
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 from shutil import rmtree
 
@@ -44,10 +44,13 @@ def download_images_after_region(sender, instance: Region, **kwargs):
         instance.save(update_fields=["task_id"])
 
 
-@receiver(post_save, sender=Region)
-def download_images_after_update_polygon(sender, instance: Region, update_fields, **kwargs):
-    if not kwargs["created"] and update_fields is not None:
-        if "polygon" in update_fields:  # Polygon of region is updated
+@receiver(pre_save, sender=Region)
+def download_images_after_update_polygon(sender, instance: Region, *args, **kwargs):
+    if instance.id:  # Save for update
+        old_polygon = Region.objects.filter(id=instance.id).only("polygon").first().polygon
+        new_polygon = instance.polygon
+        if old_polygon.geom_class.coords != new_polygon.geom_class.coords:
+            # Polygon of region is updated
             for path in instance.images_path:
                 os.remove(path)
 
