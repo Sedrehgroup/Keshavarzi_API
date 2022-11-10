@@ -8,20 +8,9 @@ from shutil import rmtree
 
 from regions.models import Region
 from notes.models import Note
-from regions.tasks import download_images
-from regions.utils import get_geojson_by_polygon
+from regions.tasks import call_download_images_celery_task
 
 logger = logging.getLogger(__name__)
-
-
-def call_download_images_celery_task(instance: Region):
-    logger.info(f"Signal: Download image of {instance.__str__()}")
-    end = datetime.datetime.now()
-    start = end - datetime.timedelta(days=30)
-    geom = get_geojson_by_polygon(instance.polygon)
-    task = download_images.delay(start.strftime('%Y-%m-%d'), end.strftime('%Y-%m-%d'),
-                                 geom, instance.user_id, instance.id, instance.dates)
-    return task
 
 
 @receiver(post_save, sender=Region)
@@ -38,6 +27,7 @@ def create_note_after_attach_expert(sender, instance: Region, update_fields, **k
 @receiver(post_save, sender=Region)
 def download_images_after_region(sender, instance: Region, **kwargs):
     if kwargs["created"]:
+        logger.info(f"Signal: Download image of {instance.__str__()}")
         task = call_download_images_celery_task(instance)
 
         instance.task_id = task.id
