@@ -54,38 +54,6 @@ class BaseRegionViewsTestCase(APITestCase):
         return self
 
 
-class BaseRegionWithConfiguredDatabase(APISimpleTestCase):
-    databases = '__all__'
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-
-        # Start up celery worker
-        cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
-        cls.celery_worker.__enter__()
-
-        cls.password = "VeryStrongPassword123#@!"
-        cls.user = UserFactory.create(password=cls.password)
-        cls.admin = AdminFactory.create(password=cls.password)
-        cls.expert = ExpertFactory.create(password=cls.password)
-
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        # Close worker
-        cls.celery_worker.__exit__(None, None, None)
-
-    def login(self, phone_number, password=None):
-        password = password if password is not None else self.password
-        data = {"phone_number": phone_number, "password": password}
-        res = self.client.post(LOGIN_URL, data)
-
-        self.assertEqual(res.status_code, status.HTTP_200_OK, f"{res.data}\ncredential => {data}")
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + res.data['access'])
-        return self
-
-
 class UpdateRegionExpert(BaseRegionViewsTestCase):
     def test_attach_expert_to_region_with_admin(self):
         self.login(self.admin.phone_number)
@@ -359,7 +327,37 @@ class CreateRegion(BaseRegionViewsTestCase):
         self.assertEqual(qs.count(), 0)
 
 
-class CreateRegionWithTestAfterCeleryTasks(BaseRegionWithConfiguredDatabase):
+class CreateRegionWithTestAfterCeleryTasks(APISimpleTestCase):
+    databases = '__all__'
+
+    @classmethod
+    def setUpClass(cls):
+        super(CreateRegionWithTestAfterCeleryTasks).setUpClass()
+
+        # Start up celery worker
+        cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
+        cls.celery_worker.__enter__()
+
+        cls.password = "VeryStrongPassword123#@!"
+        cls.user = UserFactory.create(password=cls.password)
+        cls.admin = AdminFactory.create(password=cls.password)
+        cls.expert = ExpertFactory.create(password=cls.password)
+
+    @classmethod
+    def tearDownClass(cls):
+        super(CreateRegionWithTestAfterCeleryTasks).tearDownClass()
+        # Close worker
+        cls.celery_worker.__exit__(None, None, None)
+
+    def login(self, phone_number, password=None):
+        password = password if password is not None else self.password
+        data = {"phone_number": phone_number, "password": password}
+        res = self.client.post(LOGIN_URL, data)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK, f"{res.data}\ncredential => {data}")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + res.data['access'])
+        return self
+
     def test_create_region_is_download_images(self):
         self.login(self.user.phone_number)
 
@@ -527,7 +525,37 @@ class UpdateRegion(BaseRegionViewsTestCase):
         self.assertIsNone(res.data["dates"])
 
 
-class UpdateRegionWithTestAfterCeleryTasks(BaseRegionWithConfiguredDatabase):
+class UpdateRegionWithTestAfterCeleryTasks(APISimpleTestCase):
+    databases = '__all__'
+
+    @classmethod
+    def setUpClass(cls):
+        super(UpdateRegionWithTestAfterCeleryTasks).setUpClass()
+
+        # Start up celery worker
+        cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
+        cls.celery_worker.__enter__()
+
+        cls.password = "VeryStrongPassword123#@!"
+        cls.user = UserFactory.create(password=cls.password)
+        cls.admin = AdminFactory.create(password=cls.password)
+        cls.expert = ExpertFactory.create(password=cls.password)
+
+    @classmethod
+    def tearDownClass(cls):
+        super(UpdateRegionWithTestAfterCeleryTasks).tearDownClass()
+        # Close worker
+        cls.celery_worker.__exit__(None, None, None)
+
+    def login(self, phone_number, password=None):
+        password = password if password is not None else self.password
+        data = {"phone_number": phone_number, "password": password}
+        res = self.client.post(LOGIN_URL, data)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK, f"{res.data}\ncredential => {data}")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + res.data['access'])
+        return self
+
     def test_update_images_after_update_polygon(self):
         region = RegionFactory.create(user=self.user)
         old_res = AsyncResult(region.task_id)
@@ -662,7 +690,37 @@ class RetrieveRegion(BaseRegionViewsTestCase):
             self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
 
 
-class RetrieveRegionWithTestAfterCeleryTasks(BaseRegionWithConfiguredDatabase):
+class RetrieveRegionWithTestAfterCeleryTasks(APISimpleTestCase):
+    databases = '__all__'
+
+    @classmethod
+    def setUpClass(cls):
+        super(RetrieveRegionWithTestAfterCeleryTasks).setUpClass()
+
+        # Start up celery worker
+        cls.celery_worker = start_worker(celery_app, perform_ping_check=False)
+        cls.celery_worker.__enter__()
+
+        cls.password = "VeryStrongPassword123#@!"
+        cls.user = UserFactory.create(password=cls.password)
+        cls.admin = AdminFactory.create(password=cls.password)
+        cls.expert = ExpertFactory.create(password=cls.password)
+
+    @classmethod
+    def tearDownClass(cls):
+        super(RetrieveRegionWithTestAfterCeleryTasks).tearDownClass()
+        # Close worker
+        cls.celery_worker.__exit__(None, None, None)
+
+    def login(self, phone_number, password=None):
+        password = password if password is not None else self.password
+        data = {"phone_number": phone_number, "password": password}
+        res = self.client.post(LOGIN_URL, data)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK, f"{res.data}\ncredential => {data}")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + res.data['access'])
+        return self
+
     def test_that_dates_field_is_not_empty(self):
         region = RegionFactory.create(user=self.user)
         res = AsyncResult(region.task_id)
