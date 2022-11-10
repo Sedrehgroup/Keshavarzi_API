@@ -450,10 +450,10 @@ class UpdateRegion(BaseRegionViewsTestCase):
             res = self.client.patch(RUR_URL(region.id), data, format="json")
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
-        self.assertContains("polygon", res.data)
+        self.assertIn("polygon", res.data)
         self.assertEqual(res.data["polygon"], fake_polygon_geojson_2)
         self.assertNotEqual(res.data["polygon"], fake_polygon_geojson)
-        self.assertContains("dates", res.data)
+        self.assertIn("dates", res.data)
         self.assertIsNone(res.data["dates"])
 
 
