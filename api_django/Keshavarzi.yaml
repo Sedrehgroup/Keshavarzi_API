@@ -258,7 +258,7 @@ paths:
           description: ''
   /regions/{id}/:
     get:
-      operationId: regions_update
+      operationId: regions_retrieve
       summary: Retrive region
       description: |
         User should be authenticated. \
@@ -529,6 +529,9 @@ paths:
   /users/:
     post:
       operationId: users_create
+      summary: "Create new user"
+      description: |
+        User should **not** be authenticated.
       tags:
       - users
       requestBody:
@@ -580,9 +583,42 @@ paths:
                     access: Token
                   summary: Return access and refresh token
           description: ''
+  /users/{id}:
+    get:
+      operationId: users_retrieve
+      description: |
+        User should be authenticated. \
+        Admin can retrieve specefic user.
+
+      summary: Get user by id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {"message": "You don't have access to see details of other users"}
+          description: ''
   /users/token/:
     post:
       operationId: users_token_create
+      summary: "Get 'access' and 'refresh' toekn"
       description: |-
         Takes a set of user credentials and returns an access and refresh JSON web
         token pair to prove the authentication of those credentials.
@@ -637,6 +673,7 @@ paths:
   /users/token/refresh/:
     post:
       operationId: users_token_refresh_create
+      summary: "Refresh the 'access' token"
       description: |-
         Takes a refresh type JSON web token and returns an access type JSON web
         token if the refresh token is valid.
@@ -661,6 +698,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenRefresh'
           description: ''
+  /users/token/verify/:
+    get:
+      operationId: users_token_verify_token
+      summary: "Verify access token"
+      description: |-
+        Set the access token in header and check that, is access token still valid or not
+      tags:
+      - users
+      responses:
+        '200':
+          description: "Access token is valid"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
+        '403':
+          description: |
+            Access token is not valid anymore. \
+            Refresh the accss token by 'Refresh token' endpoint.
+          content:
+            application/json:
+                schema:
+                  type: object
+                  example: {}
 components:
   schemas:
     # Notes
@@ -985,6 +1047,7 @@ components:
           maxLength: 254
         phone_number:
           type: string
+          example: "+989032567181"
           description: |-
             Phone number should start with '+98'.
             This field should contain 13 character.
