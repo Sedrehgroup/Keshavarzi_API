@@ -8,9 +8,9 @@ django-celery-beat==2.3.0
 earthengine-api==0.1.329
 gsconfig-py3==1.0.8
 
-drf-yasg[validation]==1.21.4
-drf-spectacular==0.24.2
-drf-spectacular[sidecar]
+# drf-yasg[validation]==1.21.4
+# drf-spectacular==0.24.2
+# drf-spectacular[sidecar]
 
 #Test requirements
 factory-boy==3.2.1
