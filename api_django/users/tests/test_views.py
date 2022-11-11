@@ -2,12 +2,18 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from users.tests.factories import UserFactory
+from users.tests.factories import AdminFactory, UserFactory
 
 CREATE_URL = reverse("users:create")
+LOGIN_URL = reverse('users:token_obtain_pair')
 
 
-class UsersViewsTestCase(APITestCase):
+def RU_URL(user_id):
+    """ Retrieve User URL """
+    return reverse("users:retrieve", kwargs={"pk": user_id})
+
+
+class RegisterUser(APITestCase):
     def setUp(self) -> None:
         self.password = "VeryStrongPassword"
         self.user = UserFactory.create(password=self.password)
@@ -66,3 +72,59 @@ class UsersViewsTestCase(APITestCase):
 
             self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
             self.assertIn('phone_number', res.data)
+
+
+class RetrieveUser(APITestCase):
+    def setUp(self) -> None:
+        self.password = "VeryStrongPassword"
+        self.user = UserFactory.create(password=self.password)
+
+    def login(self, phone_number, password=None):
+        password = password if password is not None else self.password
+        data = {"phone_number": phone_number, "password": password}
+        res = self.client.post(LOGIN_URL, data)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK, f"{res.data}\ncredential => {data}")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + res.data['access'])
+        return self
+
+    def retrieve_user_by_user_itself(self):
+        self.login(self.user.phone_number)
+        with self.assertNumQueries(1):
+            """
+                1- Retrieve User
+            """
+            res = self.client.get(RU_URL(self.user.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+    def retrieve_user_by_no_authenticated_user(self):
+        with self.assertNumQueries(1):
+            """
+                1- Retrieve User
+            """
+            res = self.client.get(RU_URL(self.user.id))
+
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def retrieve_user_by_admin(self):
+        admin = AdminFactory.create(password=self.password)
+        self.login(admin.phone_number)
+        with self.assertNumQueries(1):
+            """
+                1- Retrieve User
+            """
+            res = self.client.get(RU_URL(self.user.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def retrieve_user_by_another_user(self):
+        user2 = UserFactory.create(password=self.password)
+        self.login(user2.phone_number)
+        with self.assertNumQueries(1):
+            """
+                1- Retrieve User
+            """
+            res = self.client.get(RU_URL(self.user.id))
+
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
