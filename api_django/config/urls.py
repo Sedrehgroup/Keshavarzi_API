@@ -35,6 +35,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 # )
 urlpatterns = [
     path('__debug__/', include('debug_toolbar.urls')),
+    path('doc/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 
     path('admin/', admin.site.urls),
     path("users/", include("users.api.urls", namespace="users")),
