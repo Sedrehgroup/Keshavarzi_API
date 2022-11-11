@@ -18,7 +18,7 @@ from django.urls import include, path
 from django.conf import settings
 
 from django.conf.urls.static import static
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView, SpectacularYAMLAPIView
 
 # from rest_framework import permissions
 # from drf_yasg.views import get_schema_view
@@ -35,7 +35,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 # )
 urlpatterns = [
     path('__debug__/', include('debug_toolbar.urls')),
-    path('doc/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('doc/', SpectacularYAMLAPIView.as_view(), name='document'),
 
     path('admin/', admin.site.urls),
     path("users/", include("users.api.urls", namespace="users")),
