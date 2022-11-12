@@ -36,4 +36,4 @@ def download_images_after_region(sender, instance: Region, **kwargs):
 @receiver(post_delete, sender=Region)
 def delete_images_after_deleting_the_region(sender, instance: Region, **kwargs):
     logger.info(f"Signal: Remove images of {instance.__str__()}")
-    rmtree(instance.folder_path)
+    rmtree(instance.folder_path, ignore_errors=True)
