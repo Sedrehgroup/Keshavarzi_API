@@ -106,7 +106,7 @@ def download_one_image():
     st = time.time()
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
         .filterBounds(ee.Geometry.Polygon(coords=geojson['features'][0]['geometry']['coordinates'])) \
-        .filterDate('2022-10-05', '2022-11-12') \
+        .filterDate('2021-10-05', '2022-11-12') \
         .first()
 
 
@@ -136,7 +136,7 @@ def download_two_image():
     st = time.time()
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
         .filterBounds(ee.Geometry.Polygon(coords=geojson['features'][0]['geometry']['coordinates'])) \
-        .filterDate('2022-10-05', '2022-11-12') \
+        .filterDate('2021-10-05', '2022-11-12') \
         .first()
 
     folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', 'test', 'seperated', now().strftime('%Y-%m-%d_%H-%M-%S')])}"
