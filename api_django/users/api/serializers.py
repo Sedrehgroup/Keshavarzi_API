@@ -1,29 +1,10 @@
 from django.contrib.auth.hashers import make_password
-from drf_spectacular.utils import OpenApiExample, extend_schema_serializer
 from rest_framework import serializers, status
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from users.models import User
-
-examples = [
-    OpenApiExample(
-        name='Valid example', request_only=False, response_only=True,
-        summary="Return access and refresh token", value={'refresh': "Token", 'access': "Token"},
-    ), OpenApiExample(
-        name="Valid example", request_only=True, response_only=False,
-        summary="✅13 character phone number length with raw password.", value={"phone_number": "+989032567181", "password": "raw password"}
-    ), OpenApiExample(
-        name="Invalid example 1", request_only=True, response_only=False,
-        summary="❌Start with 0", value={"phone_number": "09032567181", "password": "raw_password"}
-    ), OpenApiExample(
-        name="Invalid example 2", request_only=True, response_only=False,
-        summary="❌Doesn't start with '+98'", value={"phone_number": "+979032567181", "password": "raw_password"}
-    ), OpenApiExample(
-        name="Invalid example 3", request_only=True, response_only=False,
-        summary="❌The length of phone number is not 13 character", value={"phone_number": "+9890325671812", "password": "raw_password"}
-    )]
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -44,7 +25,6 @@ def phone_number_validator(phone_number: str) -> (bool, str):
         return True, ""
 
 
-@extend_schema_serializer(examples=examples)
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
@@ -56,7 +36,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
 
 
-@extend_schema_serializer(examples=examples)
 class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
