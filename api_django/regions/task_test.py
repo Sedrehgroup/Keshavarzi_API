@@ -44,7 +44,7 @@ def download_ndvi(image: ee.Image, polygon, folder_path):
 
     with requests.get(url) as response:
         # Write Binary is important: https://stackoverflow.com/a/2665873/14449337
-        with open(file_path, 'w') as ndvi_file:
+        with open(file_path, 'wb') as ndvi_file:
             ndvi_file.write(response.content)
 
     return file_path
@@ -59,7 +59,7 @@ def download_image_rgb_band(image: ee.Image, polygon, folder_path):
     print(f"download -> {file_path}")
     with requests.get(url) as response:
         # Write Binary is important: https://stackoverflow.com/a/2665873/14449337
-        with open(folder_path, 'w') as rgb_file:
+        with open(folder_path, 'wb') as rgb_file:
             rgb_file.write(response.content)
 
     return file_path
@@ -85,7 +85,7 @@ def download_one_image():
     meta.update(driver='GTiff')
     meta.update(dtype=rasterio.float32)
     ndvi_file_path = f"{folder_path}/NDVI.tif"
-    with rasterio.open(ndvi_file_path, 'w', **meta) as ndvi_file:
+    with rasterio.open(ndvi_file_path, 'wb', **meta) as ndvi_file:
         ndvi_file.write(1, ndvi_result.as_type(rasterio.float32))
 
     elapsed_time = time.time() - st
