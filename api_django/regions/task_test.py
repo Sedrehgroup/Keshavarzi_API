@@ -26,6 +26,7 @@ def download_image_all_bands(image: ee.Image, polygon):
 
     # Example: /media/images/test/2022-01-02/file.tif
     folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', 'test', 'all', today_str])}"
+    os.makedirs(folder_path, exist_ok=True)
     file_path = f"{folder_path}/file.tif"
     with requests.get(url) as response:
         # Write Binary is important: https://stackoverflow.com/a/2665873/14449337
