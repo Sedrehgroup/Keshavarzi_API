@@ -76,8 +76,8 @@ def get_new_images():
         Step 1: Get target regions( region.date_last_download is older that 7 days ago )
         Step 2: Slice regions to smaller and nested list: [1,2,3,4,5,6,7] -> [[1,2,3], [4,5,6], [7]]
         Step 3: Download every small region list images and wait for !PENDING stats
-        STEP 4: Check that tasks are done without FAILURE stats
-        STEP 5: Check that tasks are done with SUCCESS stats
+        STEP 4: Check that tasks are done without FAILURE states
+        STEP 5: Check that tasks are done with SUCCESS states
         STEP 6: Update region.date_last_update field of small region list.
         ** DONE **
     """
@@ -103,16 +103,18 @@ def get_new_images():
         while all(AsyncResult(task.id).state != "PENDING" for task in tasks_list):
             sleep(1)
 
-        if not all(AsyncResult(task.id).state != "FAILURE" for task in tasks_list):
+        if any(AsyncResult(task.id).state == "FAILURE" for task in tasks_list):
+            # Check if state is FAILURE for any task in the tasks_list.
             for task in tasks_list:
                 async_result = AsyncResult(task.id)
                 if async_result.state == "FAILURE":
                     logger.error(f"Task with ID={task.id} is failed. Result={async_result.result}")
                     break
-        elif not all(AsyncResult(task.id).state != "SUCCESS" for task in tasks_list):
+        elif any(AsyncResult(task.id).state != "SUCCESS" for task in tasks_list):
+            # Check if state is not SUCCESS for any task in the tasks_list.
             for task in tasks_list:
                 async_result = AsyncResult(task.id)
-                if async_result.state == "SUCCESS":
+                if async_result.state != "SUCCESS":
                     logger.error(f"Task with ID={task.id} is not success. Result={async_result.result}")
                     break
 
