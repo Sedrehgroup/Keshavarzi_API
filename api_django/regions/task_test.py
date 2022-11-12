@@ -35,7 +35,7 @@ def download_image_all_bands(image: ee.Image, polygon):
 
 
 def download_ndvi(image: ee.Image, polygon, folder_path):
-    url = image.normalizedDifference(['B8', 'B4']).getDownloadURL(params={
+    url = image.normalizedDifference(['B8', 'B4'], input=image).getDownloadURL(params={
         'scale': 10, 'region': polygon,
         'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
 
@@ -50,9 +50,9 @@ def download_ndvi(image: ee.Image, polygon, folder_path):
     return file_path
 
 
-def download_image_rgb_band(image: ee.Image, folder_path):
+def download_image_rgb_band(image: ee.Image, polygon, folder_path):
     url = image.getDownloadURL(params={
-        'scale': 10, "bands": ['TCI_R', 'TCI_G', 'TCI_B'],
+        'scale': 10, "bands": ['TCI_R', 'TCI_G', 'TCI_B'], 'region': polygon,
         'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
 
     file_path = f"{folder_path}/rgb.tif"
