@@ -19,7 +19,7 @@ from regions.utils import get_geojson_by_polygon
 from utils.gee.utils import get_and_validate_date_range, get_and_validate_polygon_by_geom, get_dates_of_image_collection, get_image_collections
 from utils.geoserver.base import cat
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("celery")
 
 
 @shared_task()
@@ -27,8 +27,7 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
     region = Region.objects.get(id=region_id)
     start, end = get_and_validate_date_range(start, end)
     polygon = get_and_validate_polygon_by_geom(polygon_geojson)
-    folder_path = region.folder_path
-    os.makedirs(folder_path, exist_ok=True)
+    os.makedirs(region.folder_path, exist_ok=True)
     dates = dates if dates is not None else ""
 
     image_collection = get_image_collections(polygon, start, end)
