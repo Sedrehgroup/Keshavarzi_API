@@ -74,7 +74,7 @@ def download_one_image():
 
     file_path, folder_path = download_image_all_bands(image, polygon)
     with rasterio.open(file_path, 'r') as data:
-        b8_4 = data.read_band((8, 4))
+        b8_4 = data.read((8, 4))
         b8, b4 = b8_4.read(8), b8_4.read(4)
         ndvi_result = (b8 + b4) / (b8 - b4)
 
