@@ -35,7 +35,7 @@ class Region(models.Model):
         return dates_list
 
     @property
-    def main_folder_path(self):
+    def user_folder_path(self):
         return f"{settings.BASE_DIR}/{'/'.join(['media', 'images', f'user-{str(self.user_id)}'])}"
 
     @property
@@ -51,5 +51,20 @@ class Region(models.Model):
             result.append(f"{folder_path}/{date}.tif")
         return result
 
-    def get_file_path_by_date_and_folder_path(self, date, folder_path):
-        return f"{folder_path}/{date}.tif"
+    def get_ndvi_path(self, image_date):
+        return f"{self.folder_path}/ndvi/{image_date}.tif"
+
+    def get_list_ndvi_path(self):
+        folder_path = self.folder_path
+        result = []
+        for image_date in self.dates_as_list:
+            result.append(f"{folder_path}/ndvi/{image_date}.tif")
+
+    def get_rgb_path(self, image_date):
+        return f"{self.folder_path}/rgb/{image_date}.tif"
+
+    def get_list_rgb_path(self):
+        folder_path = self.folder_path
+        result = []
+        for image_date in self.dates_as_list:
+            result.append(f"{folder_path}/rgb/{image_date}.tif")
