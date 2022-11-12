@@ -7,7 +7,43 @@ import os
 
 from django.conf import settings
 from django.utils.timezone import now
-from regions.tests.factories import fake_polygon_geojson
+
+geojson = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              51.453868831417964,
+              35.68022716757025
+            ],
+            [
+              51.45299786499936,
+              35.680226960021656
+            ],
+            [
+              51.45318235230536,
+              35.679688158833784
+            ],
+            [
+              51.4536839829494,
+              35.67937590778622
+            ],
+            [
+              51.453868831417964,
+              35.68022716757025
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      }
+    }
+  ]
+}
 
 
 # https://gis.stackexchange.com/questions/429958/calculating-monthly-modis-ndvi-using-gee-python-api-applied-to-one-or-multiple-r
@@ -69,7 +105,7 @@ def download_one_image():
     """ Download one image and then get NDVI with rasterio """
     st = time.time()
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
-        .filterBounds(ee.Geometry.Polygon(coords=fake_polygon_geojson['features'][0]['geometry']['coordinates'])) \
+        .filterBounds(ee.Geometry.Polygon(coords=geojson['features'][0]['geometry']['coordinates'])) \
         .filterDate('2022-10-05', '2022-11-12') \
         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
@@ -101,7 +137,7 @@ def download_two_image():
     """ Download RGB and NDVI separately """
     st = time.time()
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
-        .filterBounds(ee.Geometry.Polygon(coords=fake_polygon_geojson['features'][0]['geometry']['coordinates'])) \
+        .filterBounds(ee.Geometry.Polygon(coords=geojson['features'][0]['geometry']['coordinates'])) \
         .filterDate('2022-10-05', '2022-11-12') \
         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
