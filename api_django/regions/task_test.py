@@ -21,13 +21,10 @@ def download_image_all_bands(image: ee.Image, polygon):
         'scale': 10, "bands": ['TCI_R', 'TCI_G', 'TCI_B', 'B8', 'B4'], 'region': polygon,
         'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
 
-    today_str = now().strftime('%Y-%m-%d_%H-%M-%S')
-    print(f"download -> {today_str}")
-
-    # Example: /media/images/test/2022-01-02/file.tif
-    folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', 'test', 'all', today_str])}"
+    folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', 'test', 'all', now().strftime('%Y-%m-%d_%H-%M-%S')])}"
     os.makedirs(folder_path, exist_ok=True)
     file_path = f"{folder_path}/file.tif"
+    print(f"download -> {file_path}")
     with requests.get(url) as response:
         # Write Binary is important: https://stackoverflow.com/a/2665873/14449337
         with open(file_path, 'wb') as raster_file:
