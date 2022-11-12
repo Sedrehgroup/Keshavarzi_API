@@ -88,7 +88,8 @@ def download_one_image():
     print(f"RPG size file -> {os.path.getsize(file_path)}")
 
     return elapsed_time
-
+# Download all images       -> 2.8836936950683594 second -> NDVI:4602750 bytes    RGB:1321225 bytes
+# Download seperated images -> 5.1786751985549930 secnod -> NDVI:6922750 bytes    RGB:4876400 bytes
 
 def download_two_image():
     """ Download RGB and NDVI separately """
