@@ -71,9 +71,7 @@ def download_image_all_bands(image: ee.Image):
 
 
 def download_ndvi(image: ee.Image, folder_path):
-    url = image.normalizedDifference(['B8', 'B4']).getDownloadURL(params={
-        'scale': 10,
-        'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
+    url = image.normalizedDifference(['B8', 'B4']).getDownloadURL()
 
     file_path = f"{folder_path}/ndvi.tif"
     print(f"download -> {file_path}")
