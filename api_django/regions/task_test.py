@@ -59,7 +59,7 @@ def download_image_rgb_band(image: ee.Image, polygon, folder_path):
     print(f"download -> {file_path}")
     with requests.get(url) as response:
         # Write Binary is important: https://stackoverflow.com/a/2665873/14449337
-        with open(folder_path, 'wb') as rgb_file:
+        with open(file_path, 'wb') as rgb_file:
             rgb_file.write(response.content)
 
     return file_path
@@ -72,7 +72,6 @@ def download_one_image():
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
         .filterBounds(polygon) \
         .filterDate('2022-11-05', '2022-11-12') \
-        .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
 
     file_path, folder_path = download_image_all_bands(image, polygon)
