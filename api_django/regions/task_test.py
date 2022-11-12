@@ -104,8 +104,8 @@ def download_two_image():
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
         .filterBounds(polygon) \
         .filterDate('2022-11-05', '2022-11-12') \
-        .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
+    print(image)
     image = ee.Image(image)
     folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', 'test', 'seperated', now().strftime('%Y-%m-%d_%H-%M-%S')])}"
     file_ndvi_path = download_ndvi(image, polygon, folder_path)
