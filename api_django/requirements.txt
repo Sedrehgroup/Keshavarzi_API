@@ -12,6 +12,8 @@ gsconfig-py3==1.0.8
 # drf-spectacular==0.24.2
 # drf-spectacular[sidecar]
 
+rasterio
+
 #Test requirements
 factory-boy==3.2.1
 django-debug-toolbar==3.7.0
