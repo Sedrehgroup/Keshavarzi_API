@@ -107,10 +107,8 @@ def download_one_image():
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
         .filterBounds(ee.Geometry.Polygon(coords=geojson['features'][0]['geometry']['coordinates'])) \
         .filterDate('2022-10-05', '2022-11-12') \
-        .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
 
-    print(image)
 
     file_path, folder_path = download_image_all_bands(image)
     with rasterio.open(file_path, 'r') as data:
@@ -139,10 +137,7 @@ def download_two_image():
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
         .filterBounds(ee.Geometry.Polygon(coords=geojson['features'][0]['geometry']['coordinates'])) \
         .filterDate('2022-10-05', '2022-11-12') \
-        .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
-
-    print(image)
 
     folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', 'test', 'seperated', now().strftime('%Y-%m-%d_%H-%M-%S')])}"
     file_ndvi_path = download_ndvi(image, folder_path)
