@@ -74,6 +74,8 @@ def download_one_image():
         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
 
+    print(image)
+
     file_path, folder_path = download_image_all_bands(image)
     with rasterio.open(file_path, 'r') as data:
         b8_4 = data.read_band((8, 4))
@@ -103,6 +105,9 @@ def download_two_image():
         .filterDate('2022-11-05', '2022-11-12') \
         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
+
+    print(image)
+
     folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', 'test', 'seperated', now().strftime('%Y-%m-%d_%H-%M-%S')])}"
     file_ndvi_path = download_ndvi(image, folder_path)
     file_rgb_path = download_image_rgb_band(image, folder_path)
@@ -126,6 +131,7 @@ def download_test():
         list_all.append(download_two_image())
 
     print(f"Download seperated images -> {sum(list_seperated) / len(list_seperated)}")
+
 
 if __name__ == "__main__":
     download_test()
