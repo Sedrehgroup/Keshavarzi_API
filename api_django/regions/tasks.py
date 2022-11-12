@@ -37,19 +37,31 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
     logger.info("Start downloading images")
     for img_id, img_date in id_date_list:
         url = ee.Image(img_id).getDownloadURL(params={
-            'scale': 10, 'region': polygon, "bands": ['TCI_R', 'TCI_G', 'TCI_B'],
+            'scale': 10, 'region': polygon,
+            "bands": ['TCI_R', 'TCI_G', 'TCI_B', 'B4', 'B8'],
             'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
 
-        # Example: /media/images/user-1/region-1/2022-01-02.tif
-        file_path = region.get_file_path_by_date_and_folder_path(img_date, folder_path)
+        ndvi_file_path = region.get_ndvi_path(img_date)  # Example: /media/images/user-1/region-1/ndvi/2022-01-02.tif
+        rgb_file_path = region.get_rgb_path(img_date)  # Example: /media/images/user-1/region-1/rgb/2022-01-02.tif
         dates += f"{img_date}\n"
         with requests.get(url) as response:
-            # Write Binary is important: https://stackoverflow.com/a/2665873/14449337
-            with open(file_path, 'wb') as raster_file:
-                raster_file.write(response.content)
+            with rasterio.open(BytesIO(response.content)) as raster_file:
+                b4, b8 = raster_file.read(4), raster_file.read(5)  # ['TCI_R', 'TCI_G', 'TCI_B', 'B4', 'B8']
+                ndvi_result = (b8 - b4) / (b8 + b4)
+                rgb_result = raster_file.read((1, 2, 3))
+
+                meta = raster_file.meta
+                meta.update(driver='GTiff')
+                meta.update(dtype=rasterio.float32)
+
+        with rasterio.open(ndvi_file_path, "wb") as ndvi_file:
+            ndvi_file.write(ndvi_result, 1)
+        with rasterio.open(rgb_file_path, "wb") as rgb_file:
+            rgb_file.write(rgb_result, (1, 2, 3))
 
         try:
-            cat.create_coveragestore(name=f"user_{user_id}--region_{region_id}--{img_date}", data=file_path)
+            cat.create_coveragestore(name=f"user_{user_id}--region_{region_id}--NDVI--{img_date}", data=ndvi_file_path)
+            cat.create_coveragestore(name=f"user_{user_id}--region_{region_id}--RGB--{img_date}", data=rgb_file_path)
         except ConflictingDataError as e:
             logger.error(e)
 
