@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 @shared_task()
 def download_images(start, end, polygon_geojson, user_id, region_id, dates):
-    logger.debug("Start task -> download_images")
+    logger.critical("Start task -> download_images")
     region = Region.objects.get(id=region_id)
     start, end = get_and_validate_date_range(start, end)
     polygon = get_and_validate_polygon_by_geom(polygon_geojson)
