@@ -76,7 +76,7 @@ def download_one_image():
         b8, b4 = data.read(4), data.read(5) #['TCI_R', 'TCI_G', 'TCI_B', 'B8', 'B4']
         ndvi_result = (b8 + b4) / (b8 - b4)
 
-        meta = b4.meta
+        meta = data.meta
         meta.update(driver='GTiff')
         meta.update(dtype=rasterio.float32)
     ndvi_file_path = f"{folder_path}/NDVI.tif"
