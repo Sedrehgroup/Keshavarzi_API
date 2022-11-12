@@ -38,7 +38,6 @@ def download_ndvi(image: ee.Image, polygon, folder_path):
         'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
 
     file_path = f"{folder_path}/ndvi.tif"
-    print(f"download -> {file_path}")
 
     with requests.get(url) as response:
         # Write Binary is important: https://stackoverflow.com/a/2665873/14449337
@@ -118,11 +117,11 @@ def download_test():
     for _ in range(20):
         list_all.append(download_one_image())
 
-    print(f"Download all images -> {sum(list_all) / len(list_all)}")
     list_seperated = []
     for _ in range(20):
-        list_all.append(download_two_image())
+        list_seperated.append(download_two_image())
 
+    print(f"Download all images -> {sum(list_all) / len(list_all)}")
     print(f"Download seperated images -> {sum(list_seperated) / len(list_seperated)}")
 
 
