@@ -54,7 +54,6 @@ def download_image_rgb_band(image: ee.Image, polygon, folder_path):
         'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
 
     file_path = f"{folder_path}/rgb.tif"
-    print(f"download -> {file_path}")
     with requests.get(url) as response:
         # Write Binary is important: https://stackoverflow.com/a/2665873/14449337
         with open(file_path, 'wb') as rgb_file:
