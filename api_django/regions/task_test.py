@@ -4,6 +4,7 @@ import rasterio
 import requests
 import ee
 import os
+import json
 
 from django.conf import settings
 from django.utils.timezone import now
