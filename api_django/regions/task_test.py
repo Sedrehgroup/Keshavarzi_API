@@ -74,7 +74,7 @@ def download_one_image():
     file_path, folder_path = download_image_all_bands(image, polygon)
     with rasterio.open(file_path, 'r') as data:
         b8, b4 = data.read(4), data.read(5)  # ['TCI_R', 'TCI_G', 'TCI_B', 'B8', 'B4']
-        ndvi_result = (b8.astype(float) - b4.astype(float)) / (b8 + b4)
+        ndvi_result = (b8 - b4) / (b8 + b4)
 
         meta = data.meta
         meta.update(driver='GTiff')
@@ -85,7 +85,7 @@ def download_one_image():
 
     elapsed_time = time.time() - st
     print('Execution time:', time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
-    print(f"NDVI size file -> {os.path.getsize(ndvi_file)}")
+    print(f"NDVI size file -> {os.path.getsize(ndvi_file_path)}")
     print(f"RPG size file -> {os.path.getsize(file_path)}")
 
     return elapsed_time
