@@ -4,56 +4,10 @@ import rasterio
 import requests
 import ee
 import os
-import json
 
 from django.conf import settings
 from django.utils.timezone import now
-
-private_key_path = os.path.join(settings.BASE_DIR, "utils", "gee", "geotest-privkey.json")
-if not os.path.isfile(private_key_path):
-    raise FileNotFoundError("geotest-privkey.json not found. This file should exists in utils.gee package.")
-
-service_account = 'geo-test@geotest-317218.iam.gserviceaccount.com'
-with open(private_key_path, 'r') as pk:
-    credentials = ee.ServiceAccountCredentials(service_account, key_data=json.dumps(json.load(pk)))
-ee.Initialize(credentials)
-
-geojson = {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            [
-              51.454203471640426,
-              35.67995126888944
-            ],
-            [
-              51.454203471640426,
-              35.67993377710842
-            ],
-            [
-              51.45422301913513,
-              35.67993377710842
-            ],
-            [
-              51.45422301913513,
-              35.67995126888944
-            ],
-            [
-              51.454203471640426,
-              35.67995126888944
-            ]
-          ]
-        ],
-        "type": "Polygon"
-      }
-    }
-  ]
-}
+from regions.tests.factories import fake_polygon_geojson
 
 
 # https://gis.stackexchange.com/questions/429958/calculating-monthly-modis-ndvi-using-gee-python-api-applied-to-one-or-multiple-r
@@ -62,9 +16,9 @@ geojson = {
 # NDVI => Normalized Difference Vegetation Index
 # NDVI = (Band 8 – Band 4) / (Band 8 + Band 4)
 
-def download_image_all_bands(image: ee.Image):
+def download_image_all_bands(image: ee.Image, polygon):
     url = image.getDownloadURL(params={
-        'scale': 10, "bands": ['TCI_R', 'TCI_G', 'TCI_B', 'B8', 'B4'],
+        'scale': 10, "bands": ['TCI_R', 'TCI_G', 'TCI_B', 'B8', 'B4'], 'region': polygon,
         'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
 
     today_str = now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -80,8 +34,10 @@ def download_image_all_bands(image: ee.Image):
     return file_path, folder_path
 
 
-def download_ndvi(image: ee.Image, folder_path):
-    url = image.normalizedDifference(['B8', 'B4']).getDownloadURL()
+def download_ndvi(image: ee.Image, polygon, folder_path):
+    url = image.normalizedDifference(['B8', 'B4']).getDownloadURL(params={
+        'scale': 10, 'region': polygon,
+        'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
 
     file_path = f"{folder_path}/ndvi.tif"
     print(f"download -> {file_path}")
@@ -112,13 +68,14 @@ def download_image_rgb_band(image: ee.Image, folder_path):
 def download_one_image():
     """ Download one image and then get NDVI with rasterio """
     st = time.time()
+    polygon = ee.Geometry.Polygon(coords=fake_polygon_geojson['features'][0]['geometry']['coordinates'])
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
-        .filterBounds(ee.Geometry.Polygon(coords=geojson['features'][0]['geometry']['coordinates'])) \
-        .filterDate('2021-10-05', '2022-11-12') \
+        .filterBounds(polygon) \
+        .filterDate('2022-11-05', '2022-11-12') \
+        .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
 
-
-    file_path, folder_path = download_image_all_bands(image)
+    file_path, folder_path = download_image_all_bands(image, polygon)
     with rasterio.open(file_path, 'r') as data:
         b8_4 = data.read_band((8, 4))
         b8, b4 = b8_4.read(8), b8_4.read(4)
@@ -142,14 +99,15 @@ def download_one_image():
 def download_two_image():
     """ Download RGB and NDVI separately """
     st = time.time()
+    polygon = ee.Geometry.Polygon(coords=fake_polygon_geojson['features'][0]['geometry']['coordinates'])
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
-        .filterBounds(ee.Geometry.Polygon(coords=geojson['features'][0]['geometry']['coordinates'])) \
-        .filterDate('2021-10-05', '2022-11-12') \
+        .filterBounds(polygon) \
+        .filterDate('2022-11-05', '2022-11-12') \
+        .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
-
     folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', 'test', 'seperated', now().strftime('%Y-%m-%d_%H-%M-%S')])}"
-    file_ndvi_path = download_ndvi(image, folder_path)
-    file_rgb_path = download_image_rgb_band(image, folder_path)
+    file_ndvi_path = download_ndvi(image, polygon, folder_path)
+    file_rgb_path = download_image_rgb_band(image, polygon, folder_path)
 
     elapsed_time = time.time() - st
     print('Execution time:', time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
