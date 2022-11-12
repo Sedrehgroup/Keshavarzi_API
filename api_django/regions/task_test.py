@@ -126,3 +126,6 @@ def download_test():
         list_all.append(download_two_image())
 
     print(f"Download seperated images -> {sum(list_seperated) / len(list_seperated)}")
+
+if __name__ == "__main__":
+    download_test()
