@@ -212,7 +212,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-        'celery': {
+        'regions.tasks': {
             'handlers': ['console', 'file_celery'],
             'level': 'DEBUG',
             'propagate': False,
