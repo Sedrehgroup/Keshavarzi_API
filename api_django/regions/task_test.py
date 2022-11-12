@@ -35,7 +35,6 @@ def download_image_all_bands(image: ee.Image, polygon):
 
 
 def download_ndvi(image: ee.Image, polygon, folder_path):
-
     url = image.normalizedDifference(['B8', 'B4']).getDownloadURL(params={
         'scale': 10, 'region': polygon,
         'crs': 'EPSG:4326', 'filePerBand': False, 'format': 'GEO_TIFF'})
@@ -105,9 +104,9 @@ def download_two_image():
         .filterBounds(polygon) \
         .filterDate('2022-11-05', '2022-11-12') \
         .first()
-    print(image)
-    image = ee.Image(image)
+
     folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', 'test', 'seperated', now().strftime('%Y-%m-%d_%H-%M-%S')])}"
+    os.makedirs(folder_path, exist_ok=True)
     file_ndvi_path = download_ndvi(image, polygon, folder_path)
     file_rgb_path = download_image_rgb_band(image, polygon, folder_path)
 
