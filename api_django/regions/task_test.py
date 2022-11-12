@@ -24,7 +24,7 @@ def download_image_all_bands(image: ee.Image, polygon):
     folder_path = f"{settings.BASE_DIR}/{'/'.join(['media', 'images', 'test', 'all', now().strftime('%Y-%m-%d_%H-%M-%S')])}"
     os.makedirs(folder_path, exist_ok=True)
     file_path = f"{folder_path}/file.tif"
-    print(f"download -> {file_path}")
+
     with requests.get(url) as response:
         # Write Binary is important: https://stackoverflow.com/a/2665873/14449337
         with open(file_path, 'wb') as raster_file:
@@ -73,8 +73,7 @@ def download_one_image():
 
     file_path, folder_path = download_image_all_bands(image, polygon)
     with rasterio.open(file_path, 'r') as data:
-        b8_4 = data.read((8, 4))
-        b8, b4 = b8_4.read(8), b8_4.read(4)
+        b8, b4 = data.read(4), data.read(5) #['TCI_R', 'TCI_G', 'TCI_B', 'B8', 'B4']
         ndvi_result = (b8 + b4) / (b8 - b4)
 
     meta = b4.meta
