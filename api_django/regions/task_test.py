@@ -77,7 +77,7 @@ def download_one_image():
         ndvi_result = (b8 + b4) / (b8 - b4)
 
     ndvi_file_path = f"{folder_path}/NDVI.tif"
-    with rasterio.open(ndvi_file_path, 'wb') as ndvi_file:
+    with rasterio.open(ndvi_file_path, 'w') as ndvi_file:
         ndvi_file.write(1, ndvi_result.as_type(rasterio.float32))
 
     elapsed_time = time.time() - st
