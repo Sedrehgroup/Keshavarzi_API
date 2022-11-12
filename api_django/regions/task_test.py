@@ -70,7 +70,7 @@ def download_one_image():
     st = time.time()
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
         .filterBounds(ee.Geometry.Polygon(coords=fake_polygon_geojson['features'][0]['geometry']['coordinates'])) \
-        .filterDate('2021-11-05', '2022-11-12') \
+        .filterDate('2022-10-05', '2022-11-12') \
         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
 
@@ -102,7 +102,7 @@ def download_two_image():
     st = time.time()
     image = ee.ImageCollection("COPERNICUS/S2_SR") \
         .filterBounds(ee.Geometry.Polygon(coords=fake_polygon_geojson['features'][0]['geometry']['coordinates'])) \
-        .filterDate('2021-11-05', '2022-11-12') \
+        .filterDate('2022-10-05', '2022-11-12') \
         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
         .first()
 
