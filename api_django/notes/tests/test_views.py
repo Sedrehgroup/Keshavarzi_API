@@ -17,12 +17,12 @@ LIST_USER_NOTES_URL = reverse("notes:list_create")
 TEST_TIF = os.path.join(BASE_DIR, "regions", "tests", "tif_test.tif")
 
 
-def RUD_URL(note_id):
-    """ Retrieve Update Destroy URL """
+def RUD_NOTE_URL(note_id):
+    """ Retrieve Update Destroy Note URL """
     return reverse("notes:retrieve_update_destroy", kwargs={"pk": note_id})
 
 
-def LNBR_URL(region_id):
+def L_NOTE_BY_REGION_URL(region_id):
     """ List Notes By Region URL """
     return reverse("notes:list_notes_by_region", kwargs={"pk": region_id})
 
@@ -80,7 +80,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
         NoteFactory.create_batch(user=self.user, region=region, size=12)
 
         self.login(self.user.phone_number)
-        res = self.client.get(LNBR_URL(region.id))
+        res = self.client.get(L_NOTE_BY_REGION_URL(region.id))
         self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
         self.assertIn("count", res.data)
@@ -112,7 +112,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
                 3- Count the number of notes(Pagination)
                 4- Retrieve Note
             """
-            res = self.client.get(LNBR_URL(region.id))
+            res = self.client.get(L_NOTE_BY_REGION_URL(region.id))
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertEqual(res.data["count"], 20)
@@ -130,7 +130,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
                 3- Count the number of notes(Pagination)
                 3- Retrieve Note
             """
-            res = self.client.get(LNBR_URL(region.id))
+            res = self.client.get(L_NOTE_BY_REGION_URL(region.id))
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertEqual(res.data["count"], 15)
@@ -149,7 +149,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
                 2- Count the number of notes(Pagination)
                 3- Retrieve Note
             """
-            res = self.client.get(LNBR_URL(region.id))
+            res = self.client.get(L_NOTE_BY_REGION_URL(region.id))
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
         self.assertEqual(res.data["count"], 12)
@@ -166,7 +166,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
                 1- Retrieve User
                 2- Retrieve Region
             """
-            res = self.client.get(LNBR_URL(region.id))
+            res = self.client.get(L_NOTE_BY_REGION_URL(region.id))
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
@@ -181,7 +181,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
                 1- Retrieve User
                 2- Retrieve Region
             """
-            res = self.client.get(LNBR_URL(region.id))
+            res = self.client.get(L_NOTE_BY_REGION_URL(region.id))
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
@@ -194,7 +194,7 @@ class ListNoteByRegionTestCase(BaseNotesTestCase):
                 1- Retrieve User
                 2- Count Notes
             """
-            res = self.client.get(LNBR_URL(invalid_region_id))
+            res = self.client.get(L_NOTE_BY_REGION_URL(invalid_region_id))
 
             self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
 
@@ -304,7 +304,7 @@ class UpdateNoteTestCase(BaseNotesTestCase):
                 3- Update object
             """
             data = {"text": "new_text"}
-            res = self.client.patch(RUD_URL(note.id), data)
+            res = self.client.patch(RUD_NOTE_URL(note.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
 
@@ -327,7 +327,7 @@ class UpdateNoteTestCase(BaseNotesTestCase):
                 2- Retrieve Note
             """
             data = {"text": "This test should fail"}
-            res = self.client.patch(RUD_URL(note.id), data)
+            res = self.client.patch(RUD_NOTE_URL(note.id), data)
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
 
@@ -343,7 +343,7 @@ class DeleteNoteTestCase(BaseNotesTestCase):
                 2- Retrieve Note
                 3- Delete Note
             """
-            res = self.client.delete(RUD_URL(note.id))
+            res = self.client.delete(RUD_NOTE_URL(note.id))
 
             self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT, res.data)
 
@@ -357,7 +357,7 @@ class DeleteNoteTestCase(BaseNotesTestCase):
                 2- Retrieve Note
                 3- Delete Note
             """
-            res = self.client.delete(RUD_URL(note.id))
+            res = self.client.delete(RUD_NOTE_URL(note.id))
 
             self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT, res.data)
 
@@ -371,6 +371,6 @@ class DeleteNoteTestCase(BaseNotesTestCase):
                 1- Retrieve User
                 2- Retrieve Note
             """
-            res = self.client.delete(RUD_URL(note.id))
+            res = self.client.delete(RUD_NOTE_URL(note.id))
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
