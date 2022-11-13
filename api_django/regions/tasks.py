@@ -9,7 +9,7 @@ from time import sleep
 
 from celery import shared_task
 from celery.result import AsyncResult
-from celery.exceptions import InvalidTaskError
+from celery.exceptions import InvalidTaskError, TaskError
 from django.conf import settings
 from django.utils.timezone import now
 from geoserver.catalog import ConflictingDataError
@@ -116,14 +116,14 @@ def get_new_images():
                 async_result = AsyncResult(task.id)
                 if async_result.state == "FAILURE":
                     logger.error(f"Task with ID={task.id} is failed. Result={async_result.result}")
-                    break
+                    raise TaskError()
         elif any(AsyncResult(task.id).state != "SUCCESS" for task in tasks_list):
             # Check if state is not SUCCESS for any task in the tasks_list.
             for task in tasks_list:
                 async_result = AsyncResult(task.id)
                 if async_result.state != "SUCCESS":
                     logger.error(f"Task with ID={task.id} is not success. Result={async_result.result}")
-                    break
+                    raise TaskError()
 
         bulk_list = []
         for region in region_slice:
