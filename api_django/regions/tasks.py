@@ -82,6 +82,7 @@ def get_new_images():
         STEP 6: Update region.date_last_update field of small region list.
         ** DONE **
     """
+    logger.info("Start task -> get_new_images")
     date_today = datetime.today()
     date_weak_ago = date_today - timedelta(days=7)
     regions = Region.objects \
