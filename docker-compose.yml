@@ -16,8 +16,8 @@ services:
     depends_on:
       - postgis
       - geoserver
-    ports:
-      - 8000:8000
+    expose:
+      - 8000
     volumes:
       - ./api_django:/api_django
     environment:
