@@ -28,7 +28,7 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
     region = Region.objects.get(id=region_id)
     start, end = get_and_validate_date_range(start, end)
     polygon = get_and_validate_polygon_by_geom(polygon_geojson)
-    dates = dates if dates is not None else ""
+    dates = dates if dates else ""
 
     image_collection = get_image_collections(polygon, start, end)
     id_date_list = get_dates_of_image_collection(image_collection)
