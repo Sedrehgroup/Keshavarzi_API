@@ -99,9 +99,11 @@ def get_new_images():
         logger.debug("get tasks")
         result = []
         for region in region_list:
-            task = download_images.delay(start=region.date_last_download, end=date_today.date(),
+            start_str = region.date_last_download.strftime('%Y-%m-%d')
+            end_str = date_today.strftime('%Y-%m-%d')
+            task = download_images.delay(start=start_str, end=end_str, dates=region.dates,
                                          polygon_geojson=get_geojson_by_polygon(region.polygon),
-                                         user_id=region.user_id, region_id=region.id, dates=region.dates)
+                                         user_id=region.user_id, region_id=region.id)
             result.append(task)
         return result
 
