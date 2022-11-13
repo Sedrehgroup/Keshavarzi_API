@@ -1,6 +1,5 @@
 import ee
 import logging
-import os
 import rasterio
 import requests
 
@@ -10,6 +9,7 @@ from time import sleep
 
 from celery import shared_task
 from celery.result import AsyncResult
+from celery.exceptions import InvalidTaskError
 from django.conf import settings
 from django.utils.timezone import now
 from geoserver.catalog import ConflictingDataError
@@ -25,9 +25,13 @@ logger = logging.getLogger(__name__)
 @shared_task()
 def download_images(start, end, polygon_geojson, user_id, region_id, dates):
     logger.debug("Start task -> download_images")
-    region = Region.objects.get(id=region_id)
-    start, end = get_and_validate_date_range(start, end)
-    polygon = get_and_validate_polygon_by_geom(polygon_geojson)
+    try:
+        region = Region.objects.get(id=region_id)
+        start, end = get_and_validate_date_range(start, end)
+        polygon = get_and_validate_polygon_by_geom(polygon_geojson)
+    except Exception as e:
+        logger.error(e)
+        raise InvalidTaskError(e)
     dates = dates if dates else ""
 
     image_collection = get_image_collections(polygon, start, end)
