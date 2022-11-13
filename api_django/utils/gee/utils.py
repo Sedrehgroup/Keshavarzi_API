@@ -4,7 +4,7 @@ import ee
 import os
 
 from typing import Tuple, Union
-from datetime import datetime,date
+from datetime import datetime, date
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
@@ -21,18 +21,17 @@ ee.Initialize(credentials)
 
 def get_and_validate_date_range(start_date: Union[str, date], end_date: Union[str, date]) -> Tuple[date, date]:
     logger.debug("Get and validate date range")
-    if isinstance(start_date, date) and isinstance(end_date, date):
-        return start_date, end_date
-    try:
-        # 1- Validate that input strings are in a correct format.
-        # 2- Convert string-datetime to datetime instance.
-        date_format = '%Y-%m-%d'
-        start_date = datetime.strptime(start_date, date_format)
-        end_date = datetime.strptime(end_date, date_format)
-        return start_date, end_date
-    except (ValueError, TypeError) as e:
-        # Exception message example: time data '12/11/2018' does not match format '%Y-%m-%d'
-        raise ValueError({"datetime": e})
+    if isinstance(start_date, str) and isinstance(end_date, str):
+        try:
+            # 1- Validate that input strings are in a correct format.
+            # 2- Convert string-datetime to datetime instance.
+            date_format = '%Y-%m-%d'
+            start_date = datetime.strptime(start_date, date_format)
+            end_date = datetime.strptime(end_date, date_format)
+        except (ValueError, TypeError) as e:
+            # Exception message example: time data '12/11/2018' does not match format '%Y-%m-%d'
+            raise ValueError({"datetime": e})
+    return start_date, end_date
 
 
 def get_dates_of_image_collection(image_collection: ee.ImageCollection):
