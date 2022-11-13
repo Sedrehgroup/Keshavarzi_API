@@ -42,11 +42,11 @@ class Region(models.Model):
     def folder_path(self):
         return f"{settings.BASE_DIR}/{'/'.join(['media', 'images', f'user-{str(self.user_id)}', f'region-{str(self.id)}'])}"
 
-    @property
     def create_ndvi_rgb_dir(self):
         import os
         os.makedirs(f"{self.folder_path}/ndvi", exist_ok=True)
         os.makedirs(f"{self.folder_path}/rgb", exist_ok=True)
+
     def get_ndvi_path(self, image_date):
         return f"{self.folder_path}/ndvi/{image_date}.tif"
 
