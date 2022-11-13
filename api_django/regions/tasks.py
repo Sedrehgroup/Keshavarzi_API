@@ -32,13 +32,13 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
     except Exception as e:
         logger.error(e)
         raise InvalidTaskError(e)
-    dates = dates if dates else ""
 
     image_collection = get_image_collections(polygon, start, end)
     id_date_list = get_dates_of_image_collection(image_collection)
 
-    logger.debug("Start downloading images")
     region.create_ndvi_rgb_dir()
+    dates = dates if dates else ""
+    logger.debug("Start downloading images")
     for img_id, img_date in id_date_list:
         url = ee.Image(img_id).getDownloadURL(params={
             'scale': 10, 'region': polygon,
@@ -96,9 +96,10 @@ def get_new_images():
     sliced_regions = [regions[i:i + mdipt] for i in range(0, len(regions), mdipt)]
 
     def get_tasks(region_list: list):
+        logger.debug("get tasks")
         result = []
         for region in region_list:
-            task = download_images.delay(start=region.date_last_download, end=date_today,
+            task = download_images.delay(start=region.date_last_download, end=date_today.date(),
                                          polygon_geojson=get_geojson_by_polygon(region.polygon),
                                          user_id=region.user_id, region_id=region.id, dates=region.dates)
             result.append(task)
