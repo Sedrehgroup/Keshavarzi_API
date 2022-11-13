@@ -38,8 +38,10 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
 
     region.create_ndvi_rgb_dir()
     dates = dates if dates else ""
+    last_image_date = ""
     logger.debug("Start downloading images")
     for img_id, img_date in id_date_list:
+        last_image_date = img_date
         url = ee.Image(img_id).getDownloadURL(params={
             'scale': 10, 'region': polygon,
             "bands": ['TCI_R', 'TCI_G', 'TCI_B', 'B4', 'B8'],
@@ -71,7 +73,7 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
             logger.error(e)
 
     region.dates = dates
-    region.date_last_download = now()
+    region.date_last_download = datetime.strptime(last_image_date, '%Y-%m-%d')
     region.save(update_fields=["dates", "date_last_download"])
 
 
@@ -99,7 +101,7 @@ def get_new_images():
         logger.debug("get tasks")
         result = []
         for region in region_list:
-            start_str = region.date_last_download.strftime('%Y-%m-%d')
+            start_str = (region.date_last_download + timedelta(days=1)).strftime('%Y-%m-%d')
             end_str = date_today.strftime('%Y-%m-%d')
             task = download_images.delay(start=start_str, end=end_str, dates=region.dates,
                                          polygon_geojson=get_geojson_by_polygon(region.polygon),
@@ -127,11 +129,11 @@ def get_new_images():
                     logger.error(f"Task with ID={task.id} is not success. Result={async_result.result}")
                     raise TaskError()
 
-        bulk_list = []
-        for region in region_slice:
-            region.date_last_download = date_today
-            bulk_list.append(region)
-        Region.objects.bulk_update(bulk_list, ["date_last_download"])
+        # bulk_list = []
+        # for region in region_slice:
+        #     region.date_last_download = date_today
+        #     bulk_list.append(region)
+        # Region.objects.bulk_update(bulk_list, ["date_last_download"])
 
 
 def call_download_images_celery_task(instance: Region):
