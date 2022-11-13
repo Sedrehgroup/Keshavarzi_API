@@ -374,3 +374,121 @@ class DeleteNoteTestCase(BaseNotesTestCase):
             res = self.client.delete(RUD_NOTE_URL(note.id))
 
             self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class RetrieveNoteTestCase(BaseNotesTestCase):
+    def test_with_unauthorized_user(self):
+        note = NoteFactory.create()
+        with self.assertNumQueries(0):
+            res = self.client.get(RUD_NOTE_URL(note.id))
+
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
+
+    def test_not_exists_note(self):
+        invalid_note_id = Note.objects.order_by("id").only("id").first().id + 1
+        with self.assertNumQueries(0):
+            res = self.client.get(RUD_NOTE_URL(invalid_note_id))
+
+            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND, res.data)
+
+    def test_note_by_creator_admin(self):
+        """
+            User role: Admin
+            Is creator: True
+        """
+        note = NoteFactory.create(user=self.admin, user_role="A")
+        self.login(self.admin.phone_number)
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+                3- Retrieve Note
+            """
+            res = self.client.get(RUD_NOTE_URL(note.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+    def test_note_by_creator_user(self):
+        """
+            User role: User
+            Is creator: True
+        """
+        note = NoteFactory.create(user=self.user, user_role="U")
+        self.login(self.user.phone_number)
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+                3- Retrieve Note
+            """
+            res = self.client.get(RUD_NOTE_URL(note.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+    def test_note_by_creator_expert(self):
+        """
+            User role: Expert
+            Is creator: True
+        """
+        note = NoteFactory.create(user=self.expert, user_role="A")
+        self.login(self.expert.phone_number)
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+                3- Retrieve Note
+            """
+            res = self.client.get(RUD_NOTE_URL(note.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+    def test_note_by_not_creator_admin(self):
+        """
+            User role: Admin
+            Is creator: False
+        """
+        note = NoteFactory.create(user=self.user, user_role="U")
+        self.login(self.admin.phone_number)
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+                3- Retrieve Note
+            """
+            res = self.client.get(RUD_NOTE_URL(note.id))
+
+            self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+
+    def test_note_by_not_creator_user(self):
+        """
+            User role: User
+            Is creator: False
+        """
+        note = NoteFactory.create()
+        self.login(self.user.phone_number)
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+                3- Retrieve Note
+            """
+            res = self.client.get(RUD_NOTE_URL(note.id))
+
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
+
+    def test_note_by_not_creator_expert(self):
+        """
+            User role: User
+            Is creator: False
+        """
+        note = NoteFactory.create()
+        self.login(self.expert.phone_number)
+        with self.assertNumQueries(3):
+            """
+                1- Retrieve User
+                2- Retrieve Region
+                3- Retrieve Note
+            """
+            res = self.client.get(RUD_NOTE_URL(note.id))
+
+            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
