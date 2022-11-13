@@ -4,7 +4,7 @@ import ee
 import os
 
 from typing import Tuple, Union
-from datetime import datetime
+from datetime import datetime,date
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
@@ -19,9 +19,9 @@ with open(private_key_path, 'r') as pk:
 ee.Initialize(credentials)
 
 
-def get_and_validate_date_range(start_date: Union[str, datetime], end_date: Union[str, datetime]) -> Tuple[datetime, datetime]:
+def get_and_validate_date_range(start_date: Union[str, date], end_date: Union[str, date]) -> Tuple[date, date]:
     logger.debug("Get and validate date range")
-    if isinstance(start_date, datetime) and isinstance(end_date, datetime):
+    if isinstance(start_date, date) and isinstance(end_date, date):
         return start_date, end_date
     try:
         # 1- Validate that input strings are in a correct format.
