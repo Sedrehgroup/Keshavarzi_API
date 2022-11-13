@@ -24,7 +24,7 @@ class RetrieveNoteSerializer(serializers.ModelSerializer):
 
 
 class CreateNoteSerializer(serializers.ModelSerializer):
-    region_id = serializers.IntegerField(min_value=1, write_only=True)
+    region_id = serializers.IntegerField(min_value=1)
 
     def get_region_by_id(self, attrs):
         user = self.context['request'].user
