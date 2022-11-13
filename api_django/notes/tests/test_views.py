@@ -33,7 +33,6 @@ class BaseNotesTestCase(APITestCase):
         self.user = UserFactory.create(password=self.password)
         self.expert = ExpertFactory.create(password=self.password)
         self.admin = AdminFactory.create(password=self.password)
-        self.region = RegionFactory.create()
 
     def login(self, phone_number, password=None):
         password = password if password is not None else self.password
