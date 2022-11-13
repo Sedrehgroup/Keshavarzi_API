@@ -93,7 +93,7 @@ def get_new_images():
     def get_tasks(region_list: list):
         result = []
         for region in region_list:
-            task = download_images.delay(start=date_weak_ago, end=date_today,
+            task = download_images.delay(start=region.date_last_download, end=date_today,
                                          polygon_geojson=get_geojson_by_polygon(region.polygon),
                                          user_id=region.user_id, region_id=region.id, dates=region.dates)
             result.append(task)
