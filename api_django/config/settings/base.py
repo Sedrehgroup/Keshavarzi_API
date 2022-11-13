@@ -166,18 +166,14 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
         },
     },
     'handlers': {
         'console': {
             'level': 'DEBUG',
+            'formatter': 'standard',
             'class': 'logging.StreamHandler',
         },
         'mail_admins': {
@@ -187,7 +183,7 @@ LOGGING = {
         'file_request': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'debug_celery.log',
+            'filename': BASE_DIR / 'debug_request.log',
         },
         'file_django': {
             'level': 'ERROR',
@@ -198,7 +194,7 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR / 'debug_celery.log',
-            'formatter': 'simple',
+            'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
     },
@@ -217,6 +213,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
+        'celery': {
+            'handlers': ['console', 'file_celery'],
+            'level': 'DEBUG',
+            'propagate': False,
+        }
     }
 }
 
