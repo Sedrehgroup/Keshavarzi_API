@@ -1,4 +1,5 @@
 version: "3.9"
+#ToDo: Change debug mode of celery and celery-beat
 
 services:
   api_django:
@@ -9,8 +10,8 @@ services:
     command: sh -c "python manage.py makemigrations --noinput
       && python manage.py migrate
       && python manage.py collectstatic --no-input
-      && celery -A config worker --logfile=logs/celery/worker/info.log -l info --detach
-      && celery -A config beat --logfile=logs/celery/beat/info.log  -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler --detach
+      && celery -A config worker --logfile=logs/celery/worker/info.log -l debug --detach
+      && celery -A config beat --logfile=logs/celery/beat/info.log  -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler --detach
       && gunicorn --reload config.wsgi --bind 0.0.0.0:8000"
     depends_on:
       - postgis
