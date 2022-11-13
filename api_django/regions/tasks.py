@@ -45,14 +45,15 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
         rgb_file_path = region.get_rgb_path(img_date)  # Example: /media/images/user-1/region-1/rgb/2022-01-02.tif
         dates += f"{img_date}\n"
         with requests.get(url) as response:
-            with rasterio.open(BytesIO(response.content)) as raster_file:
-                b4, b8 = raster_file.read(4), raster_file.read(5)  # ['TCI_R', 'TCI_G', 'TCI_B', 'B4', 'B8']
-                ndvi_result = (b8 - b4) / (b8 + b4)
-                rgb_result = raster_file.read((1, 2, 3))
+            with BytesIO(response.content) as content:
+                with rasterio.open(content) as raster_file:
+                    b4, b8 = raster_file.read(4), raster_file.read(5)  # ['TCI_R', 'TCI_G', 'TCI_B', 'B4', 'B8']
+                    ndvi_result = (b8 - b4) / (b8 + b4)
+                    rgb_result = raster_file.read((1, 2, 3))
 
-                meta = raster_file.meta
-                meta.update({"width": raster_file.width, "height": raster_file.height,
-                             "driver": 'GTiff', "dtype": rasterio.float32})
+                    meta = raster_file.meta
+                    meta.update({"width": raster_file.width, "height": raster_file.height,
+                                 "driver": 'GTiff', "dtype": rasterio.float32})
 
         with rasterio.open(ndvi_file_path, "w", **meta) as ndvi_file:
             ndvi_file.write(ndvi_result, 1)
