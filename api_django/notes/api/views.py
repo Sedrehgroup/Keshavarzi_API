@@ -52,7 +52,6 @@ class ListNotesByRegion(ListAPIView):
 
 class RetrieveUpdateDestroyNote(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsCreator | IsAdmin]
-    default_description = "Only creator or admin can {} the note."
 
     def get_queryset(self):
         qs = Note.objects.all()
