@@ -51,8 +51,8 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
                 rgb_result = raster_file.read((1, 2, 3))
 
                 meta = raster_file.meta
-                meta.update(driver='GTiff')
-                meta.update(dtype=rasterio.float32)
+                meta.update({"width": raster_file.shape[2], "height": raster_file.shape[1],
+                             "driver": 'GTiff', "dtype": rasterio.float32})
 
         with rasterio.open(ndvi_file_path, "w", **meta) as ndvi_file:
             ndvi_file.write(ndvi_result, 1)
