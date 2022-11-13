@@ -30,7 +30,7 @@ def get_and_validate_date_range(start_date: Union[str, date], end_date: Union[st
             end_date = datetime.strptime(end_date, date_format)
         except (ValueError, TypeError) as e:
             # Exception message example: time data '12/11/2018' does not match format '%Y-%m-%d'
-            raise ValueError({"datetime": e})
+            raise ValueError({"msg": e, "values": (start_date, end_date)})
     return start_date, end_date
 
 
