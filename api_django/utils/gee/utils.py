@@ -22,7 +22,7 @@ ee.Initialize(credentials)
 def get_and_validate_date_range(start_date: Union[str, datetime], end_date: Union[str, datetime]) -> Tuple[str, str]:
     logger.debug("Get and validate date range")
     date_format = '%Y-%m-%d'
-    if isinstance(start_date, datetime) and isinstance(end_date, datetime):
+    if not isinstance(start_date, str) and not isinstance(end_date, str):
         start_date = start_date.strftime(date_format)
         end_date = end_date.strftime(date_format)
     else:
