@@ -19,21 +19,20 @@ with open(private_key_path, 'r') as pk:
 ee.Initialize(credentials)
 
 
-def get_and_validate_date_range(start_date: Union[str, datetime], end_date: Union[str, datetime]) -> Tuple[str, str]:
+def get_and_validate_date_range(start_date: Union[str, datetime], end_date: Union[str, datetime]) -> Tuple[datetime, datetime]:
     logger.debug("Get and validate date range")
-    date_format = '%Y-%m-%d'
-    if not isinstance(start_date, str) and not isinstance(end_date, str):
-        start_date = start_date.strftime(date_format)
-        end_date = end_date.strftime(date_format)
-    else:
-        try:
-            # Validate that input strings are in a correct format.
-            datetime.strptime(start_date, date_format)
-            datetime.strptime(end_date, date_format)
-        except (ValueError, TypeError) as e:
-            # Exception message example: time data '12/11/2018' does not match format '%Y-%m-%d'
-            raise ValidationError({"datetime": e})
-    return start_date, end_date
+    if isinstance(start_date, datetime) and isinstance(end_date, datetime):
+        return start_date, end_date
+    try:
+        # 1- Validate that input strings are in a correct format.
+        # 2- Convert string-datetime to datetime instance.
+        date_format = '%Y-%m-%d'
+        start_date = datetime.strptime(start_date, date_format)
+        end_date = datetime.strptime(end_date, date_format)
+        return start_date, end_date
+    except (ValueError, TypeError) as e:
+        # Exception message example: time data '12/11/2018' does not match format '%Y-%m-%d'
+        raise ValueError({"datetime": e})
 
 
 def get_dates_of_image_collection(image_collection: ee.ImageCollection):
