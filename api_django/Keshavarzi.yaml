@@ -1,6 +1,6 @@
 openapi: 3.0.3
 servers:
-  - url: '{protocol}://95.216.55.238:8000/'
+  - url: '{protocol}://95.216.55.238:443/'
     variables:
       protocol:
         enum:
@@ -8,6 +8,13 @@ servers:
           - https
         default: http
   - url: '{protocol}://keshavarzi.ir'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: https
+  - url: '{protocol}://api.keshavarzi.ir'
     variables:
       protocol:
         enum:
