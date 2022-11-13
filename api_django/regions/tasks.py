@@ -28,13 +28,13 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
     region = Region.objects.get(id=region_id)
     start, end = get_and_validate_date_range(start, end)
     polygon = get_and_validate_polygon_by_geom(polygon_geojson)
-    os.makedirs(region.folder_path, exist_ok=True)
     dates = dates if dates is not None else ""
 
     image_collection = get_image_collections(polygon, start, end)
     id_date_list = get_dates_of_image_collection(image_collection)
 
     logger.info("Start downloading images")
+    region.create_ndvi_rgb_dir()
     for img_id, img_date in id_date_list:
         url = ee.Image(img_id).getDownloadURL(params={
             'scale': 10, 'region': polygon,
