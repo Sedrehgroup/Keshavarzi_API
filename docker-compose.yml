@@ -20,6 +20,8 @@ services:
       - 8000
     volumes:
       - ./api_django:/api_django
+      - static_volume:/api_django/static
+      - media_volume:/api_django/app/media
     environment:
       - ALLOW_ORIGIN=""
 
@@ -31,7 +33,7 @@ services:
       - DB_PASS=ymEp331j5cI5jRI9
       - DB_PORT=5432
 
-       # Geoserver
+      # Geoserver
       - GEOSERVER_USERNAME=sedreh
       - GEOSERVER_PASSWORD=ABcd1234!@
       - GEOSERVER_WORKSPACE=zamin2
@@ -110,6 +112,8 @@ services:
       - 443:443
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/api_django/static
+      - media_volume:/api_django/app/media
 
 networks:
   main:
@@ -122,3 +126,5 @@ volumes:
   geoserver_letsencrypt_sedreh:
   geoserver_fonts_sedreh:
   settings:
+  media_volume:
+  static_volume:
