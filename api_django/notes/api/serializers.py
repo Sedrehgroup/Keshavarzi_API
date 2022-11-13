@@ -3,14 +3,12 @@ from rest_framework import serializers
 from rest_framework.exceptions import NotFound, ValidationError
 
 from notes.models import Note
-from regions.api.serializers import PolygonSerializer
 from regions.models import Region
 from users.api.serializers import UserSerializer
 
 
 class RetrieveNoteSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
-    polygon = PolygonSerializer()
 
     def get_user(self, obj):
         user = self.context['request'].user
