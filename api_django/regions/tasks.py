@@ -80,22 +80,21 @@ def download_images(start, end, polygon_geojson, user_id, region_id, dates):
 @shared_task()
 def get_new_images():
     """
-        Step 1: Get target regions( region.date_last_download is older that 7 days ago )
+        Step 1: Get target regions( region.date_last_download is less than or equals to 7 days ago )
         Step 2: Slice regions to smaller and nested list: [1,2,3,4,5,6,7] -> [[1,2,3], [4,5,6], [7]]
-        Step 3: Download every small region list images and wait for !PENDING stats
-        STEP 4: Check that tasks are done without FAILURE states
-        STEP 5: Check that tasks are done with SUCCESS states
-        STEP 6: Update region.date_last_update field of small region list.
+        Step 3: Call download_images for every region in sliced_regions(Step2) and get task.id
+        Step 4: Download every small region list images and wait until state != PENDING
+        STEP 5: Check that tasks are done without FAILURE states
+        STEP 6: Check that tasks are done with SUCCESS states
         ** DONE **
     """
     logger.info("Start task -> get_new_images")
     date_today = datetime.today()
-    date_weak_ago = date_today - timedelta(days=7)
     regions = Region.objects \
-        .filter(date_last_download__lt=date_weak_ago) \
-        .only("id", "user_id", "polygon")
+        .filter(date_last_download__lte=date_today - timedelta(days=7)) \
+        .only("id", "user_id", "polygon", "dates")  # Step 1
     mdipt = getattr(settings, "MAXIMUM_DOWNLOAD_IMAGE_PER_TASK", 3)
-    sliced_regions = [regions[i:i + mdipt] for i in range(0, len(regions), mdipt)]
+    sliced_regions = [regions[i:i + mdipt] for i in range(0, len(regions), mdipt)]  # Step 2
 
     def get_tasks(region_list: list):
         logger.debug("get tasks")
@@ -110,30 +109,24 @@ def get_new_images():
         return result
 
     for region_slice in sliced_regions:
-        tasks_list = get_tasks(region_slice)
-        while all(AsyncResult(task.id).state != "PENDING" for task in tasks_list):
+        tasks_list = get_tasks(region_slice)  # Step 3
+        while all(AsyncResult(task.id).state != "PENDING" for task in tasks_list):  # Step 4
             sleep(1)
 
-        if any(AsyncResult(task.id).state == "FAILURE" for task in tasks_list):
+        if any(AsyncResult(task.id).state == "FAILURE" for task in tasks_list):  # Step 5
             # Check if state is FAILURE for any task in the tasks_list.
             for task in tasks_list:
                 async_result = AsyncResult(task.id)
                 if async_result.state == "FAILURE":
                     logger.error(f"Task with ID={task.id} is failed. Result={async_result.result}")
                     raise TaskError()
-        elif any(AsyncResult(task.id).state != "SUCCESS" for task in tasks_list):
+        elif any(AsyncResult(task.id).state != "SUCCESS" for task in tasks_list):  # Step 6
             # Check if state is not SUCCESS for any task in the tasks_list.
             for task in tasks_list:
                 async_result = AsyncResult(task.id)
                 if async_result.state != "SUCCESS":
                     logger.error(f"Task with ID={task.id} is not success. Result={async_result.result}")
                     raise TaskError()
-
-        # bulk_list = []
-        # for region in region_slice:
-        #     region.date_last_download = date_today
-        #     bulk_list.append(region)
-        # Region.objects.bulk_update(bulk_list, ["date_last_download"])
 
 
 def call_download_images_celery_task(instance: Region):
