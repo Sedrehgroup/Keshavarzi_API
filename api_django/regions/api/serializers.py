@@ -110,7 +110,8 @@ class CreateRegionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Region
-        fields = ("polygon", "name")
+        fields = ("id", "name", "polygon")
+        read_only_fields = ("id",)
 
 
 class RetrieveUpdateRegionSerializer(serializers.ModelSerializer):
