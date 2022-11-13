@@ -34,10 +34,10 @@ class RegionUtilsTestCase(APITestCase):
         without_zero = ("2022-2-1", "2022-3-1")
 
         func = utils.get_and_validate_date_range
-        self.assertEqual(valid_str, func(*valid_date))
         self.assertEqual(valid_str, func(*valid_str))
         self.assertEqual(without_zero, func(*without_zero))  # doesnt change it to with_zero
-        self.assertRaises(ValidationError, lambda: func(*with_underline))
+        self.assertRaises(ValueError, lambda: func(*valid_date))
+        self.assertRaises(ValueError, lambda: func(*with_underline))
 
     def test_date_of_image_collection(self):
         """ Test that this function is return list of [ID, Image_name] of every image that exists in image collection """
