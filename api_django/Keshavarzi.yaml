@@ -1,6 +1,6 @@
 openapi: 3.0.3
 servers:
-  - url: '{protocol}://95.216.55.238:443/'
+  - url: '{protocol}://95.216.55.238:440/'
     variables:
       protocol:
         enum:
@@ -28,11 +28,11 @@ info:
 paths:
   /notes/:
     get:
-      summary: List notes of regular OR expert user
+      summary: List notes of user
       description: |-
         User should be authenticated. \
-        Authenticated user should be an instance of Regular user or expert user. \
-        Admin user doesn't have access to this endpoint.
+        \
+        Time zone of **created_date** and **updated_date** are 'Asia/Tehran'
 
       operationId: notes_list
       tags:
@@ -842,6 +842,7 @@ components:
           $ref: '#/components/schemas/UserRoleEnum'
         text:
           type: string
+          example: "lorem ipsum"
         created_date:
           type: string
           format: date-time
@@ -865,12 +866,12 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?page=4
+          example: http://Keshavarizi.ir/notes/regions/123/?page=4
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?page=2
+          example: http://Keshavarizi.ir/notes/regions/123/?page=2
         results:
           type: array
           items:
@@ -894,8 +895,12 @@ components:
     CreateRegion:
       type: object
       properties:
+        id:
+          type: integer
+          example: 1
         name:
           type: string
+          example: "Lorem ipsum"
           description: Maximum length for this field is 20 character
           maxLength: 20
         polygon:
