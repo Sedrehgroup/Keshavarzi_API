@@ -382,7 +382,7 @@ class RetrieveNoteTestCase(BaseNotesTestCase):
         with self.assertNumQueries(0):
             res = self.client.get(RUD_NOTE_URL(note.id))
 
-            self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN, res.data)
+            self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED, res.data)
 
     def test_not_exists_note(self):
         invalid_note_id = Note.objects.order_by("id").only("id").first().id + 1
@@ -398,11 +398,10 @@ class RetrieveNoteTestCase(BaseNotesTestCase):
         """
         note = NoteFactory.create(user=self.admin, user_role="A")
         self.login(self.admin.phone_number)
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
-                2- Retrieve Region
-                3- Retrieve Note
+                2- Retrieve Note
             """
             res = self.client.get(RUD_NOTE_URL(note.id))
 
@@ -415,11 +414,10 @@ class RetrieveNoteTestCase(BaseNotesTestCase):
         """
         note = NoteFactory.create(user=self.user, user_role="U")
         self.login(self.user.phone_number)
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
-                2- Retrieve Region
-                3- Retrieve Note
+                2- Retrieve Note
             """
             res = self.client.get(RUD_NOTE_URL(note.id))
 
@@ -432,11 +430,10 @@ class RetrieveNoteTestCase(BaseNotesTestCase):
         """
         note = NoteFactory.create(user=self.expert, user_role="A")
         self.login(self.expert.phone_number)
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
-                2- Retrieve Region
-                3- Retrieve Note
+                2- Retrieve Note
             """
             res = self.client.get(RUD_NOTE_URL(note.id))
 
@@ -449,11 +446,10 @@ class RetrieveNoteTestCase(BaseNotesTestCase):
         """
         note = NoteFactory.create(user=self.user, user_role="U")
         self.login(self.admin.phone_number)
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
-                2- Retrieve Region
-                3- Retrieve Note
+                2- Retrieve Note
             """
             res = self.client.get(RUD_NOTE_URL(note.id))
 
@@ -466,11 +462,10 @@ class RetrieveNoteTestCase(BaseNotesTestCase):
         """
         note = NoteFactory.create()
         self.login(self.user.phone_number)
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
-                2- Retrieve Region
-                3- Retrieve Note
+                2- Retrieve Note
             """
             res = self.client.get(RUD_NOTE_URL(note.id))
 
@@ -483,11 +478,10 @@ class RetrieveNoteTestCase(BaseNotesTestCase):
         """
         note = NoteFactory.create()
         self.login(self.expert.phone_number)
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             """
                 1- Retrieve User
-                2- Retrieve Region
-                3- Retrieve Note
+                2- Retrieve Note
             """
             res = self.client.get(RUD_NOTE_URL(note.id))
 
