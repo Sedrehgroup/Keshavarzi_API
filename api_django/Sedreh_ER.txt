@@ -1,0 +1,36 @@
+Table user {
+  id int [pk, increment]
+  first_name varchar
+  last_name varchar
+  email email
+  phone_number varchar
+  created_at datetime
+  is_superuser boolean
+  is_staff boolean
+  is_expert boolean
+}
+
+
+Table region {
+  id int [pk, increment]
+  user_id int [ref: > user.id]
+  expert_id int [ref: > user.id]
+  polygon polygon
+  name varchar
+  date_created date
+  date_last_download date
+  is_active boolean
+  dates text
+  task_id varchar
+ }
+
+Table note {
+  id int [pk, increment]
+  region_id int [ref: > region.id]
+  user_id int [ref: > user.id]
+  user_role varchar
+  text text
+  created_date date
+  updated_date date
+}
+
