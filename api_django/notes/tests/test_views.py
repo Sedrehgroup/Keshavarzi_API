@@ -28,11 +28,21 @@ def L_NOTE_BY_REGION_URL(region_id):
 
 
 class BaseNotesTestCase(APITestCase):
-    def setUp(self) -> None:
-        self.password = "VeryStrongPassword123#@!"
-        self.user = UserFactory.create(password=self.password)
-        self.expert = ExpertFactory.create(password=self.password)
-        self.admin = AdminFactory.create(password=self.password)
+    @classmethod
+    def setUpClass(cls):
+        cls.password = "VeryStrongPassword123#@!"
+        cls.user = UserFactory.create(password=cls.password)
+        cls.expert = ExpertFactory.create(password=cls.password)
+        cls.admin = AdminFactory.create(password=cls.password)
+        cls.region = RegionFactory.create()
+
+    @classmethod
+    def tearDownClass(cls):
+        del cls.password
+        cls.user.delete()
+        cls.expert.delete()
+        cls.admin.delete()
+        cls.regoin.delete()
 
     def login(self, phone_number, password=None):
         password = password if password is not None else self.password
