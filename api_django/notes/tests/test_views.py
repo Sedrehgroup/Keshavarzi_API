@@ -42,7 +42,7 @@ class BaseNotesTestCase(APITestCase):
         cls.user.delete()
         cls.expert.delete()
         cls.admin.delete()
-        cls.regoin.delete()
+        cls.region.delete()
 
     def login(self, phone_number, password=None):
         password = password if password is not None else self.password
@@ -395,7 +395,8 @@ class RetrieveNoteTestCase(BaseNotesTestCase):
             self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED, res.data)
 
     def test_not_exists_note(self):
-        invalid_note_id = Note.objects.order_by("id").only("id").first().id + 1
+        last_note = Note.objects.order_by("id").only("id").last()
+        invalid_note_id = last_note.id if last_note else 1
         with self.assertNumQueries(0):
             res = self.client.get(RUD_NOTE_URL(invalid_note_id))
 
