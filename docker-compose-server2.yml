@@ -28,7 +28,7 @@ services:
     restart: on-failure
     command: celery -A app worker -l INFO --concurrency=4
     build:
-      context: ./celery
+      context: ./operator/celery
     depends_on:
       - rabbitmq
     networks:
