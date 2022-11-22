@@ -5,14 +5,12 @@ services:
     restart: on-failure
     container_name: app
     build:
-      context: ./app
+      context: ./operator/app
     depends_on:
       - rabbitmq
       - celery_worker
     expose:
       - 8000
-    volumes:
-      - ./app:/app
     networks:
       - main
 
