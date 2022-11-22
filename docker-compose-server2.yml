@@ -26,7 +26,7 @@ services:
   celery_worker:
     container_name: celery_worker
     restart: on-failure
-    command: celery -A app worker -l INFO --concurrency=4
+    command: celery -A tasks worker -l INFO --concurrency=4
     build:
       context: ./operator/celery
     depends_on:

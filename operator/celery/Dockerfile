@@ -11,5 +11,3 @@ RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 COPY . .
-
-RUN celery -A tasks worker -l INFO --concurrency=4
