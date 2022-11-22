@@ -1,0 +1,87 @@
+version: "3.9"
+
+services:
+  api_django:
+    restart: on-failure
+    container_name: api_django
+    build:
+      context: ./api_django
+    command: sh -c "python manage.py makemigrations --noinput
+      && python manage.py migrate
+      && python manage.py collectstatic --no-input
+      && gunicorn --reload config.wsgi --bind 0.0.0.0:8000"
+    depends_on:
+      - postgis
+      - geoserver
+    expose:
+      - 8000
+    volumes:
+      - ./api_django:/api_django
+      - static_volume:/api_django/static
+      - media_volume:/api_django/app/media
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_SCHEMA=${DB_SCHEMA}
+      - DB_PORT=${DB_PORT}
+    networks:
+      - main
+
+  postgis:
+    image: kartoza/postgis:14-3.2
+    restart: on-failure
+    container_name: postgis
+    volumes:
+      - db_land:/var/lib/postgresql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASS=ymEp331j5cI5jRI9
+      - POSTGRES_DBNAME=LandMonitoring
+    networks:
+      - main
+    expose:
+      - 5432
+
+  nginx:
+    image: nginx:latest
+    restart: on-failure
+    container_name: nginx
+    command: nginx -g 'daemon off;'
+    depends_on:
+      - api_django
+    networks:
+      - main
+    ports:
+      - 440:440
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/api_django/static
+      - media_volume:/api_django/app/media
+
+  celery_beat:
+    container_name: celery_beat
+    restart: always
+    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    build:
+      context: ./api_django
+    #    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    depends_on:
+      - api_django
+      - geoserver
+    environment:
+      - DB_HOST=postgis
+      - DB_NAME=LandMonitoring
+      - DB_USER=postgres
+      - DB_PASS=ymEp331j5cI5jRI9
+      - DB_PORT=5432
+      - DB_SCHEMA=public
+      - C_FORCE_ROOT="true"
+    networks:
+      - main
+networks:
+  main:
+
+volumes:
+  db_data:
+  media_voume:
+  static_volume:
