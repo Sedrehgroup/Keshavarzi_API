@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  app:
+    restart: on-failure
+    container_name: app
+    build:
+      context: ./app
+    depends_on:
+      - rabbitmq
+      - celery_worker
+    expose:
+      - 8000
+    networks:
+      - main
+
+  rabbitmq:
+    container_name: rabbitmq_f
+    image: rabbitmq:latest
+    restart: on-failure
+    env_file:
+      - .env
+    networks:
+      - main
+    expose:
+      - 5672
+
+  celery_worker:
+    container_name: celery_worker
+    restart: on-failure
+    command: celery -A config worker -l INFO --concurrency=4
+    build:
+      context: ./celery
+    depends_on:
+      - rabbitmq
+    networks:
+      - main
+
+
+networks:
+  main:
+
+volumes:
+  db_data:
+  geoserver_sedreh:
+  geoserver_footprints_sedreh:
+  geoserver_gwc_sedreh:
+  geoserver_letsencrypt_sedreh:
+  geoserver_fonts_sedreh:
+  settings:
