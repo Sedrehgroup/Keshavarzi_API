@@ -33,6 +33,8 @@ services:
       context: ./celery
     depends_on:
       - rabbitmq
+    env_file:
+      - .env
     networks:
       - main
 
