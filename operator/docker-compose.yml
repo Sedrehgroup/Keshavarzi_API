@@ -15,7 +15,7 @@ services:
       - main
 
   rabbitmq:
-    container_name: rabbitmq_f
+    container_name: rabbitmq
     image: rabbitmq:latest
     restart: on-failure
     env_file:
