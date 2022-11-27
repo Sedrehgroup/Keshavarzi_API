@@ -12,8 +12,8 @@ RUN apt-get -y install cron
 
 WORKDIR /api_django
 
-COPY ../requirements.txt requirements.txt
+COPY requirements.txt requirements.txt
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY .. .
+COPY . .
