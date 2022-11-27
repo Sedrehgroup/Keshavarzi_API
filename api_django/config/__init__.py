@@ -1,3 +1,3 @@
-from config.celery import celery_app
+from config.celery_conf import celery_app
 
 __all__ = ("celery_app",)
