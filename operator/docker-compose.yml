@@ -22,8 +22,8 @@ services:
       - .env
     networks:
       - main
-    expose:
-      - 5672
+    ports:
+      - "5672:5672"
 
   celery_worker:
     container_name: celery_worker
