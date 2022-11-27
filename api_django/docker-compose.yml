@@ -60,7 +60,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - static_volume:/api_django/static
-      - media_volume:/api_django/app/media
+      - media_volume:/api_django/media
 
   geoserver:
     image: kartoza/geoserver:2.20.4
