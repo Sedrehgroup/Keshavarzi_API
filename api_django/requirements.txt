@@ -12,7 +12,7 @@ gsconfig-py3==1.0.8
 # drf-spectacular==0.24.2
 # drf-spectacular[sidecar]
 
-rasterio
+rasterio==1.3.4
 
 #Test requirements
 factory-boy==3.2.1
