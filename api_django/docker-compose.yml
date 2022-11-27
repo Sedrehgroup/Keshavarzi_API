@@ -16,9 +16,9 @@ services:
     expose:
       - 8000
     volumes:
-      - ./api_django:/api_django #.##########################################
+      - .:/api_django
       - static_volume:/api_django/static
-      - media_volume:/api_django/app/media
+      - media_volume:/api_django/media
     env_file:
       - .env
     environment:
