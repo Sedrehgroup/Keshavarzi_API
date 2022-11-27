@@ -1,4 +1,5 @@
-setting_env = 'LOCAL'  # Choices are: LOCAL, PRODUCTION
+from os import getenv
+setting_env = getenv("SETTINGS_ENV", "LOCAL")  # Choices are: LOCAL, PRODUCTION
 
 # Colors
 ENDC = '\033[0m'
