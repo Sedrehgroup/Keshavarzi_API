@@ -1,9 +1,9 @@
 from django.conf import settings
 from geoserver.catalog import Catalog
 
-cat = Catalog(f"http://{settings.GEOSERVER['HOST']}:{settings.GEOSERVER['PORT']}/geoserver/rest/",
-              username=settings.GEOSERVER['USERNAME'],
-              password=settings.GEOSERVER['PASSWORD'])
+cat = Catalog(f'http://{environ["GEOSERVER_HOST"]}:{environ["GEOSERVER_PORT"]}/geoserver/rest/',
+              username=environ["GEOSERVER_USER"],
+              password=environ["GEOSERVER_PASS"])
 
 
 def get_or_create_workspace(name):

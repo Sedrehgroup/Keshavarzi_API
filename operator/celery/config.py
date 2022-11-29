@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 celery_app = Celery('config')
 
 celery_app.autodiscover_tasks(['tasks'])
-celery_app.conf.broker_url = f"amqp://{os.environ['RABBITMQ_DEFAULT_USER']}:{os.environ['RABBITMQ_DEFAULT_PASS']}@{os.environ['SERVER_IP']}"
+celery_app.conf.broker_url = f"amqp://{os.environ['RABBITMQ_DEFAULT_USER']}:{os.environ['RABBITMQ_DEFAULT_PASS']}@{os.environ['RABBITMQ_IP']}"
 celery_app.conf.result_backend = 'rpc://'
 celery_app.conf.task_serializer = 'json'
 celery_app.conf.result_serializer = 'json'
