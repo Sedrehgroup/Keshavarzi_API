@@ -4,10 +4,10 @@ import rasterio
 import requests
 
 from io import BytesIO
-from celery import shared_task
 from celery.exceptions import InvalidTaskError
 from geoserver.catalog import ConflictingDataError
 
+from config import celery_app
 from geoserver.base import cat
 from gee.utils import get_and_validate_polygon_by_geom, get_image_collections, \
     get_dates_of_image_collection, RegionTools
@@ -15,7 +15,7 @@ from gee.utils import get_and_validate_polygon_by_geom, get_image_collections, \
 logger = logging.getLogger(__name__)
 
 
-@shared_task()
+@celery_app.task
 def download_images(start, end, polygon_geojson, user_id, region_id, dates):
     """
         ** Note**
