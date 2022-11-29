@@ -10,9 +10,8 @@ from celery.exceptions import InvalidTaskError
 from datetime import timedelta
 from geoserver.catalog import ConflictingDataError
 
-
-from geoserver.base import cat
-from gee.utils import get_and_validate_polygon_by_geom, get_image_collections, \
+from tools.geoserver.base import cat
+from tools.gee.utils import get_and_validate_polygon_by_geom, get_image_collections, \
     get_dates_of_image_collection, RegionTools
 
 logger = logging.getLogger(__name__)
