@@ -8,8 +8,8 @@ from typing import Tuple
 from datetime import datetime, date
 
 logger = logging.getLogger(__name__)
-BASE_DIR = Path(__file__).resolve()
-private_key_path = os.path.join(BASE_DIR, "utils", "gee", "geotest-privkey.json")
+BASE_DIR = Path(__file__).resolve().parent.parent
+private_key_path = os.path.join(BASE_DIR, "tools", "gee", "geotest-privkey.json")
 if not os.path.isfile(private_key_path):
     raise FileNotFoundError("geotest-privkey.json not found. This file should exists in utils.gee package.")
 
