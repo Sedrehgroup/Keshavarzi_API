@@ -110,11 +110,3 @@ def get_and_validate_polygon_by_geom(polygon_geojson) -> ee.Geometry.Polygon:
         msg = {"function name": "get_and_validate_polygon_by_geom",
                "message": e, "geom_data": polygon_geojson}
         raise ValidationError(msg)
-
-
-def get_clipped_image(image_name, polygon: ee.Geometry.Polygon) -> ee.Image:
-    logger.debug("Get clipped image")
-    try:
-        return ee.Image(image_name).clip(polygon).select(['TCI_R', 'TCI_G', 'TCI_B'])
-    except Exception as e:
-        raise ValidationError({"function name": "get_clipped_image", "message": e})
