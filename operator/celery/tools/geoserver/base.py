@@ -1,4 +1,4 @@
-from django.conf import settings
+from os import environ
 from geoserver.catalog import Catalog
 
 cat = Catalog(f'http://{environ["GEOSERVER_HOST"]}:{environ["GEOSERVER_PORT"]}/geoserver/rest/',
