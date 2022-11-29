@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 from typing import Tuple
 from datetime import datetime, date
-from rest_framework.exceptions import ValidationError
 
 logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve()
@@ -109,4 +108,4 @@ def get_and_validate_polygon_by_geom(polygon_geojson) -> ee.Geometry.Polygon:
     except Exception as e:
         msg = {"function name": "get_and_validate_polygon_by_geom",
                "message": e, "geom_data": polygon_geojson}
-        raise ValidationError(msg)
+        raise ValueError(msg)
