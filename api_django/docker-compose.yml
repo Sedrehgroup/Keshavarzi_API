@@ -67,7 +67,9 @@ services:
     container_name: geoserver
     restart: always
     ports:
-      - 8080:8080
+      - ${GEOSERVER_PORT}:${GEOSERVER_PORT}
+    env_file:
+      - .env
     volumes:
       - geoserver_sedreh:/opt/geoserver/data_dir
       - geoserver_footprints_sedreh:/opt/footprints_dir
