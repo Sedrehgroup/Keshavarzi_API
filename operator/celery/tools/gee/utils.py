@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent.parent
 private_key_path = os.path.join(BASE_DIR, "tools", "gee", "geotest-privkey.json")
 if not os.path.isfile(private_key_path):
-    raise FileNotFoundError("geotest-privkey.json not found. This file should exists in utils.gee package.")
+    raise FileNotFoundError(f"geotest-privkey.json not found. This file should exists in {private_key_path}")
 
 service_account = 'geo-test@geotest-317218.iam.gserviceaccount.com'
 with open(private_key_path, 'r') as pk:
