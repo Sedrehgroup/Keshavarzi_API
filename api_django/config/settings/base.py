@@ -183,17 +183,17 @@ LOGGING = {
         'file_request': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'debug_request.log',
+            'filename': BASE_DIR / "logs" / 'debug_request.log',
         },
         'file_django': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'debug_django.log',
+            'filename': BASE_DIR / "logs" / 'debug_django.log',
         },
         'file_celery': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'debug_celery.log',
+            'filename': BASE_DIR / "logs" / 'debug_celery.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
