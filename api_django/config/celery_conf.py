@@ -13,7 +13,7 @@ rabbit_pass = os.environ['RABBITMQ_PASS']
 rabbit_port = os.environ['RABBITMQ_PORT']
 server_ip = os.environ['SERVER_IP']
 
-celery_app.conf.broker_url = f"amqp://{rabbit_user}:{rabbit_pass}@{rabbit_port}:{server_ip}"
+celery_app.conf.broker_url = f"amqp://{rabbit_user}:{rabbit_pass}@{server_ip}:{rabbit_port}"
 celery_app.conf.result_backend = 'rpc://'
 celery_app.conf.task_serializer = 'json'
 celery_app.conf.result_serializer = 'json'
