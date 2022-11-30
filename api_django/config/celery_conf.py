@@ -8,7 +8,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 celery_app = Celery('config')
 celery_app.autodiscover_tasks(['regions.tasks'])
 
-celery_app.conf.broker_url = f"amqp://{os.environ['RABBITMQ_USER']}:{os.environ['RABBITMQ_PASS']}@{os.environ['SERVER_IP']}"
+celery_app.conf.broker_url = f"amqp://{os.environ['RABBITMQ_USER']}:{os.environ['RABBITMQ_PASS']}@{os.environ['SERVER_IP']:{os.environ['RABBITMQ_PORT']}}"
 celery_app.conf.result_backend = 'rpc://'
 celery_app.conf.task_serializer = 'json'
 celery_app.conf.result_serializer = 'json'
