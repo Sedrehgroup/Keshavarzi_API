@@ -207,12 +207,7 @@ LOGGING = {
             'handlers': ['console', 'file_request'],
             'level': 'ERROR',
             'propagate': False,
-        },
-        # 'regions.tasks': {
-        #     'handlers': ['console', 'file_celery'],
-        #     'level': 'DEBUG',
-        #     'propagate': False,
-        # }
+        }
     }
 }
 
