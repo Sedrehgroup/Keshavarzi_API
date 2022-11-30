@@ -16,7 +16,7 @@ if not os.path.isfile(private_key_path):
 service_account = 'geo-test@geotest-317218.iam.gserviceaccount.com'
 with open(private_key_path, 'r') as pk:
     credentials = ee.ServiceAccountCredentials(service_account, key_data=json.dumps(json.load(pk)))
-ee.Initialize(credentials)
+# ee.Initialize(credentials)
 
 
 def get_and_validate_date_range(start_date: str, end_date: str) -> Tuple[date, date]:
