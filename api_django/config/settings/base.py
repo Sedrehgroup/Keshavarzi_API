@@ -212,8 +212,8 @@ LOGGING = {
 }
 
 CELERY_BEAT_SCHEDULE = {
-    "get_user_regions": {
-        "task": "regions.tasks.get_user_regions",
+    "get_new_images": {
+        "task": "regions.tasks.get_new_images",
         "schedule": crontab(day_of_week="fri", hour="3", minute="30"),
     },
 }
