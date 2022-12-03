@@ -10,7 +10,7 @@ services:
     networks:
       - main
     ports:
-      - "5672:5672"
+      - "${RABBITMQ_PORT:-5672}:${RABBITMQ_PORT:-5672}"
 
   celery_worker:
     container_name: celery_worker
