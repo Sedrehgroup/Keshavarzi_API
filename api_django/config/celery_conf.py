@@ -6,7 +6,6 @@ from celery import Celery
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 celery_app = Celery('config')
-celery_app.autodiscover_tasks(['regions.tasks'])
 
 rabbit_user = os.environ['RABBITMQ_USER']
 rabbit_pass = os.environ['RABBITMQ_PASS']
