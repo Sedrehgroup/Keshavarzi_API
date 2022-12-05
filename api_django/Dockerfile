@@ -17,3 +17,6 @@ RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 COPY . .
+
+CMD ["python", "geoserver_startup.py"]
+CMD ["start_api.sh"]

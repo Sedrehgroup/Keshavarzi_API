@@ -2,12 +2,10 @@ version: "3.9"
 
 services:
   api_django:
-    restart: on-failure
+    restart: always
     container_name: api_django
     build:
       context: .
-    command: sh -c "python geoserver_startup.py
-        && start_api.sh"
     depends_on:
       - postgis
       - geoserver
