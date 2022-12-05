@@ -6,10 +6,8 @@ services:
     container_name: api_django
     build:
       context: .
-    command: sh -c "python manage.py makemigrations --noinput
-      && python manage.py migrate
-      && python manage.py collectstatic --no-input
-      && gunicorn --reload config.wsgi --bind 0.0.0.0:8000"
+    command:
+      - /bin/sh -c "python geoserver_startup.py"
     depends_on:
       - postgis
       - geoserver
