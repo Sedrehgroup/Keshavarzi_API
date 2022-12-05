@@ -65,7 +65,10 @@ services:
     ports:
       - ${GEOSERVER_PORT}:${GEOSERVER_PORT}
     env_file:
-      - .env
+      - .env'
+    environment:
+      - GEOSERVER_ADMIN_USER=${GEOSERVER_USER}
+      - GEOSERVER_ADMIN_PASSWORD=${GEOSERVER_PASS}
     volumes:
       - geoserver_sedreh:/opt/geoserver/data_dir
       - geoserver_footprints_sedreh:/opt/footprints_dir
