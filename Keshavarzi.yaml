@@ -36,9 +36,9 @@ paths:
 
       operationId: notes_list
       tags:
-      - notes
+        - notes
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -58,7 +58,7 @@ paths:
 
       operationId: notes_create
       tags:
-      - notes
+        - notes
       requestBody:
         content:
           application/json:
@@ -72,7 +72,7 @@ paths:
               $ref: '#/components/schemas/CreateNote'
         required: true
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '201':
           content:
@@ -89,15 +89,15 @@ paths:
 
       summary: Get note by id
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - notes
+        - notes
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -112,13 +112,13 @@ paths:
         Only admin OR note creator can update specefic note.
       summary: Update note by id
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - notes
+        - notes
       requestBody:
         content:
           application/json:
@@ -132,7 +132,7 @@ paths:
               $ref: '#/components/schemas/UpdateNote'
         required: true
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -147,13 +147,13 @@ paths:
         Only admin OR note creator can update specefic note.
       summary: Update note by id
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - notes
+        - notes
       requestBody:
         content:
           application/json:
@@ -166,7 +166,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedUpdateNote'
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -181,15 +181,15 @@ paths:
         User should be authenticated. \
         Only admin OR note creator can retrieve specefic note.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - notes
+        - notes
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '204':
           description: No response body
@@ -206,27 +206,27 @@ paths:
           - Default page_size is 10
           - Maximum page_size is 25
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - name: page_size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - name: page_size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
       tags:
-      - notes
+        - notes
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -266,7 +266,7 @@ paths:
             1. Link for valid geojson -> [geojson.io](https://geojson.io)
       operationId: regions_create
       tags:
-      - regions
+        - regions
       requestBody:
         content:
           application/json:
@@ -274,7 +274,7 @@ paths:
               $ref: '#/components/schemas/CreateRegion'
         required: true
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '201':
           description: ''
@@ -287,15 +287,15 @@ paths:
         Every authenticated role user have access to this endpoint. \
         Regular or Expert user should have relation to the region.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - regions
+        - regions
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -312,13 +312,13 @@ paths:
         Expert user doesn't have access to this endpoint. \
         Regular user should have relation to region.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - regions
+        - regions
       requestBody:
         content:
           application/json:
@@ -326,7 +326,7 @@ paths:
               $ref: '#/components/schemas/UpdateRegion'
         required: true
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -343,20 +343,20 @@ paths:
         Expert user doesn't have access to this endpoint. \
         Regular user should have relation to region.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - regions
+        - regions
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedUpdateRegion'
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -374,13 +374,13 @@ paths:
           1. Expert user doesn't have access to this endpoint.
           2. Regular user doesn't have access to this endpoint.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - regions
+        - regions
       requestBody:
         content:
           application/json:
@@ -388,7 +388,7 @@ paths:
               $ref: '#/components/schemas/UpdateRegionExpert'
         required: true
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           description: ''
@@ -401,13 +401,13 @@ paths:
           1. Expert user doesn't have access to this endpoint.
           2. Regular user doesn't have access to this endpoint.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - regions
+        - regions
       requestBody:
         content:
           application/json:
@@ -420,7 +420,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedUpdateRegionExpert'
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -438,13 +438,13 @@ paths:
           1. Expert user doesn't have access to this endpoint.
           2. Regular user doesn't have access to this endpoint.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - regions
+        - regions
       requestBody:
         content:
           application/json:
@@ -458,7 +458,7 @@ paths:
               $ref: '#/components/schemas/UpdateRegionUser'
         required: true
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -475,13 +475,13 @@ paths:
           1. Expert user doesn't have access to this endpoint.
           2. Regular user doesn't have access to this endpoint.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - regions
+        - regions
       requestBody:
         content:
           application/json:
@@ -494,7 +494,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedUpdateRegionUser'
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -513,9 +513,9 @@ paths:
           2. Regular user doesn't have access to this endpoint.
 
       tags:
-      - regions
+        - regions
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -535,9 +535,9 @@ paths:
           1. Admin user doesn't have access to this endpoint.
           2. Expert user doesn't have access to this endpoint.
       tags:
-      - regions
+        - regions
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -555,7 +555,7 @@ paths:
       description: |
         User should **not** be authenticated.
       tags:
-      - users
+        - users
       requestBody:
         content:
           application/json:
@@ -590,8 +590,8 @@ paths:
               $ref: '#/components/schemas/CreateUser'
         required: true
       security:
-      - jwtAuth: []
-      - {}
+        - jwtAuth: [ ]
+        - { }
       responses:
         '201':
           content:
@@ -614,15 +614,15 @@ paths:
 
       summary: Get user by id
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       tags:
-      - users
+        - users
       security:
-      - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         '200':
           content:
@@ -635,7 +635,7 @@ paths:
             application/json:
               schema:
                 type: object
-                example: {"message": "You don't have access to see details of other users"}
+                example: { "message": "You don't have access to see details of other users" }
           description: ''
   /users/token/:
     post:
@@ -645,7 +645,7 @@ paths:
         Takes a set of user credentials and returns an access and refresh JSON web
         token pair to prove the authentication of those credentials.
       tags:
-      - users
+        - users
       requestBody:
         content:
           application/json:
@@ -700,7 +700,7 @@ paths:
         Takes a refresh type JSON web token and returns an access type JSON web
         token if the refresh token is valid.
       tags:
-      - users
+        - users
       requestBody:
         content:
           application/json:
@@ -727,7 +727,7 @@ paths:
       description: |-
         Set the access token in header and check that, is access token still valid or not
       tags:
-      - users
+        - users
       responses:
         '200':
           description: "Access token is valid"
@@ -735,16 +735,16 @@ paths:
             application/json:
               schema:
                 type: object
-                example: {}
+                example: { }
         '403':
           description: |
             Access token is not valid anymore. \
             Refresh the accss token by 'Refresh token' endpoint.
           content:
             application/json:
-                schema:
-                  type: object
-                  example: {}
+              schema:
+                type: object
+                example: { }
 components:
   schemas:
     # Notes
@@ -759,8 +759,8 @@ components:
           minimum: 1
           writeOnly: true
       required:
-      - region_id
-      - text
+        - region_id
+        - text
     RetrieveNote:
       type: object
       properties:
@@ -769,7 +769,7 @@ components:
           readOnly: true
         user:
           allOf:
-          - $ref: '#/components/schemas/User'
+            - $ref: '#/components/schemas/User'
           readOnly: true
         user_role:
           $ref: '#/components/schemas/UserRoleEnum'
@@ -785,19 +785,19 @@ components:
         region:
           type: integer
       required:
-      - id
-      - region
-      - text
-      - updated_date
-      - user
-      - user_role
+        - id
+        - region
+        - text
+        - updated_date
+        - user
+        - user_role
     UpdateNote:
       type: object
       properties:
         text:
           type: string
       required:
-      - text
+        - text
     PatchedUpdateNote:
       type: object
       properties:
@@ -823,11 +823,11 @@ components:
           format: date-time
           readOnly: true
       required:
-      - id
-      - text
-      - updated_date
-      - user
-      - user_role
+        - id
+        - text
+        - updated_date
+        - user
+        - user_role
     ListUserNotes:
       type: object
       properties:
@@ -836,7 +836,7 @@ components:
           readOnly: true
         region:
           allOf:
-          - $ref: '#/components/schemas/inline_region_serializer'
+            - $ref: '#/components/schemas/inline_region_serializer'
           readOnly: true
         user_role:
           $ref: '#/components/schemas/UserRoleEnum'
@@ -851,11 +851,11 @@ components:
           format: date-time
           readOnly: true
       required:
-      - id
-      - region
-      - text
-      - updated_date
-      - user_role
+        - id
+        - region
+        - text
+        - updated_date
+        - user_role
     PaginatedListNotesByRegionList:
       type: object
       properties:
@@ -890,8 +890,8 @@ components:
         polygon:
           $ref: '#/components/schemas/GeojsonPolygon'
       required:
-      - name
-      - polygon
+        - name
+        - polygon
     CreateRegion:
       type: object
       properties:
@@ -906,8 +906,8 @@ components:
         polygon:
           $ref: '#/components/schemas/GeojsonPolygon'
       required:
-      - name
-      - polygon
+        - name
+        - polygon
     RetrieveRegion:
       type: object
       properties:
@@ -916,17 +916,17 @@ components:
           description: Maximum length for this field is 20 character
           maxLength: 20
         is_active:
-         type: boolean
+          type: boolean
         dates:
           type: array
-          example: ['2022-01-01','2022-01-07','2022-01-13']
+          example: [ '2022-01-01','2022-01-07','2022-01-13' ]
           items:
             type: string
         polygon:
           $ref: '#/components/schemas/GeojsonPolygon'
       required:
-      - name
-      - polygon
+        - name
+        - polygon
     PatchedUpdateRegion:
       type: object
       properties:
@@ -983,11 +983,11 @@ components:
         polygon:
           $ref: '#/components/schemas/GeojsonPolygon'
       required:
-      - date_created
-      - id
-      - name
-      - polygon
-      - user
+        - date_created
+        - id
+        - name
+        - polygon
+        - user
     ListRegionUser:
       type: object
       properties:
@@ -1013,11 +1013,11 @@ components:
         polygon:
           $ref: '#/components/schemas/GeojsonPolygon'
       required:
-      - date_created
-      - expert
-      - id
-      - name
-      - polygon
+        - date_created
+        - expert
+        - id
+        - name
+        - polygon
     UpdateRegionExpert:
       type: object
       properties:
@@ -1026,7 +1026,7 @@ components:
           minimum: 1
           nullable: true
       required:
-      - expert_id
+        - expert_id
     UpdateRegionUser:
       type: object
       properties:
@@ -1034,7 +1034,7 @@ components:
           type: integer
           minimum: 1
       required:
-      - user_id
+        - user_id
     inline_region_serializer:
       type: object
       properties:
@@ -1044,8 +1044,8 @@ components:
           type: string
           maxLength: 20
       required:
-      - id
-      - name
+        - id
+        - name
 
     # Users
     User:
@@ -1080,7 +1080,7 @@ components:
             This field should contain 13 character.
           maxLength: 13
       required:
-      - id
+        - id
     CreateUser:
       type: object
       properties:
@@ -1094,12 +1094,12 @@ components:
           type: string
           writeOnly: true
       required:
-      - password
+        - password
     UserRoleEnum:
       enum:
-      - U
-      - E
-      - A
+        - U
+        - E
+        - A
       type: string
     TokenRefresh:
       type: object
@@ -1111,8 +1111,8 @@ components:
           type: string
           writeOnly: true
       required:
-      - access
-      - refresh
+        - access
+        - refresh
     CustomTokenObtainPair:
       type: object
       properties:
@@ -1122,8 +1122,8 @@ components:
           type: string
           writeOnly: true
       required:
-      - password
-      - phone_number
+        - password
+        - phone_number
 
     # Polygon
     GeojsonPolygonFeatureGeometry:
@@ -1136,16 +1136,16 @@ components:
           type: array
           items:
             type: array
-            example:  [
-                        [51.40940355971463, 35.71186958113398],
-                        [51.38012363053096, 35.69960676446529],
-                        [51.40219311800959, 35.68167819599533],
-                        [51.42898799466354, 35.69355360445098],
-                        [51.42502575827493, 35.71394249867582],
-                        [51.41510206917434, 35.71826702024353],
-                        [51.40642561112406, 35.71949939177594],
-                        [51.40940355971463, 35.71186958113398]
-          ]
+            example: [
+              [ 51.40940355971463, 35.71186958113398 ],
+              [ 51.38012363053096, 35.69960676446529 ],
+              [ 51.40219311800959, 35.68167819599533 ],
+              [ 51.42898799466354, 35.69355360445098 ],
+              [ 51.42502575827493, 35.71394249867582 ],
+              [ 51.41510206917434, 35.71826702024353 ],
+              [ 51.40642561112406, 35.71949939177594 ],
+              [ 51.40940355971463, 35.71186958113398 ]
+            ]
             items:
               type: number
     GeojsonPolygonFeature:
