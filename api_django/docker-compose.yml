@@ -65,7 +65,7 @@ services:
     ports:
       - ${GEOSERVER_PORT}:${GEOSERVER_PORT}
     env_file:
-      - .env'
+      - .env
     environment:
       - GEOSERVER_ADMIN_USER=${GEOSERVER_USER}
       - GEOSERVER_ADMIN_PASSWORD=${GEOSERVER_PASS}
