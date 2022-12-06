@@ -18,5 +18,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["python", "geoserver_startup.py"]
 CMD ["sh", "start_api.sh"]
