@@ -21,10 +21,7 @@ class TestCeleryTasks(TestCase):
         while async_result.state == "PENDING":
             sleep(1)
         if async_result.state != "SUCCESS":
-            if async_result.state == "FAILURE":
-                raise AssertionError({"Failed": async_result.message})
-            else:
-                raise AssertionError({"NOT SUCCESS": async_result.result})
+            raise AssertionError({async_result.state: async_result.result})
 
     def test_download_image_task(self):
         """ Test that download_image task with valid data is working correctly """
