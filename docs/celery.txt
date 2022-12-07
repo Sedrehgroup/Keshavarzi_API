@@ -1,0 +1,4 @@
+How to call task  from one machine( host ) to another
+https://stackoverflow.com/questions/18433071/celery-how-to-send-task-from-remote-machine
+celery.send_task('tasks.add', (2, 2))
+

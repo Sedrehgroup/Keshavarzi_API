@@ -1,0 +1,12 @@
+Installation:
+    <<pip install gsconfig>> is not working.
+    Instead, you should use <<pip install gsconfig-py3>>
+
+
+Usage:
+    for using the REST of gsconif package:
+        You should add /rest/ at the end of the 'service_url'
+
+Tips:
+    For deleting store and layer together, you should only delete store.
+

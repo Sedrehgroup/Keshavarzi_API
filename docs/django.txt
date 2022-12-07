@@ -1,0 +1,5 @@
+https://docs.djangoproject.com/en/4.1/ref/validators/#writing-validators
+
+If you are using nested data for testing your endpoint you have to add format="json" at your self.client.post
+
+After gunicorn start-server command, you can not run any other command.

@@ -1,0 +1,7 @@
+** How to save and load docker images **
+docker image prune -a
+docker save -o img_api.tar IMAGE_ID
+scp *.tar username@host:~
+docker load -i img_api.tar
+
+**  **
