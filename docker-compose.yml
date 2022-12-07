@@ -57,7 +57,7 @@ services:
     container_name: geoserver
     restart: always
     ports:
-      - ${GEOSERVER_PORT}:${GEOSERVER_PORT}
+      - ${GEOSERVER_PORT:-8080}:${GEOSERVER_PORT:-8080}
     env_file:
       - .env
     environment:
