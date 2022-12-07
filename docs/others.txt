@@ -1,7 +1,0 @@
-Celery:
-    https://stackoverflow.com/questions/18433071/celery-how-to-send-task-from-remote-machine
-      
-
-RabbitMQ:
-    https://groups.google.com/g/rabbitmq-users/c/O4SgWVZ9j2o
-    
