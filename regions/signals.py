@@ -7,7 +7,7 @@ from shutil import rmtree
 
 from regions.models import Region
 from notes.models import Note
-from regions.tasks import call_download_images_celery_task
+from regions.utils import call_download_images_celery_task
 
 logger = logging.getLogger(__name__)
 

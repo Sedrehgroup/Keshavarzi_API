@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from regions.models import Region
-from regions.tasks import call_download_images_celery_task
+from regions.utils import call_download_images_celery_task
 from regions.utils import get_geojson_by_polygon, get_polygon_by_geojson
 from users.api.serializers import UserSerializer
 from users.models import User
