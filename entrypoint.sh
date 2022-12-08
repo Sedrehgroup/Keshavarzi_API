@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#https://www.gnu.org/software/bash/manual/bash.html#The-Set-Builtin
 set -e
 
 

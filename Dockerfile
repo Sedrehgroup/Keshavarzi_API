@@ -18,4 +18,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["sh", "start_api.sh"]
+CMD ["sh", "entrypoint.sh"]
