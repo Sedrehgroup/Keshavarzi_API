@@ -177,7 +177,7 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
         'mail_admins': {
-            'level': 'ERROR',
+            'level': "CRITICAL",
             'class': 'django.utils.log.AdminEmailHandler',
         },
         'file_request': {
@@ -205,9 +205,12 @@ LOGGING = {
         },
         'django.request': {
             'handlers': ['console', 'file_request'],
-            'level': 'ERROR',
             'propagate': False,
-        }
+        },
+        'celery_tasks': {
+            'handlers': ['console', "file_celery"],
+            'propagate': False,
+        },
     }
 }
 
