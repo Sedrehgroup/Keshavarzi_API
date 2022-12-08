@@ -6,7 +6,7 @@ from regions.tests.factories import RegionFactory
 from regions.utils import get_geojson_by_polygon
 from users.tests.factories import UserFactory
 
-DOWNLOAD_IMAGES = "config.download_images"
+DOWNLOAD_IMAGES = "tasks.download_images.download_images"
 
 
 class TestCeleryTasks(TestCase):
