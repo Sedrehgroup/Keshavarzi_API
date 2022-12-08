@@ -72,23 +72,6 @@ services:
     networks:
       - main
 
-  celery_beat:
-    container_name: celery_beat
-    restart: always
-    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    build:
-      context: .
-    depends_on:
-      - api_django
-      - postgis
-    env_file:
-      - .env
-    environment:
-      - DB_USER=${POSTGRES_USER}
-      - DB_PASS=${POSTGRES_PASS}
-      - DB_NAME=${POSTGRES_DBNAME}
-    networks:
-      - main
 networks:
   main:
 
