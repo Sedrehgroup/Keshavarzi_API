@@ -26,7 +26,7 @@ class TestCeleryTasks(TestCase):
     def test_download_image_task(self):
         """ Test that download_image task with valid data is working correctly """
         start_date = "2022-01-01"
-        end_date = "2022-02-01"
+        end_date = "2022-01-15"
         args = (start_date, end_date, get_geojson_by_polygon(self.region.polygon),
                 self.user.id, self.region.id, self.region.dates)
         result = celery_app.send_task(DOWNLOAD_IMAGES, args)
