@@ -3,6 +3,7 @@
 set -e
 
 python manage.py wait_for_db
+python manage.py wait_for_celery
 
 python manage.py makemigrations --noinput
 python manage.py migrate
