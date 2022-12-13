@@ -87,10 +87,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASS"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DATABASE"),
+        "USER": os.getenv("POSTGRES_USERNAME"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
     }
@@ -145,18 +145,7 @@ REST_FRAMEWORK = {
     )
 }
 
-GEOSERVER = {
-    'HOST': os.environ.get('GEOSERVER_HOST'),
-    'IP': os.environ.get('GEOSERVER_HOST_IP'),
-    'USERNAME': os.environ.get('GEOSERVER_USERNAME'),
-    'PASSWORD': os.environ.get('GEOSERVER_PASSWORD'),
-    'WORKSPACE': os.environ.get('GEOSERVER_WORKSPACE'),
-    'NAMESPACE': os.environ.get('GEOSERVER_NAMESPACE'),
-    'MEDIA_ROOT': 'media/geoserver/',
-    'RASTER_URL': os.path.join(BASE_DIR, 'images'),
-    'GEOSERVER_URL': '/opt/geoserver/data_dir',
-    'PORT': os.environ.get('GEOSERVER_PORT')
-}
+
 ADMINS = [
     ('Hossein Shayesteh', 'shayestehhs1@gmail.com'),
     # ('Sedreh', 'info@sedreh.ir')

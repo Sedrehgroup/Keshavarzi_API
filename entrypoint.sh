@@ -3,7 +3,6 @@
 #https://www.gnu.org/software/bash/manual/bash.html#The-Set-Builtin
 set -e
 
-
 celery -A config beat -l DEBUG -f logs/beat.log --scheduler django_celery_beat.schedulers:DatabaseScheduler
 
 python manage.py wait_for_db

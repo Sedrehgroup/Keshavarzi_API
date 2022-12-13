@@ -7,38 +7,32 @@ services:
     build:
       context: .
     depends_on:
-      - postgis
+      - postgres
       - geoserver
+    volumes:
+      - logs:./logs
     expose:
       - 8000
     env_file:
       - .env
-    environment:
-      - DB_USER=${POSTGRES_USER}
-      - DB_PASS=${POSTGRES_PASS}
-      - DB_NAME=${POSTGRES_DBNAME}
     networks:
       - main
 
-  postgis:
-    image: kartoza/postgis:14-3.2
+  postgres:
+    image: bitnami/postgresql:latest
     restart: on-failure
-    container_name: postgis
+    container_name: postgres
     volumes:
       - db_data:/var/lib/postgresql/data
     env_file:
       - .env
-    environment:
-      - DB_USER=${POSTGRES_USER}
-      - DB_PASS=${POSTGRES_PASS}
-      - DB_NAME=${POSTGRES_DBNAME}
     networks:
       - main
     expose:
       - 5432
 
   nginx:
-    image: nginx:latest
+    image: bitnami/nginx:latest
     restart: on-failure
     container_name: nginx
     command: nginx -g 'daemon off;'
@@ -76,6 +70,7 @@ networks:
   main:
 
 volumes:
+  logs:
   db_data:
   geoserver_sedreh:
   geoserver_footprints_sedreh:
