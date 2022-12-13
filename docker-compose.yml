@@ -10,7 +10,7 @@ services:
       - postgres
       - geoserver
     volumes:
-      - logs:./logs
+      - ./logs:/logs
     expose:
       - 8000
     env_file:
