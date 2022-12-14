@@ -21,7 +21,7 @@ def get_weather_forcast(region_id, lat, lon, start_time="now", end_time="nowPlus
         "endTime": end_time,
         "units": "metric"
     }
-    response = requests.get(url, params, headers={"Content-Type": "application/json"})
+    response = requests.get(url, params)
     if response.status_code != 200:
         if response.status_code == 403:
             print("API key is not valid any more. change it.")
