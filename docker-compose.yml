@@ -9,6 +9,7 @@ services:
     depends_on:
       - postgres
       - geoserver
+      - redis
     volumes:
       - ./logs:/logs
     expose:
@@ -71,7 +72,7 @@ services:
     container_name: redis
     restart: on-failure
     expose:
-      - %{REDIS_PORT_NUMBER:-6379}
+      - ${REDIS_PORT_NUMBER:-6379}
     env_file:
       - .env
     networks:
