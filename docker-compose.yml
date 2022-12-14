@@ -66,6 +66,17 @@ services:
     networks:
       - main
 
+  redis:
+    image: bitnami/redis:latest
+    container_name: redis
+    restart: on-failure
+    expose:
+      - %{REDIS_PORT_NUMBER:-6379}
+    env_file:
+      - .env
+    networks:
+      - main
+
 networks:
   main:
 
