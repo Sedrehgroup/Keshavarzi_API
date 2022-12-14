@@ -1,10 +1,8 @@
-from datetime import timedelta
-
 import requests
 
 from os import environ
 from django.core.cache import cache
-from jdatetime import datetime
+from datetime import datetime
 
 API_KEY = environ["TOMORROW_API_KEY"]
 
