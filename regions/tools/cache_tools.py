@@ -26,7 +26,7 @@ def get_seconds_until_end_of_day():
 def initialize_keys_and_index(reset_count=0, today_str_time=None):
     logger.debug("initialize keys and index")
     keys = str(environ.get("TOMORROW_API_KEY")).split()
-    index = len(keys)
+    index = len(keys) - 1
     value = {"reset_count": reset_count,
              "keys": keys, "index": index,
              "time_last_initialize": today_str_time or get_today_str_time()}
