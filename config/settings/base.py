@@ -155,7 +155,6 @@ REST_FRAMEWORK = {
     )
 }
 
-
 ADMINS = [
     ('Hossein Shayesteh', 'shayestehhs1@gmail.com'),
     # ('Sedreh', 'info@sedreh.ir')
@@ -189,6 +188,11 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': BASE_DIR / "logs" / 'debug_django.log',
         },
+        'file_cache_tools': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / "logs" / 'cache_tools.log',
+        },
         'file_celery': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -210,8 +214,8 @@ LOGGING = {
             'handlers': ['console', "file_celery"],
             'propagate': False,
         },
-        'cache_tools':{
-            'handlers': ['console','mail_admins'],
+        'cache_tools': {
+            'handlers': ['console', 'file_cache_tools', 'mail_admins'],
             'propagate': False,
         }
     }
