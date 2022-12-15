@@ -210,6 +210,10 @@ LOGGING = {
             'handlers': ['console', "file_celery"],
             'propagate': False,
         },
+        'cache_tools':{
+            'handlers': ['console','mail_admins'],
+            'propagate': False,
+        }
     }
 }
 
