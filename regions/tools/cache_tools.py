@@ -8,7 +8,7 @@ from datetime import datetime
 TOMORROW_REQUEST_TIMEOUT = int(getenv("TOMORROW_REQUEST_TIMEOUT", 2))
 TOMORROW_REQUEST_URL = "https://api.tomorrow.io/v4/timelines"
 TOMORROW_MAXIMUM_RESET_CACHE_PER_DAY = int(getenv("TOMORROW_MAXIMUM_RESET_CACHE_PER_DAY", 20))
-logger = logging.getLogger("cache_tools")  # ToDo: Config the logger
+logger = logging.getLogger()  # ToDo: Config the logger
 
 
 def get_today_str_time():

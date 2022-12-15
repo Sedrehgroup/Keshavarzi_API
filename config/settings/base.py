@@ -214,8 +214,9 @@ LOGGING = {
             'handlers': ['console', "file_celery"],
             'propagate': False,
         },
-        'cache_tools': {
+        '': {
             'handlers': ['console', 'file_cache_tools', 'mail_admins'],
+            'level': 'DEBUG',
             'propagate': False,
         }
     }
