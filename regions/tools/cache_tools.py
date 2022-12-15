@@ -1,6 +1,6 @@
 import logging
 import requests
-
+import json
 from os import environ, getenv
 from django.core.cache import cache
 from datetime import datetime
@@ -101,5 +101,5 @@ def get_weather_forcast(key, lat, lon, time_steps="1d",
     if response.status_code != 200:
         logger.critical(response.content)
 
-    cache.set(key, response.content, timeout=get_seconds_until_end_of_day())
+    cache.set(key, json.loads(response.content), timeout=get_seconds_until_end_of_day())
     return response.content
