@@ -73,13 +73,15 @@ def send_request_to_tomorrow(params):
     params.update({"apikey": get_api_key()})
     logger.debug("params:")
     logger.debug(params)
-    logger.debug("send request")
+    logger.debug(f"send request with apikey= {params.get('apikey')[:5]}")
     try:
         return requests.get(TOMORROW_REQUEST_URL, params,
                             timeout=TOMORROW_REQUEST_TIMEOUT)
-    except requests.exceptions.ReadTimeout as e:
+    except requests.exceptions.ReadTimeout:
         return send_request_to_tomorrow(params)
-
+    except Exception as e:
+        logger.critical(e)
+        return send_request_to_tomorrow(params)
 
 def get_weather_forcast(key, lat, lon, time_steps="1d",
                         start_time="now", end_time="nowPlus14d"):
