@@ -13,7 +13,7 @@ logger = logging.getLogger("cache_tools")
 
 def initialize_keys_and_index():
     value = {"keys": [API_KEY], "index": 0}
-    cache.set(key="keys_and_index")
+    cache.set("keys_and_index", value)
     return value
 
 
