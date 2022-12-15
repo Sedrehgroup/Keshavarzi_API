@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERD=TRUE
 
 RUN apt-get -y update
 RUN apt-get -y upgrade
-RUN apt-get -y install binutils libproj-dev gdal-bin
+RUN apt-get -y install binutils libproj-dev gdal-bin figlet
 
 RUN apt-get -y update
 RUN apt-get -y install cron

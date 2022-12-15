@@ -14,7 +14,6 @@ python manage.py migrate
 
 python manage.py geoserver_startup
 
-apt install figlet
 figlet sedreh AI
 
 gunicorn --reload config.wsgi --bind 0.0.0.0:8000
