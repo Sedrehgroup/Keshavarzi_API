@@ -5,14 +5,16 @@ from os import environ, getenv
 from django.core.cache import cache
 from datetime import datetime
 
-API_KEY = environ["TOMORROW_API_KEY"]
 TOMORROW_REQUEST_TIMEOUT = getenv("TOMORROW_REQUEST_TIMEOUT", 2)
 TOMORROW_REQUEST_URL = "https://api.tomorrow.io/v4/timelines"
 logger = logging.getLogger("cache_tools")
 
 
 def initialize_keys_and_index():
-    value = {"keys": [API_KEY], "index": 0}
+    value = {
+        "keys": str(environ.get("TOMORROW_API_KEY")),
+        "index": 0
+    }
     cache.set("keys_and_index", value)
     return value
 
