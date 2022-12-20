@@ -12,6 +12,9 @@ RUN apt-get -y install cron
 
 WORKDIR /api_django
 
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
 COPY requirements.txt requirements.txt
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
