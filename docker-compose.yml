@@ -34,7 +34,7 @@ services:
 
   nginx:
     build:
-      dockerfile: ./nginx/Dockerfile
+      context: ./nginx
     restart: on-failure
     container_name: nginx
     command: nginx -g 'daemon off;'
