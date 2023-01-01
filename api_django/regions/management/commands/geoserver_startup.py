@@ -12,7 +12,7 @@ class Command(BaseCommand):
                       username=environ["GEOSERVER_USER"],
                       password=environ["GEOSERVER_PASS"])
 
-        default_workspace_name = "DefaultWorkspace"
+        default_workspace_name = environ["GEOSERVER_DEFAULT_WORKSPACE_NAME"]
         if not cat.get_workspace(default_workspace_name):
             cat.create_workspace(default_workspace_name)
         cat.set_default_workspace(default_workspace_name)

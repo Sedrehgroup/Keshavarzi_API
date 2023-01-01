@@ -1,1 +1,0 @@
-figlet Sedreh AI

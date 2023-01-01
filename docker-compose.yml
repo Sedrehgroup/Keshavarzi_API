@@ -5,7 +5,7 @@ services:
     restart: always
     container_name: api_django
     build:
-      context: .
+      context: ./api_django
     depends_on:
       - postgres
       - geoserver
